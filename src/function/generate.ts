@@ -50,14 +50,14 @@ import {
   power_user,
 } from '@sillytavern/scripts/power-user';
 import { Prompt, PromptCollection } from '@sillytavern/scripts/PromptManager';
-import { Stopwatch, getBase64Async } from '@sillytavern/scripts/utils';
+import { Stopwatch, getBase64Async, isDataURL } from '@sillytavern/scripts/utils';
 import { getWorldInfoPrompt, wi_anchor_position, world_info_include_names } from '@sillytavern/scripts/world-info';
 
 import log from 'loglevel';
 
 interface GenerateConfig {
   user_input?: string;
-  image?: File | string;
+  image?: File | string | (File | string)[];
   should_stream?: boolean;
   overrides?: Overrides;
   injects?: InjectionPrompt[];
@@ -66,7 +66,7 @@ interface GenerateConfig {
 
 interface GenerateRawConfig {
   user_input?: string;
-  image?: File | string;
+  image?: File | string | (File | string)[];
   should_stream?: boolean;
   overrides?: Overrides;
   injects?: InjectionRawPrompt[];
@@ -77,7 +77,7 @@ interface GenerateRawConfig {
 interface RolePrompt {
   role: 'system' | 'assistant' | 'user';
   content: string;
-  image?: File | string;
+  image?: File | string | (File | string)[];
 }
 
 interface InjectionPrompt {
@@ -253,7 +253,7 @@ namespace detail {
   export interface GenerateParams {
     user_input?: string;
     use_preset?: boolean;
-    image?: File | string;
+    image?: File | string | (File | string)[];
     stream?: boolean;
     overrides?: OverrideConfig;
     max_chat_history?: number;
@@ -393,6 +393,20 @@ class StreamingProcessor {
   }
 }
 
+/**
+ * 生成AI响应的核心函数
+ * @param config 生成配置参数
+ * @param config.user_input 用户输入文本
+ * @param config.use_preset 是否使用预设
+ * @param config.image 图片参数，可以是单个图片(File|string)或图片数组(File|string)[]
+ * @param config.overrides 覆盖配置
+ * @param config.max_chat_history 最大聊天历史数量
+ * @param config.inject 注入的提示词
+ * @param config.order 提示词顺序
+ * @param config.stream 是否启用流式传输
+ * @returns Promise<string> 生成的响应文本
+ *
+ */
 async function iframeGenerate({
   user_input = '',
   use_preset = true,
@@ -403,11 +417,22 @@ async function iframeGenerate({
   order = undefined,
   stream = false,
 }: detail.GenerateParams = {}): Promise<string> {
-  //初始化
   abortController = new AbortController();
 
   // 1. 处理用户输入（正则，宏）
-  const processedUserInput = processUserInput(substituteParams(user_input)) || '';
+  let processedUserInput = processUserInput(substituteParams(user_input)) || '';
+  let imageArrayHandler:
+    | ((eventData: { chat: { role: string; content: string | any[] }[]; dryRun: boolean }) => void)
+    | null = null;
+
+  // 处理可能的图片数组的情况
+  let imageProcessingPromise: Promise<void> | null = null;
+  if (Array.isArray(image) && image.length > 0) {
+    const result = setupImageArrayProcessing(processedUserInput, image);
+    processedUserInput = result.userInputWithMarker;
+    imageArrayHandler = result.imageArrayHandler;
+    imageProcessingPromise = result.imageProcessingPromise;
+  }
 
   // 2. 准备过滤后的基础数据
   const baseData = await prepareAndOverrideData(
@@ -440,9 +465,15 @@ async function iframeGenerate({
         },
         processedUserInput,
       );
-  log.info('[Generate:发送提示词]', generate_data);
-  // 4. 根据 stream 参数决定生成方式
-  return await generateResponse(generate_data, stream);
+  try {
+    // 4. 根据 stream 参数决定生成方式
+    log.info('[Generate:发送提示词]', generate_data);
+    return await generateResponse(generate_data, stream, imageProcessingPromise);
+  } finally {
+    if (imageArrayHandler) {
+      eventSource.removeListener('chat_completion_prompt_ready', imageArrayHandler);
+    }
+  }
 }
 
 async function prepareAndOverrideData(
@@ -866,7 +897,11 @@ async function handlePresetPath(
     };
 
     if (config.image) {
-      userMessageTemp.image = await convertFileToBase64(config.image);
+      if (Array.isArray(config.image)) {
+        delete userMessageTemp.image;
+      } else {
+        userMessageTemp.image = await convertFileToBase64(config.image);
+      }
     }
 
     baseData.chatContext.oaiMessages.unshift(userMessageTemp);
@@ -1074,7 +1109,12 @@ async function processChatHistoryAndInject(
   const userMessage = await Message.createAsync('user', processedUserInput, 'user_input');
 
   if (promptConfig.image && hasUserInput) {
-    await userMessage.addImage(await convertFileToBase64(promptConfig.image));
+    if (!Array.isArray(promptConfig.image)) {
+      const img = await convertFileToBase64(promptConfig.image);
+      if (img) {
+        await userMessage.addImage(img);
+      }
+    }
   }
 
   // 如果聊天记录被过滤或不在order中，只处理用户输入
@@ -1114,7 +1154,10 @@ async function processChatHistoryAndInject(
       role: 'user',
       content: processedUserInput,
       identifier: 'user_input',
-      image: promptConfig.image ? await convertFileToBase64(promptConfig.image) : undefined,
+      image:
+        promptConfig.image && !Array.isArray(promptConfig.image)
+          ? await convertFileToBase64(promptConfig.image)
+          : undefined,
     };
     baseData.chatContext.oaiMessages.unshift(userPrompt);
   }
@@ -1276,10 +1319,19 @@ function getPromptRole(role: number) {
 }
 
 //生成响应
-async function generateResponse(generate_data: any, useStream = false): Promise<string> {
+async function generateResponse(
+  generate_data: any,
+  useStream = false,
+  imageProcessingPromise: Promise<void> | null = null,
+): Promise<string> {
   let result = '';
   try {
     deactivateSendButtons();
+
+    // 如果有图片处理，等待图片处理完成
+    if (imageProcessingPromise) {
+      await imageProcessingPromise;
+    }
 
     if (useStream) {
       const originalStreamSetting = oai_settings.stream_openai;
@@ -1358,11 +1410,30 @@ function extractMessageFromData(data: any) {
   );
 }
 
-async function convertFileToBase64(image: File | string): Promise<string> {
-  if (typeof image === 'string') {
-    return image;
+/**
+ * 将文件转换为base64
+ * @param img 文件或图片url
+ * @returns base64字符串
+ */
+async function convertFileToBase64(img: File | string): Promise<string | undefined> {
+  const isDataUrl = typeof img === 'string' && isDataURL(img);
+  let processedImg;
+
+  if (!isDataUrl) {
+    try {
+      if (typeof img === 'string') {
+        const response = await fetch(img, { method: 'GET', cache: 'force-cache' });
+        if (!response.ok) throw new Error('Failed to fetch image');
+        const blob = await response.blob();
+        processedImg = await getBase64Async(blob);
+      } else {
+        processedImg = await getBase64Async(img);
+      }
+    } catch (error) {
+      log.error('[Generate:图片数组处理] 图片处理失败:', error);
+    }
   }
-  return await getBase64Async(image);
+  return processedImg;
 }
 
 function addTemporaryUserMessage(userContent: string) {
@@ -1413,3 +1484,83 @@ $(document).on('click', '#mes_stop', function () {
     unblockGeneration();
   }
 });
+
+/**
+ * 设置图片数组处理逻辑
+ * @param processedUserInput 处理后的用户输入
+ * @param image 图片数组参数
+ * @returns 包含带标识符的用户输入和事件处理器的对象
+ */
+function setupImageArrayProcessing(
+  processedUserInput: string,
+  image: (File | string)[],
+): {
+  userInputWithMarker: string;
+  imageProcessingPromise: Promise<void>;
+  imageArrayHandler:
+    | ((eventData: { chat: { role: string; content: string | any[] }[]; dryRun: boolean }) => void)
+    | null;
+} {
+  const imageMarker = `__IMG_ARRAY_MARKER_`;
+  const userInputWithMarker = processedUserInput + imageMarker;
+
+  let resolveImageProcessing: () => void;
+  const imageProcessingPromise = new Promise<void>(resolve => {
+    resolveImageProcessing = resolve;
+  });
+
+  const imageArrayHandler = async (eventData: {
+    chat: { role: string; content: string | any[] }[];
+    dryRun: boolean;
+  }) => {
+    try {
+      if (eventData.dryRun) return;
+
+      for (let i = eventData.chat.length - 1; i >= 0; i--) {
+        const message = eventData.chat[i];
+        const contentStr = typeof message.content === 'string' ? message.content : '';
+        if (message.role === 'user' && contentStr.includes(imageMarker)) {
+          try {
+            const quality = oai_settings.inline_image_quality || 'low';
+            const imageContents = await Promise.all(
+              image.map(async img => {
+                const processedImg = await convertFileToBase64(img);
+                if (!processedImg) {
+                  return null;
+                }
+                return {
+                  type: 'image_url',
+                  image_url: { url: processedImg, detail: quality },
+                };
+              }),
+            );
+
+            const validImageContents = imageContents.filter(content => content !== null);
+            const cleanContent = contentStr.replace(imageMarker, '');
+            const textContent = {
+              type: 'text',
+              text: cleanContent,
+            };
+
+            if (Array.isArray(message.content)) {
+              _.assign(message.content, [textContent, ...validImageContents]);
+            } else {
+              message.content = [textContent, ...validImageContents] as any;
+            }
+
+            log.info('[Generate:图片数组处理] 成功将', validImageContents.length, '张图片插入到用户消息中');
+            break;
+          } catch (error) {
+            log.error('[Generate:图片数组处理] 处理图片时出错:', error);
+          }
+        }
+      }
+    } finally {
+      resolveImageProcessing();
+    }
+  };
+
+  eventSource.once('chat_completion_prompt_ready', imageArrayHandler);
+
+  return { userInputWithMarker, imageProcessingPromise, imageArrayHandler };
+}
