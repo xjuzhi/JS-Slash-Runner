@@ -1452,16 +1452,6 @@ async function deleteVariable(
   variable_path: string,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<boolean>;
-
-/**
- * 获取合并后的变量表
- * - 如果在消息楼层 iframe 中调用本函数, 则获取 全局→角色卡→聊天→0号消息楼层→中间所有消息楼层→当前消息楼层 的合并结果
- * - 如果在全局变量 iframe 中调用本函数, 则获取 全局→角色卡→脚本→聊天→0号消息楼层→中间所有消息楼层→最新消息楼层 的合并结果
- *
- * @example
- * const variables = getAllVariables();
- */
-function getAllVariables(): Record<string, any>;
 /**
  * 获取酒馆助手版本号
  */
@@ -2254,3 +2244,12 @@ function getCurrentMessageId(): number;
  * @returns 楼层 id
  */
 function getMessageId(iframe_name: string): number;
+/**
+ * 获取合并后的变量表
+ * - 如果在消息楼层 iframe 中调用本函数, 则获取 全局→角色卡→聊天→0号消息楼层→中间所有消息楼层→当前消息楼层 的合并结果
+ * - 如果在全局变量 iframe 中调用本函数, 则获取 全局→角色卡→脚本→聊天→0号消息楼层→中间所有消息楼层→最新消息楼层 的合并结果
+ *
+ * @example
+ * const variables = getAllVariables();
+ */
+function getAllVariables(): Record<string, any>;
