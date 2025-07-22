@@ -8,11 +8,31 @@ import { handlePresetPath } from '@/function/generate/generate';
 import { handleCustomPath } from '@/function/generate/generateRaw';
 import { processUserInputWithImages } from '@/function/generate/inputProcessor';
 import { generateResponse } from '@/function/generate/responseGenerator';
-import { unblockGeneration } from '@/function/generate/utils';
+import { setupImageArrayProcessing, unblockGeneration } from '@/function/generate/utils';
 
 declare const $: any;
 
 let abortController = new AbortController();
+
+let currentImageProcessingSetup: ReturnType<typeof setupImageArrayProcessing> | undefined = undefined;
+
+/**
+ * 清理图片处理相关的监听器和Promise
+ */
+function cleanupImageProcessing(): void {
+  if (currentImageProcessingSetup) {
+    try {
+      currentImageProcessingSetup.cleanup();
+      
+      currentImageProcessingSetup.rejectImageProcessing(new Error('Generation stopped by user'));
+      
+      log.info('[Generate:停止] 已清理图片处理相关逻辑');
+    } catch (error) {
+      log.warn('[Generate:停止] 清理图片处理时出错:', error);
+    }
+    currentImageProcessingSetup = undefined;
+  }
+}
 
 /**
  * 从Overrides转换为detail.OverrideConfig
@@ -119,6 +139,8 @@ async function iframeGenerate({
   // 1. 处理用户输入和图片（正则，宏，图片数组）
   const inputResult = await processUserInputWithImages(user_input, use_preset, image);
   const { processedUserInput, imageProcessingSetup, processedImageArray } = inputResult;
+  
+  currentImageProcessingSetup = imageProcessingSetup;
 
   // 2. 准备过滤后的基础数据
   const baseData = await prepareAndOverrideData(
@@ -148,7 +170,7 @@ async function iframeGenerate({
           max_chat_history,
           inject,
           order,
-          processedImageArray, // 传递处理后的图片数组
+          processedImageArray, 
         },
         processedUserInput,
       );
@@ -156,12 +178,18 @@ async function iframeGenerate({
   try {
     // 4. 根据 stream 参数决定生成方式
     log.info('[Generate:发送提示词]', generate_data);
-    return await generateResponse(generate_data, stream, imageProcessingSetup, abortController);
+    const result = await generateResponse(generate_data, stream, imageProcessingSetup, abortController);
+    
+    currentImageProcessingSetup = undefined;
+    
+    return result;
   } catch (error) {
-    // 如果生成过程中出错，确保清理图片处理的事件监听器
     if (imageProcessingSetup) {
       imageProcessingSetup.rejectImageProcessing(error);
     }
+    
+    currentImageProcessingSetup = undefined;
+    
     throw error;
   }
 }
@@ -185,6 +213,9 @@ $(document).on('click', '#mes_stop', function () {
     if (abortController) {
       abortController.abort('Clicked stop button');
     }
+    
+    cleanupImageProcessing();
+    
     unblockGeneration();
   }
 });

@@ -192,7 +192,6 @@ export async function processImageArrayDirectly(
 ): Promise<{ type: string; text?: string; image_url?: { url: string; detail: string } }[]> {
   const quality = oai_settings.inline_image_quality || 'low';
 
-  // 并行处理所有图片
   const imageContents = await Promise.all(
     image.map(async img => {
       try {
@@ -236,11 +235,11 @@ export function setupImageArrayProcessing(
   imageProcessingPromise: Promise<void>;
   resolveImageProcessing: () => void;
   rejectImageProcessing: (reason?: any) => void;
+  cleanup: () => void;
 } {
   const imageMarker = `__IMG_ARRAY_MARKER_`;
   const userInputWithMarker = processedUserInput + imageMarker;
 
-  // 使用更现代的Promise构造方式
   let resolveImageProcessing: () => void;
   let rejectImageProcessing: (reason?: any) => void;
 
@@ -249,15 +248,18 @@ export function setupImageArrayProcessing(
     rejectImageProcessing = reject;
   });
 
+  let timeoutId: NodeJS.Timeout | null = null;
+  let isHandlerRegistered = true;
+
   const imageArrayHandler = async (eventData: { chat: { role: string; content: string | any[] }[] }) => {
     log.debug('[Generate:图片数组处理] imageArrayHandler 被调用');
 
     try {
       // 添加超时保护
-      const timeoutId = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         log.warn('[Generate:图片数组处理] 图片处理超时');
         rejectImageProcessing(new Error('图片处理超时'));
-      }, 30000); // 30秒超时
+      }, 30000); 
 
       for (let i = eventData.chat.length - 1; i >= 0; i--) {
         const message = eventData.chat[i];
@@ -267,7 +269,6 @@ export function setupImageArrayProcessing(
           try {
             const quality = oai_settings.inline_image_quality || 'low';
 
-            // 并行处理所有图片
             const imageContents = await Promise.all(
               image.map(async img => {
                 try {
@@ -294,15 +295,20 @@ export function setupImageArrayProcessing(
               text: cleanContent,
             };
 
-            // 确保正确设置消息内容
             message.content = [textContent, ...validImageContents] as any;
 
-            clearTimeout(timeoutId);
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = null;
+            }
             log.info('[Generate:图片数组处理] 成功将', validImageContents.length, '张图片插入到用户消息中');
             resolveImageProcessing();
             return;
           } catch (error) {
-            clearTimeout(timeoutId);
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = null;
+            }
             log.error('[Generate:图片数组处理] 处理图片时出错:', error);
             rejectImageProcessing(error);
             return;
@@ -310,7 +316,6 @@ export function setupImageArrayProcessing(
         }
       }
 
-      // 如果没有找到对应的消息，也要解决Promise
       log.warn('[Generate:图片数组处理] 未找到包含图片标记的用户消息');
       resolveImageProcessing();
     } catch (error) {
@@ -321,10 +326,27 @@ export function setupImageArrayProcessing(
 
   eventSource.once('chat_completion_prompt_ready', imageArrayHandler);
 
+  const cleanup = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    if (isHandlerRegistered) {
+      try {
+        eventSource.removeListener('chat_completion_prompt_ready', imageArrayHandler);
+        isHandlerRegistered = false;
+        log.debug('[Generate:图片数组处理] 已清理事件监听器');
+      } catch (error) {
+        log.warn('[Generate:图片数组处理] 清理事件监听器时出错:', error);
+      }
+    }
+  };
+
   return {
     userInputWithMarker,
     imageProcessingPromise,
     resolveImageProcessing: resolveImageProcessing!,
     rejectImageProcessing: rejectImageProcessing!,
+    cleanup,
   };
 }
