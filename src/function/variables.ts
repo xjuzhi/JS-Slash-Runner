@@ -10,7 +10,7 @@ import {
   saveSettings,
   this_chid,
 } from '@sillytavern/script';
-import { extension_settings } from '@sillytavern/scripts/extensions';
+import { extension_settings, writeExtensionField } from '@sillytavern/scripts/extensions';
 
 import log from 'loglevel';
 
