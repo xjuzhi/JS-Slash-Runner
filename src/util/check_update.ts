@@ -288,31 +288,72 @@ export async function getChangelog() {
   }
 }
 
+async function install_extension(url: string, global: boolean): Promise<Response> {
+  const response = await fetch('/api/extensions/install', {
+    method: 'POST',
+    headers: getRequestHeaders(),
+    body: JSON.stringify({ url, global }),
+  });
+  return response;
+}
+
+async function uninstall_extension(extension_name: string, global: boolean): Promise<Response> {
+  const response = await fetch('/api/extensions/delete', {
+    method: 'POST',
+    headers: getRequestHeaders(),
+    body: JSON.stringify({ extensionName: extension_name, global }),
+  });
+  return response;
+}
+
+async function reinstall_extension(extension_name: string, global: boolean): Promise<Response> {
+  const response = await uninstall_extension(extension_name, global);
+  if (!response.ok) {
+    return response;
+  }
+  return install_extension(extension_name, global);
+}
+
+async function update_extension(extension_name: string, global: boolean): Promise<Response> {
+  const response = await fetch('/api/extensions/update', {
+    method: 'POST',
+    headers: getRequestHeaders(),
+    body: JSON.stringify({ extensionName: extension_name, global }),
+  });
+  return response;
+}
+
 /**
  * 更新酒馆助手
  */
 export async function updateTavernHelper() {
-  const extensionType = getExtensionType(extensionName);
-  const response = await fetch('/api/extensions/update', {
-    method: 'POST',
-    headers: getRequestHeaders(),
-    body: JSON.stringify({ extensionName: extensionName, global: extensionType === 'global' ? true : false }),
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    toastr.error(text || response.statusText, t`更新酒馆助手失败`, { timeOut: 5000 });
+  const global = getExtensionType(extensionName) === 'global' ? true : false;
+
+  const reload = () => {
+    toastr.success(t`成功更新酒馆助手, 准备刷新页面以生效...`);
+    log.info(`成功更新酒馆助手, 准备刷新页面以生效...`);
+    setTimeout(() => location.reload(), 3000);
+  };
+
+  const update_response = await update_extension(extensionName, global);
+  if (update_response.ok) {
+    if ((await update_response.json()).isUpToDate) {
+      log.info(`酒馆助手已是最新版本, 无需更新`);
+    } else {
+      reload();
+    }
+    return true;
+  }
+
+  const reinstall_response = await reinstall_extension(extensionName, global);
+  if (!reinstall_response.ok) {
+    const text = await reinstall_response.text();
+    toastr.error(text || reinstall_response.statusText, t`更新酒馆助手失败`, { timeOut: 5000 });
     log.error(`更新酒馆助手失败: ${text}`);
     return false;
   }
 
-  const data = await response.json();
-  if (data.isUpToDate) {
-    log.info(`酒馆助手已是最新版本, 无需更新`);
-  } else {
-    toastr.success(t`成功更新酒馆助手为 ${data.shortCommitHash}, 准备刷新页面以生效...`);
-    log.info(`成功更新酒馆助手为  ${data.shortCommitHash}, 准备刷新页面以生效...`);
-    setTimeout(() => location.reload(), 3000);
-  }
+  reload();
   return true;
 }
 
