@@ -89,7 +89,9 @@ jobs:
       - if: ${{ github.ref_type == 'tag' }}
         shell: bash
         working-directory: public/scripts/extensions/third-party/JS-Slash-Runner
-        run: git push --delete origin ${{ steps.manual_tag.outputs.result }}
+        run: |
+          git tag -d ${{ steps.manual_tag.outputs.result }}
+          git push --delete origin ${{ steps.manual_tag.outputs.result }}
       - if: ${{ github.ref_type == 'tag' || steps.autotag_check.outputs.should_tag == 'true' }}
         shell: bash
         working-directory: public/scripts/extensions/third-party/JS-Slash-Runner
