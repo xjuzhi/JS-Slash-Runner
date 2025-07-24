@@ -15,7 +15,8 @@ import {
   setChatMessages,
 } from '@/function/chat_message';
 import { formatAsDisplayedMessage, retrieveDisplayedMessage } from '@/function/displayed_message';
-import { builtin_prompt_default_order, generate, generateRaw } from '@/function/generate';
+import { generate, generateRaw } from '@/function/generate';
+import { builtin_prompt_default_order } from '@/function/generate/types';
 import {
   createLorebook,
   deleteLorebook,
