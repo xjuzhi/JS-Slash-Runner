@@ -330,7 +330,7 @@ export async function updateTavernHelper() {
   const global = getExtensionType(extensionName) === 'global' ? true : false;
 
   const reload = () => {
-    toastr.success(t`成功更新酒馆助手, 准备刷新页面以生效...`);
+    toastr.success(`成功更新酒馆助手, 准备刷新页面以生效...`);
     log.info(`成功更新酒馆助手, 准备刷新页面以生效...`);
     setTimeout(() => location.reload(), 3000);
   };
@@ -338,6 +338,7 @@ export async function updateTavernHelper() {
   const update_response = await update_extension(extensionName, global);
   if (update_response.ok) {
     if ((await update_response.json()).isUpToDate) {
+      toastr.success(`酒馆助手已是最新版本, 无需更新`);
       log.info(`酒馆助手已是最新版本, 无需更新`);
     } else {
       reload();
