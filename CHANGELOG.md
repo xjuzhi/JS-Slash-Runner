@@ -1,3 +1,15 @@
+## 3.2.13
+
+### ⏫功能
+
+- 新增 `formatAsTavernRegexedString()` 函数, 可获取酒馆正则处理后的文本结果
+
+  ```typescript
+  // 获取最后一楼文本, 将它视为将会作为显示的 AI 输出, 对它应用酒馆正则
+  const message = getChatMessages(-1)[0];
+  const result = formatAsTavernRegexedString(message.message, 'ai_output', 'display', { depth: 0 });
+  ```
+
 ## 3.2.12
 
 ### 💻界面

@@ -1,9 +1,38 @@
 import { characters, reloadCurrentChat, saveChatConditional, saveSettings, this_chid } from '@sillytavern/script';
 import { RegexScriptData } from '@sillytavern/scripts/char-data';
 import { extension_settings, writeExtensionField } from '@sillytavern/scripts/extensions';
-import { regex_placement } from '@sillytavern/scripts/extensions/regex/engine';
+import { getRegexedString, regex_placement } from '@sillytavern/scripts/extensions/regex/engine';
 
 import log from 'loglevel';
+
+interface FormatAsTavernRegexedStringOption {
+  depth?: number;
+  character_name?: string;
+}
+
+export function formatAsTavernRegexedString(
+  text: string,
+  source: 'user_input' | 'ai_output' | 'slash_command' | 'world_info' | 'reasoning',
+  destination: 'display' | 'prompt',
+  { depth, character_name }: FormatAsTavernRegexedStringOption = {},
+) {
+  return getRegexedString(
+    text,
+    {
+      user_input: regex_placement.USER_INPUT,
+      ai_output: regex_placement.AI_OUTPUT,
+      slash_command: regex_placement.SLASH_COMMAND,
+      world_info: regex_placement.WORLD_INFO,
+      reasoning: regex_placement.REASONING,
+    }[source],
+    {
+      characterOverride: character_name,
+      isMarkdown: destination === 'display',
+      isPrompt: destination === 'prompt',
+      depth,
+    },
+  );
+}
 
 interface TavernRegex {
   id: string;
