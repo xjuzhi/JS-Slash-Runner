@@ -43,6 +43,7 @@ import {
 import { getScriptButtons, replaceScriptButtons } from '@/function/script_repository';
 import { triggerSlash } from '@/function/slash';
 import {
+  formatAsTavernRegexedString,
   getTavernRegexes,
   isCharacterTavernRegexesEnabled,
   replaceTavernRegexes,
@@ -128,6 +129,7 @@ function getTavernHelper() {
     triggerSlashWithResult: triggerSlash,
 
     // tavern_regex
+    formatAsTavernRegexedString,
     isCharacterTavernRegexesEnabled,
     getTavernRegexes,
     replaceTavernRegexes,
