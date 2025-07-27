@@ -62,7 +62,7 @@ interface _OriginalLorebookEntry {
   constant: boolean;
   vectorized: boolean;
   selective: boolean;
-  selectiveLogic: 0 | 1 | 2 | 3; // 0: and_any, 1: and_all, 2: not_any, 3: not_all
+  selectiveLogic: 0 | 1 | 2 | 3; // 0: and_any, 1: not_all, 2: not_any, 3: and_all
   addMemo: boolean;
   order: number;
   position: number;
@@ -160,9 +160,9 @@ function toLorebookEntry(entry: _OriginalLorebookEntry): LorebookEntry {
     keys: entry.key,
     logic: {
       0: 'and_any',
-      1: 'and_all',
+      1: 'not_all',
       2: 'not_any',
-      3: 'not_all',
+      3: 'and_all',
     }[entry.selectiveLogic as number] as 'and_any' | 'and_all' | 'not_any' | 'not_all',
     filter: entry.keysecondary,
     filters: entry.keysecondary,
@@ -270,9 +270,9 @@ function fromPartialLorebookEntry(
     logic: (value: LorebookEntry['logic']) => ({
       selectiveLogic: {
         and_any: 0,
-        and_all: 1,
+        not_all: 1,
         not_any: 2,
-        not_all: 3,
+        and_all: 3,
       }[value],
     }),
     filters: (value: LorebookEntry['filter']) => ({ keysecondary: value }),

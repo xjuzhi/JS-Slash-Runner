@@ -10,6 +10,10 @@
   const result = formatAsTavernRegexedString(message.message, 'ai_output', 'display', { depth: 0 });
   ```
 
+### 🐛修复
+
+- 世界书条目函数将 `与所有` 和 `非任意` 弄反了
+
 ## 3.2.12
 
 ### 💻界面
