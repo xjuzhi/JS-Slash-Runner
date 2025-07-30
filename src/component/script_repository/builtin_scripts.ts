@@ -21,25 +21,15 @@ export const DEFAULT_SCRIPT_CONFIGS: Record<string, ScriptConfig> = {
     content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/标签化/index.js',
     info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/标签化/README.md',
   },
-  样式加载: {
-    name: '样式加载: 像酒馆主题自定义 css 一样编写角色卡 css',
-    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/样式加载/index.js',
-    info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/样式加载/README.md',
-  },
   预设防误触: {
     name: '预设防误触',
     content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/预设防误触/index.js',
     info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/预设防误触/README.md',
   },
-  资源预载: {
-    name: '资源预载: 提前缓存角色卡的插图',
-    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/资源预载/index.js',
-    info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/资源预载/README.md',
-  },
-  自动关闭前端卡不兼容选项: {
-    name: '自动关闭前端卡不兼容选项',
-    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/自动关闭前端卡不兼容选项/index.js',
-    info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/自动关闭前端卡不兼容选项/README.md',
+  世界书强制自定义排序: {
+    name: '世界书强制自定义排序',
+    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/世界书强制自定义排序/index.js',
+    info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/世界书强制自定义排序/README.md',
   },
   自动开启角色卡局部正则: {
     name: '自动开启角色卡局部正则',
@@ -50,6 +40,16 @@ export const DEFAULT_SCRIPT_CONFIGS: Record<string, ScriptConfig> = {
     name: '查看提示词发送情况',
     content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/查看提示词发送情况/index.js',
     info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/查看提示词发送情况/README.md',
+  },
+  样式加载: {
+    name: '样式加载: 像酒馆主题自定义 css 一样编写角色卡 css',
+    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/样式加载/index.js',
+    info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/样式加载/README.md',
+  },
+  资源预载: {
+    name: '资源预载: 提前缓存角色卡的插图',
+    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/资源预载/index.js',
+    info: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/资源预载/README.md',
   },
 };
 
