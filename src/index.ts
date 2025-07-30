@@ -31,6 +31,7 @@ import { event_types, eventSource, saveSettings } from '@sillytavern/script';
 import { extension_settings, renderExtensionTemplateAsync } from '@sillytavern/scripts/extensions';
 
 import log_object from 'loglevel';
+import { disableIncompatibleOption } from './disable_incompatible_option';
 
 const defaultSettings = {
   enabled_extension: true,
@@ -173,6 +174,7 @@ jQuery(async () => {
     await saveSettings();
   }
 
+  disableIncompatibleOption();
   initTavernHelperObject();
   initLogObject();
   await initDebugMode();
