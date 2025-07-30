@@ -1,7 +1,7 @@
 import { defaultAudioSettings, initAudioComponents } from '@/component/audio';
 import { initListener } from '@/component/listener';
 import { renderAllMacros } from '@/component/macrolike';
-import { initExtensionMainPanel } from '@/component/main';
+import { initExtensionMainPanel } from '@/component/index';
 import { defaultIframeSettings, initIframePanel } from '@/component/message_iframe';
 import { initReference } from '@/component/reference';
 import { buildScriptRepository } from '@/component/script_repository/index';
