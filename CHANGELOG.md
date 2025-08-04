@@ -1,3 +1,22 @@
+## 3.3.0
+
+### ⏫功能
+
+- 更新了一套操控预设的函数, 现在你可以简单地通过脚本操控酒馆的预设了! 具体函数请自行参考文档 (未完成) 或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/preset.d.ts), 如果已经配置了[编写模板](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/基本用法/如何正确使用酒馆助手.html)请`pnpm add -D type-fest`并下载新的`@types`文件夹!
+
+  ```typescript
+  // 为酒馆正在使用的预设开启流式传输
+  await setPreset('in_use', { settings: { should_stream: true } });
+  ```
+
+  ```typescript
+  // 将 '预设A' 的条目按顺序复制到 '预设B' 开头
+  const preset_a = getPreset('预设A');
+  const preset_b = getPreset('预设B');
+  preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
+  await replacePreset('预设B', preset_b);
+  ```
+
 ## 3.2.13
 
 ### ⏫功能
