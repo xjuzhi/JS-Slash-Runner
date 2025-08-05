@@ -1,29 +1,6 @@
-import { formatAsTavernRegexedString } from '@/function/tavern_regex';
-
-import { chat, substituteParamsExtended } from '@sillytavern/script';
+import { substituteParamsExtended } from '@sillytavern/script';
 
 import log from 'loglevel';
-
-interface FoundKeywordsOption {
-  scan_depth?: number;
-}
-
-export function foundKeywords(keywords: (string | RegExp)[], { scan_depth = 2 }: FoundKeywordsOption = {}): boolean {
-  const text = chat
-    .slice(-scan_depth)
-    .map(chat_message =>
-      formatAsTavernRegexedString(chat_message.mes, chat_message.is_user ? 'user_input' : 'ai_output', 'prompt', {
-        depth: chat.length - 1 - chat_message.message_id,
-      }),
-    )
-    .join('\n');
-  return keywords.some(keyword => {
-    if (typeof keyword === 'string') {
-      return text.includes(keyword);
-    }
-    return keyword.test(text);
-  });
-}
 
 export function substitudeMacros(text: string): string {
   const text_demacroed = substituteParamsExtended(text);
