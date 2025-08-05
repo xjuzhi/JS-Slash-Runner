@@ -983,6 +983,11 @@ interface LorebookEntry {
   delay: number | null;
 }
 
+interface GetLorebookEntriesOption {
+  /** 按照指定字段值筛选条目, 如 `{position: 'at_depth_as_system'}` 表示仅获取处于 @D⚙ 的条目; 默认为不进行筛选. 由于实现限制, 只能做到这样的简单筛选; 如果需要更复杂的筛选, 请获取所有条目然后自己筛选. */
+  filter?: 'none' | Partial<LorebookEntry>;
+}
+
 /**
  * 获取世界书中的条目信息
  *
@@ -1600,30 +1605,6 @@ function updateTavernRegexesWith(
   updater: TavernRegexUpdater,
   option?: ReplaceTavernRegexesOption,
 ): Promise<TavernRegex[]>;
-interface FoundKeywordsOption {
-  /** 扫描深度: 1 表示只扫描最后一条消息, 2 表示扫描最后两条消息, 以此类推; 默认为 2 */
-  scan_depth?: number;
-}
-
-/**
- * 在最后 `scan_depth` 条消息中 (以发送给 ai 的提示词为准), 检查消息是否包含 `keywords` 中的任意一个
- *
- * @param keywords 要检查的关键词, 可以是字符串或正则表达式
- * @param option 可选选项
- *   - `scan_depth?:number`: 扫描深度, 1 表示只扫描最后一条消息, 2 表示扫描最后两条消息, 以此类推; 默认为 2
- *
- * @returns 如果包含任意一个关键词, 则返回 true; 否则返回 false
- *
- * @example
- * // 检查最后两条消息 (最后一条用户消息和最后一条 ai 消息, **以发送给 ai 的提示词**为准) 中是否包含 '络络'
- * const is_found = foundKeywords(['络络']);
- *
- * @example
- * // 检查最后两条消息中是否包含 '络络好感度:10'、'络络好感度:11'、...、'络络好感度:19'
- * const is_found = foundKeywords([/络络好感度:1[0-9]/]);
- */
-function foundKeywords(keywords: (string | RegExp)[], { scan_depth }?: FoundKeywordsOption): boolean;
-
 /**
  * 替换字符串中的酒馆宏
  *
