@@ -67,7 +67,7 @@ import {
   replaceTavernRegexes,
   updateTavernRegexesWith,
 } from '@/function/tavern_regex';
-import { errorCatched, getLastMessageId, substitudeMacros } from '@/function/util';
+import { errorCatched, foundKeywords, getLastMessageId, substitudeMacros } from '@/function/util';
 import {
   deleteVariable,
   getVariables,
@@ -170,6 +170,7 @@ function getTavernHelper() {
     updateTavernRegexesWith,
 
     // util
+    foundKeywords,
     substitudeMacros,
     getLastMessageId,
     errorCatched,

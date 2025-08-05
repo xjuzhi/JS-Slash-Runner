@@ -48,11 +48,6 @@ interface LorebookEntry {
   delay: number | null;
 }
 
-interface GetLorebookEntriesOption {
-  /** 按照指定字段值筛选条目, 如 `{position: 'at_depth_as_system'}` 表示仅获取处于 @D⚙ 的条目; 默认为不进行筛选. 由于实现限制, 只能做到这样的简单筛选; 如果需要更复杂的筛选, 请获取所有条目然后自己筛选. */
-  filter?: 'none' | Partial<LorebookEntry>;
-}
-
 /**
  * 获取世界书中的条目信息
  *

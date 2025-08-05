@@ -1,3 +1,19 @@
+## 3.3.1
+
+### ⏫功能
+
+- 新增 `foundKeywords` 函数, 用于检查最后 `scan_depth` 条消息中 (以发送给 ai 的提示词为准) 是否包含 `keywords` 中的任意一个
+
+  ```typescript
+  // 检查最后两条消息中是否包含 '络络'
+  const is_found = foundKeywords(['络络']);
+  ```
+
+  ```typescript
+  // 检查最后两条消息中是否包含 '络络好感度:10'、'络络好感度:11'、...、'络络好感度:19'
+  const is_found = foundKeywords([/络络好感度:1[0-9]/]);
+  ```
+
 ## 3.3.0
 
 ### ⏫功能
