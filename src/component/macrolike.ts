@@ -11,7 +11,7 @@ interface Context {
   role?: 'user' | 'assistant' | 'system';
 }
 
-const macros: MacroLike[] = [
+export const macros: MacroLike[] = [
   {
     regex: /\{\{get_global_variable::(.*?)\}\}/gi,
     replace: (_context: Context, _substring: string, path: string) => {
