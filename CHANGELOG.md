@@ -1,3 +1,29 @@
+## 3.3.2
+
+### ⏫功能
+
+- 更换了内置脚本库等的网络链接 (从 `fastly.jsdelivr.net` 更换为 `testingcf.jsdelivr.net`), 让国内更容易访问
+- 为前端和脚本默认置入了 `zod` 库. 通过这个库, 你可以更方便地解析 ai 输出的数据, 并对不符的数据进行**中文报错**. 如果已经配置了[编写模板](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/基本用法/如何正确使用酒馆助手.html)请下载新的模板.
+
+  ```typescript
+  // 定义一个手机消息数据类型
+  type PhoneMessage = z.infer<typeof PhoneMessage>;
+  const PhoneMessage = z.object({
+    name: z.string(),
+    content: z.string(),
+    time: z.iso.time(),
+  })
+
+  const data = JSON.parse(/*假设你从 ai 回复中提取出了一条手机消息*/);
+  const phone_message = PhoneMessage.parse(message);
+  console.info(data);
+  // >> { name: '络络', content: '你好', time: '06:15' }
+  // 如果解析失败, 将会报错
+  // >> 无效输入: 期望 string，实际接收 undefined
+  ```
+
+  之后会用这个库修改酒馆助手的 `@types` 文件夹, 允许你检查酒馆助手的如 `ChatMessage` 等数据类型.
+
 ## 3.3.1
 
 ### ⏫功能
