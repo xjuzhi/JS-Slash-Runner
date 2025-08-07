@@ -69,8 +69,8 @@ interface PromptPreset {
 type PresetPrompt = PresetNormalPrompt | PresetSystemPrompt | PresetPlaceholderPrompt;
 interface PresetNormalPrompt {
   id: string;
-  enabled: boolean;
   name: string;
+  enabled: boolean;
   /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
   position: 'relative' | number;
 
@@ -83,8 +83,8 @@ interface PresetNormalPrompt {
 /** 预设中的酒馆系统提示词, 但其实相比于手动添加的提示词没有任何优势 */
 interface PresetSystemPrompt {
   id: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
-  enabled: boolean;
   name: string;
+  enabled: boolean;
 
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -103,8 +103,8 @@ interface PresetPlaceholderPrompt {
     | 'world_info_after'
     | 'dialogue_examples'
     | 'chat_history';
-  enabled: boolean;
   name: string;
+  enabled: boolean;
   /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
   position: 'relative' | number;
 

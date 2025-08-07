@@ -47,8 +47,9 @@ interface PromptPreset {
 type PresetPrompt = PresetNormalPrompt | PresetSystemPrompt | PresetPlaceholderPrompt;
 interface PresetNormalPrompt {
   id: string;
-  enabled: boolean;
   name: string;
+  enabled: boolean;
+
   position: 'relative' | number;
 
   role: 'system' | 'user' | 'assistant';
@@ -58,8 +59,8 @@ interface PresetNormalPrompt {
 }
 interface PresetSystemPrompt {
   id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions';
-  enabled: boolean;
   name: string;
+  enabled: boolean;
 
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -76,8 +77,9 @@ interface PresetPlaceholderPrompt {
     | 'world_info_after'
     | 'dialogue_examples'
     | 'chat_history';
-  enabled: boolean;
   name: string;
+  enabled: boolean;
+
   position: 'relative' | number;
 
   role: 'system' | 'user' | 'assistant';
@@ -199,8 +201,9 @@ interface _OriginalPromptOrder {
 type _OriginalPrompt = _OriginalNormalPrompt | _OriginalSystemPrompt | _OriginalPlaceholderPrompt;
 interface _OriginalNormalPrompt {
   identifier: string;
-  enabled?: boolean;
   name: string;
+  enabled?: boolean;
+
   injection_position: 0 | 1;
   injection_depth: number;
 
@@ -216,8 +219,8 @@ interface _OriginalNormalPrompt {
 }
 interface _OriginalSystemPrompt {
   identifier: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
-  enabled?: boolean;
   name: string;
+  enabled?: boolean;
 
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -239,8 +242,9 @@ interface _OriginalPlaceholderPrompt {
     | 'worldInfoAfter'
     | 'dialogueExamples'
     | 'chatHistory';
-  enabled?: boolean;
   name: string;
+  enabled?: boolean;
+
   injection_position: 0 | 1;
   injection_depth: number;
 
@@ -270,12 +274,12 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
   const result: Record<string, any> = {};
 
   _.set(result, 'id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4());
+  _.set(result, 'name', prompt.name ?? 'unnamed');
   _.set(
     result,
     'enabled',
     prompt_order.find(order => order.identifier === prompt.identifier)?.enabled ?? prompt.enabled ?? true,
   );
-  _.set(result, 'name', prompt.name ?? 'unnamed');
   if (is_normal_prompt || is_placeholder_prompt) {
     _.set(
       result,
@@ -324,8 +328,8 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
       prompt.id,
     ),
   );
-  _.set(result, 'enabled', prompt.enabled);
   _.set(result, 'name', prompt.name);
+  _.set(result, 'enabled', prompt.enabled);
   if (is_normal_prompt || is_placeholder_prompt) {
     _.set(result, 'injection_position', prompt.position === 'relative' ? 0 : 1);
     _.set(result, 'injection_depth', prompt.position === 'relative' ? 4 : prompt.position);
