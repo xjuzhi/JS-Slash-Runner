@@ -4,7 +4,7 @@ interface LorebookEntry {
   /** 酒馆中将排序设置为 "自定义" 时的显示顺序 */
   display_index: number;
 
-  name: string;
+  comment: string;
   enabled: boolean;
   type: 'constant' | 'selective' | 'vectorized';
   position:
@@ -80,7 +80,7 @@ async function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
  * @example
  * // 删除所有名字中包含 `神乐光` 的条目
  * const entries = await getLorebookEntries("eramgt少女歌剧");
- * _.remove(entries, entry => entry.name.includes('神乐光'));
+ * _.remove(entries, entry => entry.comment.includes('神乐光'));
  * await replaceLorebookEntries("eramgt少女歌剧", entries);
  */
 async function replaceLorebookEntries(lorebook: string, entries: Partial<LorebookEntry>[]): Promise<void>;
@@ -99,7 +99,7 @@ type LorebookEntriesUpdater =
  *
  * @example
  * // 删除所有名字中包含 `神乐光` 的条目
- * await updateLorebookEntriesWith("eramgt少女歌剧", entries => entries.filter(entry => entry.name.includes('神乐光')))
+ * await updateLorebookEntriesWith("eramgt少女歌剧", entries => entries.filter(entry => entry.comment.includes('神乐光')))
  */
 async function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntriesUpdater): Promise<LorebookEntry[]>;
 
