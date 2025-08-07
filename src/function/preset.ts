@@ -492,10 +492,11 @@ export function getLoadedPresetName(): string {
 }
 
 export function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean {
-  if (!getPresetNames().includes(preset_name) || preset_name === 'in_use') {
+  const preset_value = preset_manager.findPreset(preset_name);
+  if (!preset_value) {
     return false;
   }
-  preset_manager.selectPreset(preset_name);
+  preset_manager.selectPreset(preset_value);
   return true;
 }
 
