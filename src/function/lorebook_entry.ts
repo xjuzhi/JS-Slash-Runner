@@ -8,7 +8,9 @@ interface LorebookEntry {
   uid: number;
   display_index: number;
 
+  /** @deprecated 请使用 `name` 代替 */
   comment: string;
+  name: string;
   enabled: boolean;
   type: 'constant' | 'selective' | 'vectorized';
   position:
@@ -138,6 +140,7 @@ function toLorebookEntry(entry: _OriginalLorebookEntry): LorebookEntry {
     uid: entry.uid,
     display_index: entry.displayIndex,
 
+    name: entry.comment,
     comment: entry.comment,
     enabled: !entry.disable,
     type: entry.constant ? 'constant' : entry.vectorized ? 'vectorized' : 'selective',
@@ -230,6 +233,9 @@ function fromPartialLorebookEntry(
   }
   if (_.has(entry, 'filter') && !_.has(entry, 'filters')) {
     _.set(entry, 'filters', entry.filter);
+  }
+  if (_.has(entry, 'name')) {
+    _.set(entry, 'comment', entry.name);
   }
 
   const transformers = {
