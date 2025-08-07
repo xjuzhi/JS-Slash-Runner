@@ -3,16 +3,22 @@
 ### ⏫功能
 
 - 更换了内置脚本库等的网络链接 (从 `fastly.jsdelivr.net` 更换为 `testingcf.jsdelivr.net`), 让国内更容易访问
-- 为前端和脚本默认置入了 `zod` 库. 通过这个库, 你可以更方便地解析 ai 输出的数据, 并对不符的数据进行**中文报错**. 如果已经配置了[编写模板](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/基本用法/如何正确使用酒馆助手.html)请下载新的模板.
+- 为前端和脚本默认置入了 [`zod` 库](https://zod.dev/basics). 通过这个库, 你可以更方便地解析 ai 输出的数据, 并对不符的数据进行**中文报错**. 如果已经配置了[编写模板](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/基本用法/如何正确使用酒馆助手.html)请下载新的模板.
 
   ```typescript
   // 定义一个手机消息数据类型
   type PhoneMessage = z.infer<typeof PhoneMessage>;
   const PhoneMessage = z.object({
-    name: z.string(),
-    content: z.string(),
+    name: z.string()       // `name` 是一个字符串
+           .catch('络络'),  // 如果 ai 错误输出了数字之类的, 用 '络络'
+
+    content: z.string()
+              .default('络络'),  // 如果 ai 忘了输出 `content`, 用 '你好',
+
+    reply_count: z.number().min(1),  // 至少有一条回复
+
     time: z.iso.time(),
-  })
+  });
 
   const data = JSON.parse(/*假设你从 ai 回复中提取出了一条手机消息*/);
   const phone_message = PhoneMessage.parse(message);
