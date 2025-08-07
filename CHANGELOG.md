@@ -23,7 +23,7 @@
   const data = JSON.parse(/*假设你从 ai 回复中提取出了一条手机消息*/);
   const phone_message = PhoneMessage.parse(message);
   console.info(data);
-  // >> { name: '络络', content: '你好', time: '06:15' }
+  // >> { name: '络络', content: '你好', reply_count: 1, time: '06:15' }
   // 如果解析失败, 将会报错
   // >> 无效输入: 期望 string，实际接收 undefined
   ```
