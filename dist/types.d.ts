@@ -939,7 +939,7 @@ interface LorebookEntry {
   /** 酒馆中将排序设置为 "自定义" 时的显示顺序 */
   display_index: number;
 
-  name: string;
+  comment: string;
   enabled: boolean;
   type: 'constant' | 'selective' | 'vectorized';
   position:
@@ -1015,7 +1015,7 @@ async function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
  * @example
  * // 删除所有名字中包含 `神乐光` 的条目
  * const entries = await getLorebookEntries("eramgt少女歌剧");
- * _.remove(entries, entry => entry.name.includes('神乐光'));
+ * _.remove(entries, entry => entry.comment.includes('神乐光'));
  * await replaceLorebookEntries("eramgt少女歌剧", entries);
  */
 async function replaceLorebookEntries(lorebook: string, entries: Partial<LorebookEntry>[]): Promise<void>;
@@ -1034,7 +1034,7 @@ type LorebookEntriesUpdater =
  *
  * @example
  * // 删除所有名字中包含 `神乐光` 的条目
- * await updateLorebookEntriesWith("eramgt少女歌剧", entries => entries.filter(entry => entry.name.includes('神乐光')))
+ * await updateLorebookEntriesWith("eramgt少女歌剧", entries => entries.filter(entry => entry.comment.includes('神乐光')))
  */
 async function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntriesUpdater): Promise<LorebookEntry[]>;
 
@@ -1182,8 +1182,8 @@ interface PromptPreset {
 type PresetPrompt = PresetNormalPrompt | PresetSystemPrompt | PresetPlaceholderPrompt;
 interface PresetNormalPrompt {
   id: string;
-  enabled: boolean;
   name: string;
+  enabled: boolean;
   /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
   position: 'relative' | number;
 
@@ -1196,8 +1196,8 @@ interface PresetNormalPrompt {
 /** 预设中的酒馆系统提示词, 但其实相比于手动添加的提示词没有任何优势 */
 interface PresetSystemPrompt {
   id: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
-  enabled: boolean;
   name: string;
+  enabled: boolean;
 
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -1216,8 +1216,8 @@ interface PresetPlaceholderPrompt {
     | 'world_info_after'
     | 'dialogue_examples'
     | 'chat_history';
-  enabled: boolean;
   name: string;
+  enabled: boolean;
   /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
   position: 'relative' | number;
 
