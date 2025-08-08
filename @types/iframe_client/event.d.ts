@@ -26,7 +26,7 @@ type EventType = IframeEventType | TavernEventType | string;
  * }
  * eventOn(tavern_events.MESSAGE_UPDATED, detectMessageUpdated);
  */
-function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 监听 `event_type`, 按下脚本库中附加了按钮的脚本时自动运行 `listener`.
@@ -40,7 +40,7 @@ function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]):
  * function hello() { alert("hello"); }
  * eventOnButton(对应的按钮名称, hello);
  */
-function eventOnButton<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventOnButton<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 监听 `event_type`, 当事件发生时自动在最后运行 `listener`.
@@ -53,7 +53,7 @@ function eventOnButton<T extends EventType>(event_type: T, listener: ListenerTyp
  * @example
  * eventMakeLast(要监听的事件, 要注册的函数);
  */
-function eventMakeLast<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventMakeLast<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 监听 `event_type`, 当事件发生时自动在最先运行 `listener`.
@@ -66,7 +66,7 @@ function eventMakeLast<T extends EventType>(event_type: T, listener: ListenerTyp
  * @example
  * eventMakeFirst(要监听的事件, 要注册的函数);
  */
-function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 仅监听下一次 `event_type`, 当该次事件发生时运行 `listener`, 此后取消监听.
@@ -79,7 +79,7 @@ function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerTy
  * @example
  * eventOnce(要监听的事件, 要注册的函数);
  */
-function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 等待一次 `event_type` 事件
@@ -89,7 +89,7 @@ function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]
  * @example
  * await eventWaitOnce(tavern_events.MESSAGE_DELETED);
  */
-async function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
+declare function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
 
 /**
  * 等待 `listener` 监听到一次 `event_type` 且执行完成, 返回 `listener` 的执行结果
@@ -105,7 +105,7 @@ async function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
  * eventOnce("存档", save);
  * await eventWaitOnce("存档", save);
  */
-async function eventWaitOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): Promise<any | undefined>;
+declare function eventWaitOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): Promise<any | undefined>;
 
 /**
  * 发送 `event_type` 事件, 同时可以发送一些数据 `data`.
@@ -127,7 +127,7 @@ async function eventWaitOnce<T extends EventType>(event_type: T, listener: Liste
  * // 发送时携带数据 ["你好", 0]
  * eventEmit("事件", "你好", 0);
  */
-async function eventEmit<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): Promise<void>;
+declare function eventEmit<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): Promise<void>;
 
 /**
  * 携带 `data` 而发送 `event_type` 事件并等待事件处理结束.
@@ -135,7 +135,7 @@ async function eventEmit<T extends EventType>(event_type: T, ...data: Parameters
  * @param event_type 要发送的事件
  * @param data 要随着事件发送的数据
  */
-function eventEmitAndWait<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): void
+declare function eventEmitAndWait<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): void;
 
 /**
  * 让 `listener` 取消对 `event_type` 的监听.
@@ -148,26 +148,26 @@ function eventEmitAndWait<T extends EventType>(event_type: T, ...data: Parameter
  * @example
  * eventRemoveListener(要监听的事件, 要取消注册的函数);
  */
-function eventRemoveListener<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventRemoveListener<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 取消本 iframe 中对 `event_type` 的所有监听
  *
  * @param event_type 要取消监听的事件
  */
-function eventClearEvent(event_type: EventType): void;
+declare function eventClearEvent(event_type: EventType): void;
 
 /**
  * 取消本 iframe 中 `listener` 的的所有监听
  *
  * @param listener 要取消注册的函数
  */
-function eventClearListener(listener: Function): void;
+declare function eventClearListener(listener: Function): void;
 
 /**
  * 取消本 iframe 中对所有事件的所有监听
  */
-function eventClearAll(): void;
+declare function eventClearAll(): void;
 
 //------------------------------------------------------------------------------------------------------------------------
 // 以下是可用的事件, 你可以发送和监听它们
@@ -175,23 +175,23 @@ function eventClearAll(): void;
 type IframeEventType = (typeof iframe_events)[keyof typeof iframe_events];
 
 // iframe 事件
-const iframe_events = {
-  MESSAGE_IFRAME_RENDER_STARTED: 'message_iframe_render_started',
-  MESSAGE_IFRAME_RENDER_ENDED: 'message_iframe_render_ended',
+declare const iframe_events: {
+  MESSAGE_IFRAME_RENDER_STARTED: 'message_iframe_render_started';
+  MESSAGE_IFRAME_RENDER_ENDED: 'message_iframe_render_ended';
   /** `generate` 函数开始生成 */
-  GENERATION_STARTED: 'js_generation_started',
+  GENERATION_STARTED: 'js_generation_started';
   /** 启用流式传输的 `generate` 函数传输当前完整文本: "这是", "这是一条", "这是一条流式传输" */
-  STREAM_TOKEN_RECEIVED_FULLY: 'js_stream_token_received_fully',
+  STREAM_TOKEN_RECEIVED_FULLY: 'js_stream_token_received_fully';
   /** 启用流式传输的 `generate` 函数传输当前增量文本: "这是", "一条", "流式传输" */
-  STREAM_TOKEN_RECEIVED_INCREMENTALLY: 'js_stream_token_received_incrementally',
+  STREAM_TOKEN_RECEIVED_INCREMENTALLY: 'js_stream_token_received_incrementally';
   /** `generate` 函数完成生成 */
-  GENERATION_ENDED: 'js_generation_ended',
-} as const;
+  GENERATION_ENDED: 'js_generation_ended';
+};
 
 type TavernEventType = (typeof tavern_events)[keyof typeof tavern_events];
 
 // 酒馆事件. **不建议自己发送酒馆事件, 因为你并不清楚它需要发送什么数据**
-const tavern_events = {
+declare const tavern_events: {
   APP_READY: 'app_ready',
   EXTRAS_CONNECTED: 'extras_connected',
   MESSAGE_SWIPED: 'message_swiped',
@@ -255,7 +255,7 @@ const tavern_events = {
   CONNECTION_PROFILE_LOADED: 'connection_profile_loaded',
   TOOL_CALLS_PERFORMED: 'tool_calls_performed',
   TOOL_CALLS_RENDERED: 'tool_calls_rendered',
-} as const;
+};
 
 type ListenerType = {
   [iframe_events.MESSAGE_IFRAME_RENDER_STARTED]: (iframe_name: string) => void;

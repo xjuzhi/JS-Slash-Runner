@@ -2,15 +2,15 @@
  * 角色卡管理类
  * 用于封装角色卡数据操作和提供便捷的访问方法
  */
-class Character {
-  constructor(characterData: v1CharData);
+declare class Character {
+  constructor(characterData: SillyTavern.v1CharData);
 
   /**
    * 根据名称或头像id查找角色卡数据
    * @param options 查找选项
    * @returns 找到的角色卡数据，找不到为null
    */
-  static find({ name, allowAvatar }?: { name?: string; allowAvatar?: boolean }): v1CharData;
+  static find({ name, allowAvatar }?: { name?: string; allowAvatar?: boolean }): SillyTavern.v1CharData;
 
   /**
    * 根据名称查找角色卡数据在characters数组中的索引（类似this_chid）
@@ -34,7 +34,7 @@ class Character {
    * 获取角色管理内的数据
    * @returns 完整的角色管理内的数据对象
    */
-  getCardData(): v1CharData;
+  getCardData(): SillyTavern.v1CharData;
 
   /**
    * 获取角色头像ID
@@ -96,7 +96,7 @@ class Character {
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 角色卡数据
  */
-function getCharData(name?: string, allowAvatar?: boolean): v1CharData | null;
+declare function getCharData(name?: string, allowAvatar?: boolean): SillyTavern.v1CharData | null;
 
 /**
  * 获取角色头像路径
@@ -104,7 +104,7 @@ function getCharData(name?: string, allowAvatar?: boolean): v1CharData | null;
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 角色头像路径
  */
-function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
+declare function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
 
 /**
  * 获取角色聊天历史摘要
@@ -112,7 +112,7 @@ function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 聊天历史摘要数组
  */
-function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[] | null>;
+declare function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[] | null>;
 
 /**
  * 获取聊天历史详情
@@ -120,4 +120,4 @@ function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[
  * @param isGroupChat 是否为群组聊天
  * @returns 聊天历史详情
  */
-function getChatHistoryDetail(data: any[], isGroupChat?: boolean): Promise<Record<string, any> | null>;
+declare function getChatHistoryDetail(data: any[], isGroupChat?: boolean): Promise<Record<string, any> | null>;

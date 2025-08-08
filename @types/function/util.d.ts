@@ -8,14 +8,14 @@
  * const text = substitudeMacros("{{char}} speaks in {{lastMessageId}}");
  * text == "少女歌剧 speaks in 5";
  */
-function substitudeMacros(text: string): string;
+declare function substitudeMacros(text: string): string;
 
 /**
  * 获取最新楼层 id
  *
  * @returns 最新楼层id
  */
-function getLastMessageId(): number;
+declare function getLastMessageId(): number;
 
 /**
  * 包装 `fn` 函数，返回一个会将报错消息通过酒馆通知显示出来的同功能函数
@@ -25,9 +25,9 @@ function getLastMessageId(): number;
  *
  * @example
  * // 包装 `test` 函数从而在酒馆通知中显示 'test' 文本
- * async function test() {
+ *  function test() {
  *   throw Error(`test`);
  * }
  * errorCatched(test)();
  */
-function errorCatched<T extends any[], U>(fn: (...args: T) => U): (...args: T) => U;
+declare function errorCatched<T extends any[], U>(fn: (...args: T) => U): (...args: T) => U;

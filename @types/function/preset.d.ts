@@ -1,3 +1,5 @@
+import { PartialDeep } from 'type-fest';
+
 interface PromptPreset {
   settings: {
     /** 最大上下文 token 数 */
@@ -113,63 +115,18 @@ interface PresetPlaceholderPrompt {
   /** 额外字段, 用于为预设提示词绑定额外数据 */
   extra?: Record<string, any>;
 }
-function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt;
-function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
-function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
+declare function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt;
+declare function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
+declare function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
 
-const default_preset: PromptPreset = {
-  settings: {
-    max_context: 2000000,
-    max_completion_tokens: 300,
-    reply_count: 1,
-
-    should_stream: false,
-
-    temperature: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    repetition_penalty: 1,
-    top_p: 1,
-    min_p: 0,
-    top_k: 0,
-    top_a: 0,
-
-    seed: -1,
-
-    squash_system_messages: false,
-
-    reasoning_effort: 'auto',
-    request_thoughts: false,
-    request_images: false,
-    enable_function_calling: false,
-    enable_web_search: false,
-
-    allow_images: 'disabled',
-    allow_videos: false,
-
-    character_name_prefix: 'none',
-    wrap_user_messages_in_quotes: false,
-  },
-  prompts: [
-    { id: 'worldInfoBefore', enabled: true, position: 'relative', role: 'system' },
-    { id: 'personaDescription', enabled: true, position: 'relative', role: 'system' },
-    { id: 'charDescription', enabled: true, position: 'relative', role: 'system' },
-    { id: 'charPersonality', enabled: true, position: 'relative', role: 'system' },
-    { id: 'scenario', enabled: true, position: 'relative', role: 'system' },
-    { id: 'worldInfoAfter', enabled: true, position: 'relative', role: 'system' },
-    { id: 'dialogueExamples', enabled: true, position: 'relative', role: 'system' },
-    { id: 'chatHistory', enabled: true, position: 'relative', role: 'system' },
-  ],
-  prompts_unused: [],
-  extensions: {},
-} as const;
+declare const default_preset: PromptPreset;
 
 /**
  * 获取预设名称列表
  *
  * @returns 预设名称列表
  */
-function getPresetNames(): string[];
+declare function getPresetNames(): string[];
 
 /**
  * 获取酒馆正在使用的预设 (`'in_use'`) 是从哪个预设加载来的.
@@ -180,7 +137,7 @@ function getPresetNames(): string[];
  *
  * @returns 预设名称
  */
-function getLoadedPresetName(): string;
+declare function getLoadedPresetName(): string;
 
 /**
  * 加载 `preset_name` 预设作为酒馆正在使用的预设 (`'in_use'`)
@@ -188,7 +145,7 @@ function getLoadedPresetName(): string;
  * @param preset_name 预设名称
  * @returns 是否成功切换, 可能因预设不存在等原因而失败
  */
-function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
+declare function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
 
 /**
  * 新建 `preset_name` 预设, 内容为 `preset`
@@ -198,9 +155,9 @@ function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
  *
  * @returns 是否成功创建, 如果已经存在同名预设或尝试创建名为 `'in_use'` 的预设会失败
  */
-async function createPreset(
+declare function createPreset(
   preset_name: Exclude<string, 'in_use'>,
-  preset: PromptPreset = default_preset,
+  preset?: PromptPreset,
 ): Promise<boolean>;
 
 /**
@@ -211,9 +168,9 @@ async function createPreset(
  *
  * @returns 如果发生创建, 则返回 `true`; 如果发生替换, 则返回 `false`
  */
-async function createOrReplacePreset(
+declare function createOrReplacePreset(
   preset_name: 'in_use' | string,
-  preset: PromptPreset = default_preset,
+  preset?: PromptPreset,
 ): Promise<boolean>;
 
 /**
@@ -222,7 +179,7 @@ async function createOrReplacePreset(
  * @param preset_name 预设名称
  * @returns 是否成功删除, 可能因预设不存在等原因而失败
  */
-async function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boolean>;
+declare function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boolean>;
 
 /**
  * 重命名 `preset_name` 预设为 `new_name`
@@ -231,7 +188,7 @@ async function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boo
  * @param new_name 新名称
  * @returns 是否成功重命名, 可能因预设不存在等原因而失败
  */
-async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: string): Promise<boolean>;
+declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: string): Promise<boolean>;
 
 /**
  * 获取 `preset_name` 预设的内容
@@ -239,7 +196,7 @@ async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: st
  * @param preset_name 预设名称
  * @returns 预设内容
  */
-function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
+declare function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
 
 /**
  * 完全替换 `preset_name` 预设的内容为 `preset`
@@ -260,7 +217,7 @@ function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
  * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
  * await replacePreset('预设B', preset_b);
  */
-async function replacePreset(preset_name: 'in_use' | string, preset: PromptPreset): Promise<void>;
+declare function replacePreset(preset_name: 'in_use' | string, preset: PromptPreset): Promise<void>;
 
 type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: PromptPreset) => Promise<PromptPreset>);
 /**
@@ -286,7 +243,7 @@ type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: Prompt
  *   return preset;
  * });
  */
-async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<PromptPreset>;
+declare function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<PromptPreset>;
 
 /**
  * 将预设内容修改回预设中, 如果某个内容不存在, 则该内容将会采用原来的值
@@ -306,4 +263,4 @@ async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetU
  *   prompts: [...getPreset('预设A').prompts, ...getPreset('预设B').prompts],
  * });
  */
-async function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<PromptPreset>): Promise<PromptPreset>;
+declare function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<PromptPreset>): Promise<PromptPreset>;

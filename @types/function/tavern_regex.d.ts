@@ -20,11 +20,11 @@ interface FormatAsTavernRegexedStringOption {
  * const message = getChatMessages(-1)[0];
  * const result = formatAsTavernRegexedString(message.message, 'ai_output', 'display', { depth: 0 });
  */
-function formatAsTavernRegexedString(
+declare function formatAsTavernRegexedString(
   text: string,
   source: 'user_input' | 'ai_output' | 'slash_command' | 'world_info' | 'reasoning',
   destination: 'display' | 'prompt',
-  { depth, character_name }: FormatAsTavernRegexedStringOption = {},
+  { depth, character_name }?: FormatAsTavernRegexedStringOption,
 );
 
 interface TavernRegex {
@@ -52,7 +52,7 @@ interface TavernRegex {
 /**
  * 判断局部正则是否启用
  */
-function isCharacterTavernRegexesEnabled(): boolean;
+declare function isCharacterTavernRegexesEnabled(): boolean;
 
 interface GetTavernRegexesOption {
   scope?: 'all' | 'global' | 'character';
@@ -68,7 +68,7 @@ interface GetTavernRegexesOption {
  *
  * @returns 一个数组, 数组的元素是酒馆正则 `TavernRegex`. 该数组依据正则作用于文本的顺序排序, 也就是酒馆显示正则的地方从上到下排列.
  */
-function getTavernRegexes({ scope, enable_state }?: GetTavernRegexesOption): TavernRegex[];
+declare function getTavernRegexes({ scope, enable_state }?: GetTavernRegexesOption): TavernRegex[];
 
 interface ReplaceTavernRegexesOption {
   scope?: 'all' | 'global' | 'character';
@@ -85,7 +85,7 @@ interface ReplaceTavernRegexesOption {
  * @param option 可选选项
  *   - scope?: 'all' | 'global' | 'character';  // 要替换的酒馆正则部分; 默认为 'all'
  */
-function replaceTavernRegexes(regexes: TavernRegex[], { scope }: ReplaceTavernRegexesOption): Promise<void>;
+declare function replaceTavernRegexes(regexes: TavernRegex[], { scope }: ReplaceTavernRegexesOption): Promise<void>;
 
 type TavernRegexUpdater =
   | ((regexes: TavernRegex[]) => TavernRegex[])
@@ -111,7 +111,7 @@ type TavernRegexUpdater =
  *   return regexes;
  * });
  */
-function updateTavernRegexesWith(
+declare function updateTavernRegexesWith(
   updater: TavernRegexUpdater,
   option?: ReplaceTavernRegexesOption,
 ): Promise<TavernRegex[]>;

@@ -46,7 +46,7 @@ interface VariableOption {
  * // 在脚本内获取该脚本绑定的变量
  * const variables = getVariables({type: 'script', script_id: getScriptId()});
  */
-function getVariables({ type, message_id, script_id }?: VariableOption): Record<string, any>;
+declare function getVariables({ type, message_id, script_id }?: VariableOption): Record<string, any>;
 
 /**
  * 完全替换变量表为 `variables`
@@ -75,7 +75,7 @@ function getVariables({ type, message_id, script_id }?: VariableOption): Record<
  * // 在脚本内替换该脚本绑定的变量
  * await replaceVariables({神乐光: {好感度: 5, 认知度: 0}}, {type: 'script', script_id: getScriptId()});
  */
-async function replaceVariables(
+declare function replaceVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -103,7 +103,7 @@ type VariablesUpdater =
  * // 更新 "爱城华恋.好感度" 为原来的 2 倍, 如果该变量不存在则设置为 0
  * await updateVariablesWith(variables => _.update(variables, "爱城华恋.好感度", value => value ? value * 2 : 0));
  */
-async function updateVariablesWith(
+declare function updateVariablesWith(
   updater: VariablesUpdater,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<Record<string, any>>;
@@ -124,7 +124,7 @@ async function updateVariablesWith(
  * await insertOrAssignVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
  * // 执行后变量: `{爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}}`
  */
-async function insertOrAssignVariables(
+declare function insertOrAssignVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -145,7 +145,7 @@ async function insertOrAssignVariables(
  * await insertVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
  * // 执行后变量: `{爱城华恋: {好感度: 5}, 神乐光: {好感度: 5, 认知度: 0}}`
  */
-async function insertVariables(
+declare function insertVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -168,7 +168,7 @@ async function insertVariables(
  * await deleteVariable("爱城华恋.好感度");
  * // 执行后变量: `{爱城华恋: {}}`
  */
-async function deleteVariable(
+declare function deleteVariable(
   variable_path: string,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<boolean>;

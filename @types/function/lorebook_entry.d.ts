@@ -64,7 +64,7 @@ interface GetLorebookEntriesOption {
  * // 获取世界书中所有条目的所有信息
  * const entries = await getLorebookEntries("eramgt少女歌剧");
  */
-async function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
+declare function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
 
 /**
  * 完全替换世界书 `lorebook` 的所有条目为 `entries`
@@ -83,7 +83,7 @@ async function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
  * _.remove(entries, entry => entry.comment.includes('神乐光'));
  * await replaceLorebookEntries("eramgt少女歌剧", entries);
  */
-async function replaceLorebookEntries(lorebook: string, entries: Partial<LorebookEntry>[]): Promise<void>;
+declare function replaceLorebookEntries(lorebook: string, entries: Partial<LorebookEntry>[]): Promise<void>;
 
 type LorebookEntriesUpdater =
   | ((entries: LorebookEntry[]) => Partial<LorebookEntry>[])
@@ -101,7 +101,7 @@ type LorebookEntriesUpdater =
  * // 删除所有名字中包含 `神乐光` 的条目
  * await updateLorebookEntriesWith("eramgt少女歌剧", entries => entries.filter(entry => entry.comment.includes('神乐光')))
  */
-async function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntriesUpdater): Promise<LorebookEntry[]>;
+declare function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntriesUpdater): Promise<LorebookEntry[]>;
 
 /**
  * 将条目信息修改回对应的世界书中, 如果某个字段不存在, 则该字段采用原来的值.
@@ -113,7 +113,7 @@ async function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntr
  *
  * @returns 更新后的世界书条目
  */
-async function setLorebookEntries(
+declare function setLorebookEntries(
   lorebook: string,
   entries: Array<Pick<LorebookEntry, 'uid'> & Partial<LorebookEntry>>,
 ): Promise<LorebookEntry[]>;
@@ -126,7 +126,7 @@ async function setLorebookEntries(
  *
  * @returns 更新后的世界书条目, 以及新条目的 uid
  */
-async function createLorebookEntries(
+declare function createLorebookEntries(
   lorebook: string,
   entries: Partial<LorebookEntry>[],
 ): Promise<{ entries: LorebookEntry[]; new_uids: number[] }>;
@@ -139,14 +139,7 @@ async function createLorebookEntries(
  *
  * @returns 更新后的世界书条目, 以及是否有发生删除
  */
-async function deleteLorebookEntries(
+declare function deleteLorebookEntries(
   lorebook: string,
   uids: number[],
 ): Promise<{ entries: LorebookEntry[]; delete_occurred: boolean }>;
-
-//----------------------------------------------------------------------------------------------------------------------
-/** @deprecated 请使用 `createLorebookEntries` 代替 */
-async function createLorebookEntry(lorebook: string, field_values: Partial<LorebookEntry>): Promise<number>;
-
-/** @deprecated 请使用 `deleteLorebookEntries` 代替 */
-async function deleteLorebookEntry(lorebook: string, lorebook_uid: number): Promise<boolean>;

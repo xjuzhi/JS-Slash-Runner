@@ -140,7 +140,7 @@ interface Overrides {
 /**
  * 预设为内置提示词设置的默认顺序
  */
-const builtin_prompt_default_order: BuiltinPrompt[];
+declare const builtin_prompt_default_order: BuiltinPrompt[];
 
 type BuiltinPrompt =
   | 'world_info_before'
@@ -193,7 +193,7 @@ type BuiltinPrompt =
  *   }
  * });
  */
-async function generate(config: GenerateConfig): Promise<string>;
+declare function generate(config: GenerateConfig): Promise<string>;
 
 /**
  * 不使用酒馆当前启用的预设, 让 ai 生成一段文本.
@@ -226,4 +226,4 @@ async function generate(config: GenerateConfig): Promise<string>;
  *   ]
  * })
  */
-async function generateRaw(config: GenerateRawConfig): Promise<string>;
+declare function generateRaw(config: GenerateRawConfig): Promise<string>;

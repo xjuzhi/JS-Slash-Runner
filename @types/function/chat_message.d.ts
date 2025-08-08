@@ -53,7 +53,7 @@ interface GetChatMessagesOption {
  * // 获取所有楼层被 ai 使用的消息页
  * const chat_messages = getChatMessages('0-{{lastMessageId}}');
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: Omit<GetChatMessagesOption, 'include_swipes'> & { include_swipes?: false },
 ): ChatMessage[];
@@ -82,7 +82,7 @@ function getChatMessages(
  * // 获取所有楼层所有的消息页
  * const chat_messages = getChatMessages('0-{{lastMessageId}}', { include_swipes: true });
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: Omit<GetChatMessagesOption, 'include_swipes'> & { include_swipes?: true },
 ): ChatMessageSwiped[];
@@ -98,7 +98,7 @@ function getChatMessages(
  *
  * @returns 一个数组, 数组的元素是每楼的消息, 依据 message_id 从低到高排序, 类型为 `ChatMessage` 或 `ChatMessageSwiped` (取决于 `include_swipes` 的值, 默认为 `ChatMessage`).
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: GetChatMessagesOption,
 ): (ChatMessage | ChatMessageSwiped)[];
@@ -143,7 +143,7 @@ interface SetChatMessagesOption {
  * const last_message_id = getLastMessageId();
  * await setChatMessages(_.range(last_message_id + 1).map(message_id => ({message_id, is_hidden: true})));
  */
-async function setChatMessages(
+declare function setChatMessages(
   chat_messages: Array<{ message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>)>,
   { refresh }?: SetChatMessagesOption,
 );
@@ -185,7 +185,7 @@ interface CreateChatMessagesOption {
  * // 在末尾插入一条消息
  * await createChatMessages([{role: 'user', message: '你好'}]);
  */
-async function createChatMessages(
+declare function createChatMessages(
   chat_messages: ChatMessageCreating[],
   { insert_at, refresh }?: CreateChatMessagesOption,
 ): Promise<void>;
@@ -214,7 +214,7 @@ interface DeleteChatMessagesOption {
  * // 删除所有楼层
  * await deleteChatMessages(_.range(getLastMessageId() + 1));
  */
-async function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
+declare function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
 
 interface RotateChatMessagesOption {
   /**
@@ -244,7 +244,7 @@ interface RotateChatMessagesOption {
  * // 将前 3 楼放到最后
  * await rotateChatMessages(0, 3, getLastMessageId() + 1);
  */
-async function rotateChatMessages(
+declare function rotateChatMessages(
   begin: number,
   middle: number,
   end: number,

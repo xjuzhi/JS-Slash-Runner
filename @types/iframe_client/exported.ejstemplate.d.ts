@@ -2,7 +2,7 @@
  * 提示词模板语法插件所提供的额外功能, 必须额外安装提示词模板语法插件, 具体内容见于 https://github.com/zonde306/ST-Prompt-Template
  * 你也可以在酒馆页面按 f12,在控制台中输入 `window.EjsTemplate` 来查看当前提示词模板语法所提供的接口
  */
-const EjsTemplate: {
+declare const EjsTemplate: {
   /**
    * 对文本进行模板语法处理
    * @note `context` 一般从 `prepareContext` 获取, 若要修改则应直接修改原始对象
@@ -25,18 +25,18 @@ const EjsTemplate: {
    * const result   = compiled({ 'user': 'fred' });;
    * => result === 'hello user!'
    */
-  evaltemplate: (code: string, context: Record<string, any> = {}, options: Record<string, any> = {}) => Promise<string>;
+  evaltemplate: (code: string, context?: Record<string, any>, options?: Record<string, any>) => Promise<string>;
 
   /**
    * 创建模板语法处理使用的执行环境 (上下文)
    *
    * @param additional_context 附加的执行环境 (上下文)
-   * @param last_message_id 合并消息变量的最大 ID
+   * @param last_message_id 合并消息变量的最大 ID; 默认为所有
    * @returns 执行环境 (上下文)
    */
   prepareContext: (
-    additional_context: Record<string, any> = {},
-    last_message_id: number = 65535,
+    additional_context?: Record<string, any>,
+    last_message_id?: number,
   ) => Promise<Record<string, any>>;
 
   /**
@@ -44,10 +44,10 @@ const EjsTemplate: {
    * 并不会实际执行
    *
    * @param content 模板代码
-   * @param output_line_count 发生错误时输出的附近行数
+   * @param output_line_count 发生错误时输出的附近行数; 默认为 4
    * @returns 语法错误信息, 无错误返回空字符串
    */
-  getSyntaxErrorInfo: (code: string, output_line_count: number = 4) => Promise<string>;
+  getSyntaxErrorInfo: (code: string, output_line_count?: number) => Promise<string>;
 
   /**
    * 获取全局变量、聊天变量、消息楼层变量的并集

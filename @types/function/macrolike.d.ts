@@ -19,8 +19,7 @@ interface Context {
  *   /<checkbox>(.*?)<checkbox>/gi,
  *   (context: Context, substring: string, content: string) => { return content; });
  */
-function registerMacroLike(
+declare function registerMacroLike(
   regex: RegExp,
   replace: (context: Context, substring: string, ...args: any[]) => string,
 ): void;
-

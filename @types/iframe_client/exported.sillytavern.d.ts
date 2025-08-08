@@ -1,4 +1,4 @@
-namespace SillyTavern {
+declare namespace SillyTavern {
   interface ChatMessage {
     message_id: number;
     name: string;
@@ -19,13 +19,250 @@ namespace SillyTavern {
     variables?: Record<string, any>[];
     extra?: Record<string, any>;
   }
+
+  /**
+   * V1 character data structure.
+   */
+  interface v1CharData {
+    /** the name of the character */
+    name: string;
+    /** the description of the character */
+    description: string;
+    /** a short personality description of the character */
+    personality: string;
+    /** a scenario description of the character */
+    scenario: string;
+    /** the first message in the conversation */
+    first_mes: string;
+    /** the example message in the conversation */
+    mes_example: string;
+    /** creator's notes of the character */
+    creatorcomment: string;
+    /** the tags of the character */
+    tags: string[];
+    /** talkativeness */
+    talkativeness: number;
+    /** fav */
+    fav: boolean | string;
+    /** create_date */
+    create_date: string;
+    /** v2 data extension */
+    data: v2CharData;
+    // Non-standard extensions added by the ST server (not part of the original data)
+    /** name of the current chat file chat */
+    chat: string;
+    /** file name of the avatar image (acts as a unique identifier) */
+    avatar: string;
+    /** the full raw JSON data of the character */
+    json_data: string;
+    /** if the data is shallow (lazy-loaded) */
+    shallow?: boolean;
+  }
+
+  /**
+   * V2 character data structure.
+   */
+  interface v2CharData {
+    /** The character's name. */
+    name: string;
+    /** A brief description of the character. */
+    description: string;
+    /** The character's data version. */
+    character_version: string;
+    /** A short summary of the character's personality traits. */
+    personality: string;
+    /** A description of the character's background or setting. */
+    scenario: string;
+    /** The character's opening message in a conversation. */
+    first_mes: string;
+    /** An example message demonstrating the character's conversation style. */
+    mes_example: string;
+    /** Internal notes or comments left by the character's creator. */
+    creator_notes: string;
+    /** A list of keywords or labels associated with the character. */
+    tags: string[];
+    /** The system prompt used to interact with the character. */
+    system_prompt: string;
+    /** Instructions for handling the character's conversation history. */
+    post_history_instructions: string;
+    /** The name of the person who created the character. */
+    creator: string;
+    /** Additional greeting messages the character can use. */
+    alternate_greetings: string[];
+    /** Data about the character's world or story (if applicable). */
+    character_book: v2WorldInfoBook;
+    /** Additional details specific to the character. */
+    extensions: v2CharDataExtensionInfos;
+  }
+
+  /**
+   * A world info book containing entries.
+   */
+  interface v2WorldInfoBook {
+    /** the name of the book */
+    name: string;
+    /** the entries of the book */
+    entries: v2DataWorldInfoEntry[];
+  }
+
+  /**
+   * A world info entry object.
+   */
+  interface v2DataWorldInfoEntry {
+    /** An array of primary keys associated with the entry. */
+    keys: string[];
+    /** An array of secondary keys associated with the entry (optional). */
+    secondary_keys: string[];
+    /** A human-readable description or explanation for the entry. */
+    comment: string;
+    /** The main content or data associated with the entry. */
+    content: string;
+    /** Indicates if the entry's content is fixed and unchangeable. */
+    constant: boolean;
+    /** Indicates if the entry's inclusion is controlled by specific conditions. */
+    selective: boolean;
+    /** Defines the order in which the entry is inserted during processing. */
+    insertion_order: number;
+    /** Controls whether the entry is currently active and used. */
+    enabled: boolean;
+    /** Specifies the location or context where the entry applies. */
+    position: string;
+    /** An object containing additional details for extensions associated with the entry. */
+    extensions: v2DataWorldInfoEntryExtensionInfos;
+    /** A unique identifier assigned to the entry. */
+    id: number;
+  }
+
+  /**
+   * An object containing additional details for extensions associated with the entry.
+   */
+  interface v2DataWorldInfoEntryExtensionInfos {
+    /** The order in which the extension is applied relative to other extensions. */
+    position: number;
+    /** Prevents the extension from being applied recursively. */
+    exclude_recursion: boolean;
+    /** The chance (between 0 and 1) of the extension being applied. */
+    probability: number;
+    /** Determines if the `probability` property is used. */
+    useProbability: boolean;
+    /** The maximum level of nesting allowed for recursive application of the extension. */
+    depth: number;
+    /** Defines the logic used to determine if the extension is applied selectively. */
+    selectiveLogic: number;
+    /** A category or grouping for the extension. */
+    group: string;
+    /** Overrides any existing group assignment for the extension. */
+    group_override: boolean;
+    /** A value used for prioritizing extensions within the same group. */
+    group_weight: number;
+    /** Completely disallows recursive application of the extension. */
+    prevent_recursion: boolean;
+    /** Will only be checked during recursion. */
+    delay_until_recursion: boolean;
+    /** The maximum depth to search for matches when applying the extension. */
+    scan_depth: number;
+    /** Specifies if only entire words should be matched during extension application. */
+    match_whole_words: boolean;
+    /** Indicates if group weight is considered when selecting extensions. */
+    use_group_scoring: boolean;
+    /** Controls whether case sensitivity is applied during matching for the extension. */
+    case_sensitive: boolean;
+    /** An identifier used for automation purposes related to the extension. */
+    automation_id: string;
+    /** The specific function or purpose of the extension. */
+    role: number;
+    /** Indicates if the extension is optimized for vectorized processing. */
+    vectorized: boolean;
+    /** The order in which the extension should be displayed for user interfaces. */
+    display_index: number;
+    /** Wether to match against the persona description. */
+    match_persona_description: boolean;
+    /** Wether to match against the persona description. */
+    match_character_description: boolean;
+    /** Wether to match against the character personality. */
+    match_character_personality: boolean;
+    /** Wether to match against the character depth prompt. */
+    match_character_depth_prompt: boolean;
+    /** Wether to match against the character scenario. */
+    match_scenario: boolean;
+    /** Wether to match against the character creator notes. */
+    match_creator_notes: boolean;
+  }
+
+  /**
+   * Additional details specific to the character.
+   */
+  interface v2CharDataExtensionInfos {
+    /** A numerical value indicating the character's propensity to talk. */
+    talkativeness: number;
+    /** A flag indicating whether the character is a favorite. */
+    fav: boolean;
+    /** The fictional world or setting where the character exists (if applicable). */
+    world: string;
+    /** Prompts used to explore the character's depth and complexity. */
+    depth_prompt: {
+      /** The level of detail or nuance targeted by the prompt. */
+      depth: number;
+      /** The actual prompt text used for deeper character interaction. */
+      prompt: string;
+      /** The role the character takes on during the prompted interaction (system, user, or assistant). */
+      role: 'system' | 'user' | 'assistant';
+    };
+    /** Custom regex scripts for the character. */
+    regex_scripts: RegexScriptData[];
+    // Non-standard extensions added by external tools
+    /** The unique identifier assigned to the character by the Pygmalion.chat. */
+    pygmalion_id?: string;
+    /** The gitHub repository associated with the character. */
+    github_repo?: string;
+    /** The source URL associated with the character. */
+    source_url?: string;
+    /** The Chub-specific data associated with the character. */
+    chub?: { full_path: string };
+    /** The RisuAI-specific data associated with the character. */
+    risuai?: { source: string[] };
+    /** SD-specific data associated with the character. */
+    sd_character_prompt?: { positive: string; negative: string };
+  }
+
+  /**
+   * Regex script data for character processing.
+   */
+  interface RegexScriptData {
+    /** UUID of the script */
+    id: string;
+    /** The name of the script */
+    scriptName: string;
+    /** The regex to find */
+    findRegex: string;
+    /** The string to replace */
+    replaceString: string;
+    /** The strings to trim */
+    trimStrings: string[];
+    /** The placement of the script */
+    placement: number[];
+    /** Whether the script is disabled */
+    disabled: boolean;
+    /** Whether the script only applies to Markdown */
+    markdownOnly: boolean;
+    /** Whether the script only applies to prompts */
+    promptOnly: boolean;
+    /** Whether the script runs on edit */
+    runOnEdit: boolean;
+    /** Whether the regex should be substituted */
+    substituteRegex: number;
+    /** The minimum depth */
+    minDepth: number;
+    /** The maximum depth */
+    maxDepth: number;
+  }
 }
 
 /**
  * 酒馆提供给插件的稳定接口, 具体内容见于 SillyTavern/public/scripts/st-context.js 或 https://github.com/SillyTavern/SillyTavern/blob/release/public/scripts/st-context.js
  * 你也可以在酒馆页面按 f12, 在控制台中输入 `window.SillyTavern.getContext()` 来查看当前酒馆所提供的接口
  */
-const SillyTavern: {
+declare const SillyTavern: {
   readonly accountStorage: any;
   readonly chat: Array<SillyTavern.ChatMessage>;
   readonly characters: any;
@@ -50,13 +287,13 @@ const SillyTavern: {
   readonly chatMetadata: Record<string, any>;
   readonly streamingProcessor: any;
   readonly eventSource: {
-    on: typeof eventOn,
-    makeLast: typeof eventMakeLast,
-    makeFirst: typeof eventMakeFirst,
-    removeListener: typeof eventRemoveListener,
-    emit: typeof eventEmit,
-    emitAndWait: typeof eventEmitAndWait,
-    once: typeof eventOnce,
+    on: typeof eventOn;
+    makeLast: typeof eventMakeLast;
+    makeFirst: typeof eventMakeFirst;
+    removeListener: typeof eventRemoveListener;
+    emit: typeof eventEmit;
+    emitAndWait: typeof eventEmitAndWait;
+    once: typeof eventOnce;
   };
   readonly eventTypes: typeof tavern_events;
   readonly addOneMessage: (mes: object, options: any) => Promise<void>;
@@ -94,7 +331,7 @@ const SillyTavern: {
     original?: string,
     group?: string,
     replace_character_card?: boolean,
-    additional_macro: Record<string, any>,
+    additional_macro?: Record<string, any>,
     post_process_function?: (text: string) => string,
   ) => Promise<void>;
   readonly substituteParamsExtended: (
@@ -102,10 +339,10 @@ const SillyTavern: {
     additional_macro?: Record<string, any>,
     post_process_function?: (text: string) => string,
   ) => Promise<void>;
-  readonly SlashCommandParser: Type;
-  readonly SlashCommand: Type;
-  readonly SlashCommandArgument: Type;
-  readonly SlashCommandNamedArgument: Type;
+  readonly SlashCommandParser: any;
+  readonly SlashCommand: any;
+  readonly SlashCommandArgument: any;
+  readonly SlashCommandNamedArgument: any;
   readonly ARGUMENT_TYPE: {
     STRING: string;
     NUMBER: string;
@@ -125,7 +362,7 @@ const SillyTavern: {
   readonly unregisterFunctionTool: (name: string) => void;
   readonly isToolCallingSupported: () => boolean;
   readonly canPerformToolCalls: (type: string) => boolean;
-  readonly ToolManager: Type;
+  readonly ToolManager: any;
   readonly registerDebugFunction: (function_id: string, name: string, description: string, fn: Function) => void;
   readonly renderExtensionTemplateAsync: (
     extension_name: string,
@@ -146,7 +383,7 @@ const SillyTavern: {
   readonly mainApi: any;
   /** extension_settings */
   readonly extensionSettings: Record<string, any>;
-  readonly ModuleWorkerWrapper: Type;
+  readonly ModuleWorkerWrapper: any;
   readonly getTokenizerModel: () => string;
   readonly generateQuietPrompt: () => (
     quiet_prompt: string,
@@ -180,8 +417,8 @@ const SillyTavern: {
     [identifier: string]: string[];
   };
   readonly menuType: any;
-  readonly createCharacterData: record<string, any>;
-  readonly Popup: Type;
+  readonly createCharacterData: Record<string, any>;
+  readonly Popup: any;
   readonly POPUP_TYPE: {
     TEXT: number;
     CONFIRM: number;
@@ -249,9 +486,9 @@ const SillyTavern: {
   readonly getChatCompletionModel: (source?: string) => string;
   readonly printMessages: () => Promise<void>;
   readonly clearChat: () => Promise<void>;
-  readonly ChatCompletionService: Type;
-  readonly TextCompletionService: Type;
-  readonly ConnectionManagerRequestService: Type;
+  readonly ChatCompletionService: any;
+  readonly TextCompletionService: any;
+  readonly ConnectionManagerRequestService: any;
   readonly updateReasoningUI: (
     message_id_or_element: number | JQuery<HTMLElement> | HTMLElement,
     { reset }?: { reset?: boolean },
@@ -260,6 +497,6 @@ const SillyTavern: {
   readonly unshallowCharacter: (character_id?: string) => Promise<void>;
   readonly unshallowGroupMembers: (group_id: string) => Promise<void>;
   readonly symbols: {
-    ignore: IGNORE_SYMBOL;
+    ignore: any;
   };
 };
