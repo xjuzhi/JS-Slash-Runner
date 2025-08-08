@@ -1,38 +1,43 @@
 /**
  * 切换音频播放模式
  */
-async function audioMode(args: { type: string; mode: string }): Promise<void>;
+declare function audioMode(args: { type: string; mode: string }): Promise<void>;
 
 /**
  * 切换播放器开关状态
  */
-async function audioEnable(args: { type: string; state?: string }): Promise<void>;
+declare function audioEnable(args: { type: string; state?: string }): Promise<void>;
 
 /**
  * 切换播放/暂停状态
  */
-async function audioPlay(args: { type: string; play?: string }): Promise<void>;
+declare function audioPlay(args: { type: string; play?: string }): Promise<void>;
 
 /**
  * 导入音频链接
  */
-async function audioImport(args: { type: string; play?: string }, url: string): Promise<void>;
+declare function audioImport(args: { type: string; play?: string }, url: string): Promise<void>;
 
 /**
  * 选择并播放音频
  */
-async function audioSelect(args: { type: string }, url: string): Promise<void>;
-const builtin: {
+declare function audioSelect(args: { type: string }, url: string): Promise<void>;
+declare const builtin: {
+  /**
+   * 向网页添加一条楼层渲染
+   *
+   * @param mes 要渲染的楼层数据
+   * @param options 可选选项
+   * - `type`: 楼层类型; 默认为 `'normal'`
+   * - `insertAfter`: 插入到指定楼层后; 默认为 `null`
+   * - `scroll`: 是否滚动到新楼层; 默认为 `true`
+   * - `insertBefore`: 插入到指定楼层前; 默认为 `null`
+   * - `forceId`: 强制使用指定楼层号; 默认为 `null`
+   * - `showSwipes`: 是否显示滑动按钮; 默认为 `true`
+   */
   addOneMessage: (
     mes: Record<string, any>,
-    {
-      type = 'normal',
-      insertAfter = null,
-      scroll = true,
-      insertBefore = null,
-      forceId = null,
-      showSwipes = true,
-    }?: {
+    options?: {
       type?: string;
       insertAfter?: number;
       scroll?: boolean;
@@ -42,22 +47,24 @@ const builtin: {
     },
   ) => void;
   saveSettings: () => Promise<void>;
+  /** 刷新世界书编辑器的显示 */
   reloadEditor: (file: string, load_if_not_selected?: boolean) => void;
+  /** 刷新世界书编辑器的显示 (防抖) */
   reloadEditorDebounced: (file: string, load_if_not_selected?: boolean) => void;
 };
 /**
  * 角色卡管理类
  * 用于封装角色卡数据操作和提供便捷的访问方法
  */
-class Character {
-  constructor(characterData: v1CharData);
+declare class Character {
+  constructor(characterData: SillyTavern.v1CharData);
 
   /**
    * 根据名称或头像id查找角色卡数据
    * @param options 查找选项
    * @returns 找到的角色卡数据，找不到为null
    */
-  static find({ name, allowAvatar }?: { name?: string; allowAvatar?: boolean }): v1CharData;
+  static find({ name, allowAvatar }?: { name?: string; allowAvatar?: boolean }): SillyTavern.v1CharData;
 
   /**
    * 根据名称查找角色卡数据在characters数组中的索引（类似this_chid）
@@ -81,7 +88,7 @@ class Character {
    * 获取角色管理内的数据
    * @returns 完整的角色管理内的数据对象
    */
-  getCardData(): v1CharData;
+  getCardData(): SillyTavern.v1CharData;
 
   /**
    * 获取角色头像ID
@@ -143,7 +150,7 @@ class Character {
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 角色卡数据
  */
-function getCharData(name?: string, allowAvatar?: boolean): v1CharData | null;
+declare function getCharData(name?: string, allowAvatar?: boolean): SillyTavern.v1CharData | null;
 
 /**
  * 获取角色头像路径
@@ -151,7 +158,7 @@ function getCharData(name?: string, allowAvatar?: boolean): v1CharData | null;
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 角色头像路径
  */
-function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
+declare function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
 
 /**
  * 获取角色聊天历史摘要
@@ -159,7 +166,7 @@ function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 聊天历史摘要数组
  */
-function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[] | null>;
+declare function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[] | null>;
 
 /**
  * 获取聊天历史详情
@@ -167,7 +174,7 @@ function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[
  * @param isGroupChat 是否为群组聊天
  * @returns 聊天历史详情
  */
-function getChatHistoryDetail(data: any[], isGroupChat?: boolean): Promise<Record<string, any> | null>;
+declare function getChatHistoryDetail(data: any[], isGroupChat?: boolean): Promise<Record<string, any> | null>;
 interface ChatMessage {
   message_id: number;
   name: string;
@@ -223,7 +230,7 @@ interface GetChatMessagesOption {
  * // 获取所有楼层被 ai 使用的消息页
  * const chat_messages = getChatMessages('0-{{lastMessageId}}');
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: Omit<GetChatMessagesOption, 'include_swipes'> & { include_swipes?: false },
 ): ChatMessage[];
@@ -252,7 +259,7 @@ function getChatMessages(
  * // 获取所有楼层所有的消息页
  * const chat_messages = getChatMessages('0-{{lastMessageId}}', { include_swipes: true });
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: Omit<GetChatMessagesOption, 'include_swipes'> & { include_swipes?: true },
 ): ChatMessageSwiped[];
@@ -268,7 +275,7 @@ function getChatMessages(
  *
  * @returns 一个数组, 数组的元素是每楼的消息, 依据 message_id 从低到高排序, 类型为 `ChatMessage` 或 `ChatMessageSwiped` (取决于 `include_swipes` 的值, 默认为 `ChatMessage`).
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: GetChatMessagesOption,
 ): (ChatMessage | ChatMessageSwiped)[];
@@ -313,7 +320,7 @@ interface SetChatMessagesOption {
  * const last_message_id = getLastMessageId();
  * await setChatMessages(_.range(last_message_id + 1).map(message_id => ({message_id, is_hidden: true})));
  */
-async function setChatMessages(
+declare function setChatMessages(
   chat_messages: Array<{ message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>)>,
   { refresh }?: SetChatMessagesOption,
 );
@@ -355,7 +362,7 @@ interface CreateChatMessagesOption {
  * // 在末尾插入一条消息
  * await createChatMessages([{role: 'user', message: '你好'}]);
  */
-async function createChatMessages(
+declare function createChatMessages(
   chat_messages: ChatMessageCreating[],
   { insert_at, refresh }?: CreateChatMessagesOption,
 ): Promise<void>;
@@ -384,7 +391,7 @@ interface DeleteChatMessagesOption {
  * // 删除所有楼层
  * await deleteChatMessages(_.range(getLastMessageId() + 1));
  */
-async function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
+declare function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
 
 interface RotateChatMessagesOption {
   /**
@@ -414,7 +421,7 @@ interface RotateChatMessagesOption {
  * // 将前 3 楼放到最后
  * await rotateChatMessages(0, 3, getLastMessageId() + 1);
  */
-async function rotateChatMessages(
+declare function rotateChatMessages(
   begin: number,
   middle: number,
   end: number,
@@ -441,7 +448,7 @@ interface FormatAsDisplayedMessageOption {
  * const text = formatAsDisplayedMessage("{{char}} speaks in {{lastMessageId}}");
  * => "<p>少女歌剧 speaks in 5</p>";
  */
-function formatAsDisplayedMessage(text: string, { message_id }?: FormatAsDisplayedMessageOption): string;
+declare function formatAsDisplayedMessage(text: string, { message_id }?: FormatAsDisplayedMessageOption): string;
 
 /**
  * 获取消息楼层号对应的消息内容 JQuery
@@ -463,7 +470,7 @@ function formatAsDisplayedMessage(text: string, { message_id }?: FormatAsDisplay
  * retrieveDisplayedMessage(0).append("<pre>new text</pre>");
  * retrieveDisplayedMessage(0).append(formatAsDisplayedMessage("{{char}} speaks in {{lastMessageId}}"));
  */
-function retrieveDisplayedMessage(message_id: number): JQuery<HTMLDivElement>;
+declare function retrieveDisplayedMessage(message_id: number): JQuery<HTMLDivElement>;
 interface GenerateConfig {
   /** 用户输入 */
   user_input?: string;
@@ -606,7 +613,7 @@ interface Overrides {
 /**
  * 预设为内置提示词设置的默认顺序
  */
-const builtin_prompt_default_order: BuiltinPrompt[];
+declare const builtin_prompt_default_order: BuiltinPrompt[];
 
 type BuiltinPrompt =
   | 'world_info_before'
@@ -659,7 +666,7 @@ type BuiltinPrompt =
  *   }
  * });
  */
-async function generate(config: GenerateConfig): Promise<string>;
+declare function generate(config: GenerateConfig): Promise<string>;
 
 /**
  * 不使用酒馆当前启用的预设, 让 ai 生成一段文本.
@@ -692,7 +699,7 @@ async function generate(config: GenerateConfig): Promise<string>;
  *   ]
  * })
  */
-async function generateRaw(config: GenerateRawConfig): Promise<string>;
+declare function generateRaw(config: GenerateRawConfig): Promise<string>;
 interface Window {
   /**
    * 酒馆助手提供的额外功能, 具体内容见于 https://n0vi028.github.io/JS-Slash-Runner-Doc
@@ -834,7 +841,7 @@ interface GetCharLorebooksOption {
  * const settings = getLorebookSettings();
  * alert(settings.selected_global_lorebooks);
  */
-function getLorebookSettings(): LorebookSettings;
+declare function getLorebookSettings(): LorebookSettings;
 
 /**
  * 修改世界书全局设置
@@ -853,14 +860,14 @@ function getLorebookSettings(): LorebookSettings;
  *   setLorebookSettings(expected_settings);
  * }
  */
-function setLorebookSettings(settings: Partial<LorebookSettings>): void;
+declare function setLorebookSettings(settings: Partial<LorebookSettings>): void;
 
 /**
  * 获取世界书列表
  *
  * @returns 世界书名称列表
  */
-function getLorebooks(): string[];
+declare function getLorebooks(): string[];
 
 /**
  * 删除世界书
@@ -868,7 +875,7 @@ function getLorebooks(): string[];
  * @param lorebook 世界书名称
  * @returns 是否成功删除, 可能因世界书不存在等原因而失败
  */
-async function deleteLorebook(lorebook: string): Promise<boolean>;
+declare function deleteLorebook(lorebook: string): Promise<boolean>;
 
 /**
  * 新建世界书
@@ -877,7 +884,7 @@ async function deleteLorebook(lorebook: string): Promise<boolean>;
  *
  * @returns 是否成功创建, 如果已经存在同名世界书会失败
  */
-async function createLorebook(lorebook: string): Promise<boolean>;
+declare function createLorebook(lorebook: string): Promise<boolean>;
 
 interface CharLorebooks {
   primary: string | null;
@@ -893,14 +900,14 @@ interface CharLorebooks {
  *
  * @returns 一个 CharLorebook 数组
  */
-function getCharLorebooks({ name, type }?: GetCharLorebooksOption): CharLorebooks;
+declare function getCharLorebooks({ name, type }?: GetCharLorebooksOption): CharLorebooks;
 
 /**
  * 获取当前角色卡绑定的主要世界书
  *
  * @returns 如果当前角色卡有绑定并使用世界书 (地球图标呈绿色), 返回该世界书的名称; 否则返回 `null`
  */
-function getCurrentCharPrimaryLorebook(): string | null;
+declare function getCurrentCharPrimaryLorebook(): string | null;
 
 /**
  * 设置当前角色卡绑定的世界书
@@ -909,21 +916,21 @@ function getCurrentCharPrimaryLorebook(): string | null;
  *    - `primary: string | null;`: 主要世界书名称，设为null或空字符串表示移除
  *    - `additional: string[];`: 附加世界书名称数组，设为空数组表示移除所有附加世界书
  */
-async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>): Promise<void>;
+declare function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>): Promise<void>;
 
 /**
  * 获取当前聊天绑定的世界书
  *
  * @returns 当前聊天绑定的世界书名称, 或 null 表示没有绑定世界书
  */
-async function getChatLorebook(): Promise<string | null>;
+declare function getChatLorebook(): Promise<string | null>;
 
 /**
  * 设置当前聊天绑定的世界书
  *
  * @param lorebook 世界书名称, 或 null 表示移除世界书
  */
-async function setChatLorebook(lorebook: string | null): Promise<void>;
+declare function setChatLorebook(lorebook: string | null): Promise<void>;
 
 /**
  * 获取或创建当前聊天绑定的世界书
@@ -932,7 +939,7 @@ async function setChatLorebook(lorebook: string | null): Promise<void>;
  *
  * @returns 聊天世界书的名称
  */
-async function getOrCreateChatLorebook(lorebook?: string): Promise<string>;
+declare function getOrCreateChatLorebook(lorebook?: string): Promise<string>;
 interface LorebookEntry {
   /** uid 是相对于世界书内部的, 不要跨世界书使用 */
   uid: number;
@@ -999,7 +1006,7 @@ interface GetLorebookEntriesOption {
  * // 获取世界书中所有条目的所有信息
  * const entries = await getLorebookEntries("eramgt少女歌剧");
  */
-async function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
+declare function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
 
 /**
  * 完全替换世界书 `lorebook` 的所有条目为 `entries`
@@ -1018,7 +1025,7 @@ async function getLorebookEntries(lorebook: string): Promise<LorebookEntry[]>;
  * _.remove(entries, entry => entry.comment.includes('神乐光'));
  * await replaceLorebookEntries("eramgt少女歌剧", entries);
  */
-async function replaceLorebookEntries(lorebook: string, entries: Partial<LorebookEntry>[]): Promise<void>;
+declare function replaceLorebookEntries(lorebook: string, entries: Partial<LorebookEntry>[]): Promise<void>;
 
 type LorebookEntriesUpdater =
   | ((entries: LorebookEntry[]) => Partial<LorebookEntry>[])
@@ -1036,7 +1043,7 @@ type LorebookEntriesUpdater =
  * // 删除所有名字中包含 `神乐光` 的条目
  * await updateLorebookEntriesWith("eramgt少女歌剧", entries => entries.filter(entry => entry.comment.includes('神乐光')))
  */
-async function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntriesUpdater): Promise<LorebookEntry[]>;
+declare function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntriesUpdater): Promise<LorebookEntry[]>;
 
 /**
  * 将条目信息修改回对应的世界书中, 如果某个字段不存在, 则该字段采用原来的值.
@@ -1048,7 +1055,7 @@ async function updateLorebookEntriesWith(lorebook: string, updater: LorebookEntr
  *
  * @returns 更新后的世界书条目
  */
-async function setLorebookEntries(
+declare function setLorebookEntries(
   lorebook: string,
   entries: Array<Pick<LorebookEntry, 'uid'> & Partial<LorebookEntry>>,
 ): Promise<LorebookEntry[]>;
@@ -1061,7 +1068,7 @@ async function setLorebookEntries(
  *
  * @returns 更新后的世界书条目, 以及新条目的 uid
  */
-async function createLorebookEntries(
+declare function createLorebookEntries(
   lorebook: string,
   entries: Partial<LorebookEntry>[],
 ): Promise<{ entries: LorebookEntry[]; new_uids: number[] }>;
@@ -1074,17 +1081,10 @@ async function createLorebookEntries(
  *
  * @returns 更新后的世界书条目, 以及是否有发生删除
  */
-async function deleteLorebookEntries(
+declare function deleteLorebookEntries(
   lorebook: string,
   uids: number[],
 ): Promise<{ entries: LorebookEntry[]; delete_occurred: boolean }>;
-
-//----------------------------------------------------------------------------------------------------------------------
-/** @deprecated 请使用 `createLorebookEntries` 代替 */
-async function createLorebookEntry(lorebook: string, field_values: Partial<LorebookEntry>): Promise<number>;
-
-/** @deprecated 请使用 `deleteLorebookEntries` 代替 */
-async function deleteLorebookEntry(lorebook: string, lorebook_uid: number): Promise<boolean>;
 interface MacroLike {
   regex: RegExp;
   replace: (context: Context, substring: string, ...args: any[]) => string;
@@ -1106,10 +1106,11 @@ interface Context {
  *   /<checkbox>(.*?)<checkbox>/gi,
  *   (context: Context, substring: string, content: string) => { return content; });
  */
-function registerMacroLike(
+declare function registerMacroLike(
   regex: RegExp,
   replace: (context: Context, substring: string, ...args: any[]) => string,
 ): void;
+import { PartialDeep } from 'type-fest';
 
 interface PromptPreset {
   settings: {
@@ -1226,63 +1227,18 @@ interface PresetPlaceholderPrompt {
   /** 额外字段, 用于为预设提示词绑定额外数据 */
   extra?: Record<string, any>;
 }
-function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt;
-function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
-function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
+declare function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt;
+declare function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
+declare function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
 
-const default_preset: PromptPreset = {
-  settings: {
-    max_context: 2000000,
-    max_completion_tokens: 300,
-    reply_count: 1,
-
-    should_stream: false,
-
-    temperature: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    repetition_penalty: 1,
-    top_p: 1,
-    min_p: 0,
-    top_k: 0,
-    top_a: 0,
-
-    seed: -1,
-
-    squash_system_messages: false,
-
-    reasoning_effort: 'auto',
-    request_thoughts: false,
-    request_images: false,
-    enable_function_calling: false,
-    enable_web_search: false,
-
-    allow_images: 'disabled',
-    allow_videos: false,
-
-    character_name_prefix: 'none',
-    wrap_user_messages_in_quotes: false,
-  },
-  prompts: [
-    { id: 'worldInfoBefore', enabled: true, position: 'relative', role: 'system' },
-    { id: 'personaDescription', enabled: true, position: 'relative', role: 'system' },
-    { id: 'charDescription', enabled: true, position: 'relative', role: 'system' },
-    { id: 'charPersonality', enabled: true, position: 'relative', role: 'system' },
-    { id: 'scenario', enabled: true, position: 'relative', role: 'system' },
-    { id: 'worldInfoAfter', enabled: true, position: 'relative', role: 'system' },
-    { id: 'dialogueExamples', enabled: true, position: 'relative', role: 'system' },
-    { id: 'chatHistory', enabled: true, position: 'relative', role: 'system' },
-  ],
-  prompts_unused: [],
-  extensions: {},
-} as const;
+declare const default_preset: PromptPreset;
 
 /**
  * 获取预设名称列表
  *
  * @returns 预设名称列表
  */
-function getPresetNames(): string[];
+declare function getPresetNames(): string[];
 
 /**
  * 获取酒馆正在使用的预设 (`'in_use'`) 是从哪个预设加载来的.
@@ -1293,7 +1249,7 @@ function getPresetNames(): string[];
  *
  * @returns 预设名称
  */
-function getLoadedPresetName(): string;
+declare function getLoadedPresetName(): string;
 
 /**
  * 加载 `preset_name` 预设作为酒馆正在使用的预设 (`'in_use'`)
@@ -1301,7 +1257,7 @@ function getLoadedPresetName(): string;
  * @param preset_name 预设名称
  * @returns 是否成功切换, 可能因预设不存在等原因而失败
  */
-function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
+declare function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
 
 /**
  * 新建 `preset_name` 预设, 内容为 `preset`
@@ -1311,9 +1267,9 @@ function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
  *
  * @returns 是否成功创建, 如果已经存在同名预设或尝试创建名为 `'in_use'` 的预设会失败
  */
-async function createPreset(
+declare function createPreset(
   preset_name: Exclude<string, 'in_use'>,
-  preset: PromptPreset = default_preset,
+  preset?: PromptPreset,
 ): Promise<boolean>;
 
 /**
@@ -1324,9 +1280,9 @@ async function createPreset(
  *
  * @returns 如果发生创建, 则返回 `true`; 如果发生替换, 则返回 `false`
  */
-async function createOrReplacePreset(
+declare function createOrReplacePreset(
   preset_name: 'in_use' | string,
-  preset: PromptPreset = default_preset,
+  preset?: PromptPreset,
 ): Promise<boolean>;
 
 /**
@@ -1335,7 +1291,7 @@ async function createOrReplacePreset(
  * @param preset_name 预设名称
  * @returns 是否成功删除, 可能因预设不存在等原因而失败
  */
-async function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boolean>;
+declare function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boolean>;
 
 /**
  * 重命名 `preset_name` 预设为 `new_name`
@@ -1344,7 +1300,7 @@ async function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boo
  * @param new_name 新名称
  * @returns 是否成功重命名, 可能因预设不存在等原因而失败
  */
-async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: string): Promise<boolean>;
+declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: string): Promise<boolean>;
 
 /**
  * 获取 `preset_name` 预设的内容
@@ -1352,7 +1308,7 @@ async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: st
  * @param preset_name 预设名称
  * @returns 预设内容
  */
-function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
+declare function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
 
 /**
  * 完全替换 `preset_name` 预设的内容为 `preset`
@@ -1373,7 +1329,7 @@ function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
  * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
  * await replacePreset('预设B', preset_b);
  */
-async function replacePreset(preset_name: 'in_use' | string, preset: PromptPreset): Promise<void>;
+declare function replacePreset(preset_name: 'in_use' | string, preset: PromptPreset): Promise<void>;
 
 type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: PromptPreset) => Promise<PromptPreset>);
 /**
@@ -1399,7 +1355,7 @@ type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: Prompt
  *   return preset;
  * });
  */
-async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<PromptPreset>;
+declare function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<PromptPreset>;
 
 /**
  * 将预设内容修改回预设中, 如果某个内容不存在, 则该内容将会采用原来的值
@@ -1419,7 +1375,7 @@ async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetU
  *   prompts: [...getPreset('预设A').prompts, ...getPreset('预设B').prompts],
  * });
  */
-async function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<PromptPreset>): Promise<PromptPreset>;
+declare function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<PromptPreset>): Promise<PromptPreset>;
 interface ScriptButton {
   name: string;
   visible: boolean;
@@ -1434,12 +1390,7 @@ interface ScriptButton {
  * // 在脚本内获取当前脚本的按钮设置
  * const buttons = getScriptButtons(getScriptId());
  */
-function getScriptButtons(script_id: string): ScriptButton[] {
-  if (!script_id) {
-    throw new Error('脚本ID不能为空');
-  }
-  return ScriptManager.getInstance().getScriptButton(script_id);
-}
+declare function getScriptButtons(script_id: string): ScriptButton[];
 
 /**
  * 替换指定脚本的按钮设置
@@ -1456,21 +1407,7 @@ function getScriptButtons(script_id: string): ScriptButton[] {
  *   replaceScriptButtons(getScriptId(), [{name: '学校', visible: true}, {name: '商店', visible: true}])
  * })
  */
-function replaceScriptButtons(script_id: string, buttons: ScriptButton[]): void {
-  if (!script_id) {
-    throw new Error(`脚本ID不能为空`);
-  }
-
-  const script = ScriptManager.getInstance().getScriptById(script_id);
-  if (!script) {
-    throw new Error(`脚本不存在: ${script_id}`);
-  }
-
-  const type = ScriptData.getInstance().getScriptType(script);
-
-  script.buttons = buttons;
-  ScriptManager.getInstance().setScriptButton(script, type);
-}
+declare function replaceScriptButtons(script_id: string, buttons: ScriptButton[]): void;
 /**
  * 运行 Slash 命令, 注意如果命令写错了将不会有任何反馈
  *
@@ -1487,7 +1424,7 @@ function replaceScriptButtons(script_id: string, buttons: ScriptButton[]): void 
  * // 获取当前聊天消息最后一条消息对应的 id
  * const last_message_id = await triggerSlash('/pass {{lastMessageId}}');
  */
-async function triggerSlash(command: string): Promise<string>;
+declare function triggerSlash(command: string): Promise<string>;
 interface FormatAsTavernRegexedStringOption {
   /** 文本所在的深度; 不填则不考虑酒馆正则的`深度`选项: 无论该深度是否在酒馆正则的`最小深度`和`最大深度`范围内都生效 */
   depth?: number;
@@ -1510,11 +1447,11 @@ interface FormatAsTavernRegexedStringOption {
  * const message = getChatMessages(-1)[0];
  * const result = formatAsTavernRegexedString(message.message, 'ai_output', 'display', { depth: 0 });
  */
-function formatAsTavernRegexedString(
+declare function formatAsTavernRegexedString(
   text: string,
   source: 'user_input' | 'ai_output' | 'slash_command' | 'world_info' | 'reasoning',
   destination: 'display' | 'prompt',
-  { depth, character_name }: FormatAsTavernRegexedStringOption = {},
+  { depth, character_name }?: FormatAsTavernRegexedStringOption,
 );
 
 interface TavernRegex {
@@ -1542,7 +1479,7 @@ interface TavernRegex {
 /**
  * 判断局部正则是否启用
  */
-function isCharacterTavernRegexesEnabled(): boolean;
+declare function isCharacterTavernRegexesEnabled(): boolean;
 
 interface GetTavernRegexesOption {
   scope?: 'all' | 'global' | 'character';
@@ -1558,7 +1495,7 @@ interface GetTavernRegexesOption {
  *
  * @returns 一个数组, 数组的元素是酒馆正则 `TavernRegex`. 该数组依据正则作用于文本的顺序排序, 也就是酒馆显示正则的地方从上到下排列.
  */
-function getTavernRegexes({ scope, enable_state }?: GetTavernRegexesOption): TavernRegex[];
+declare function getTavernRegexes({ scope, enable_state }?: GetTavernRegexesOption): TavernRegex[];
 
 interface ReplaceTavernRegexesOption {
   scope?: 'all' | 'global' | 'character';
@@ -1575,7 +1512,7 @@ interface ReplaceTavernRegexesOption {
  * @param option 可选选项
  *   - scope?: 'all' | 'global' | 'character';  // 要替换的酒馆正则部分; 默认为 'all'
  */
-function replaceTavernRegexes(regexes: TavernRegex[], { scope }: ReplaceTavernRegexesOption): Promise<void>;
+declare function replaceTavernRegexes(regexes: TavernRegex[], { scope }: ReplaceTavernRegexesOption): Promise<void>;
 
 type TavernRegexUpdater =
   | ((regexes: TavernRegex[]) => TavernRegex[])
@@ -1601,7 +1538,7 @@ type TavernRegexUpdater =
  *   return regexes;
  * });
  */
-function updateTavernRegexesWith(
+declare function updateTavernRegexesWith(
   updater: TavernRegexUpdater,
   option?: ReplaceTavernRegexesOption,
 ): Promise<TavernRegex[]>;
@@ -1615,14 +1552,14 @@ function updateTavernRegexesWith(
  * const text = substitudeMacros("{{char}} speaks in {{lastMessageId}}");
  * text == "少女歌剧 speaks in 5";
  */
-function substitudeMacros(text: string): string;
+declare function substitudeMacros(text: string): string;
 
 /**
  * 获取最新楼层 id
  *
  * @returns 最新楼层id
  */
-function getLastMessageId(): number;
+declare function getLastMessageId(): number;
 
 /**
  * 包装 `fn` 函数，返回一个会将报错消息通过酒馆通知显示出来的同功能函数
@@ -1632,12 +1569,12 @@ function getLastMessageId(): number;
  *
  * @example
  * // 包装 `test` 函数从而在酒馆通知中显示 'test' 文本
- * async function test() {
+ *  function test() {
  *   throw Error(`test`);
  * }
  * errorCatched(test)();
  */
-function errorCatched<T extends any[], U>(fn: (...args: T) => U): (...args: T) => U;
+declare function errorCatched<T extends any[], U>(fn: (...args: T) => U): (...args: T) => U;
 interface VariableOption {
   /**
    * 对某一楼层的聊天变量 (`message`)、聊天变量 (`'chat'`)、角色卡变量 (`'character'`)、聊天变量 (`'script'`) 或全局变量 (`'global'`) 进行操作, 默认为 `'chat'`
@@ -1686,7 +1623,7 @@ interface VariableOption {
  * // 在脚本内获取该脚本绑定的变量
  * const variables = getVariables({type: 'script', script_id: getScriptId()});
  */
-function getVariables({ type, message_id, script_id }?: VariableOption): Record<string, any>;
+declare function getVariables({ type, message_id, script_id }?: VariableOption): Record<string, any>;
 
 /**
  * 完全替换变量表为 `variables`
@@ -1715,7 +1652,7 @@ function getVariables({ type, message_id, script_id }?: VariableOption): Record<
  * // 在脚本内替换该脚本绑定的变量
  * await replaceVariables({神乐光: {好感度: 5, 认知度: 0}}, {type: 'script', script_id: getScriptId()});
  */
-async function replaceVariables(
+declare function replaceVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -1743,7 +1680,7 @@ type VariablesUpdater =
  * // 更新 "爱城华恋.好感度" 为原来的 2 倍, 如果该变量不存在则设置为 0
  * await updateVariablesWith(variables => _.update(variables, "爱城华恋.好感度", value => value ? value * 2 : 0));
  */
-async function updateVariablesWith(
+declare function updateVariablesWith(
   updater: VariablesUpdater,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<Record<string, any>>;
@@ -1764,7 +1701,7 @@ async function updateVariablesWith(
  * await insertOrAssignVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
  * // 执行后变量: `{爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}}`
  */
-async function insertOrAssignVariables(
+declare function insertOrAssignVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -1785,7 +1722,7 @@ async function insertOrAssignVariables(
  * await insertVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
  * // 执行后变量: `{爱城华恋: {好感度: 5}, 神乐光: {好感度: 5, 认知度: 0}}`
  */
-async function insertVariables(
+declare function insertVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -1808,19 +1745,19 @@ async function insertVariables(
  * await deleteVariable("爱城华恋.好感度");
  * // 执行后变量: `{爱城华恋: {}}`
  */
-async function deleteVariable(
+declare function deleteVariable(
   variable_path: string,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<boolean>;
 /**
  * 获取酒馆助手版本号
  */
-async function getTavernHelperVersion(): Promise<string>;
+declare function getTavernHelperVersion(): Promise<string>;
 
 /**
  * 更新酒馆助手
  */
-async function updateTavernHelper(): Promise<boolean>;
+declare function updateTavernHelper(): Promise<boolean>;
 /**
  * 事件可以是
  * - `iframe_events` 中的 iframe 事件
@@ -1849,7 +1786,7 @@ type EventType = IframeEventType | TavernEventType | string;
  * }
  * eventOn(tavern_events.MESSAGE_UPDATED, detectMessageUpdated);
  */
-function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 监听 `event_type`, 按下脚本库中附加了按钮的脚本时自动运行 `listener`.
@@ -1863,7 +1800,7 @@ function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]):
  * function hello() { alert("hello"); }
  * eventOnButton(对应的按钮名称, hello);
  */
-function eventOnButton<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventOnButton<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 监听 `event_type`, 当事件发生时自动在最后运行 `listener`.
@@ -1876,7 +1813,7 @@ function eventOnButton<T extends EventType>(event_type: T, listener: ListenerTyp
  * @example
  * eventMakeLast(要监听的事件, 要注册的函数);
  */
-function eventMakeLast<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventMakeLast<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 监听 `event_type`, 当事件发生时自动在最先运行 `listener`.
@@ -1889,7 +1826,7 @@ function eventMakeLast<T extends EventType>(event_type: T, listener: ListenerTyp
  * @example
  * eventMakeFirst(要监听的事件, 要注册的函数);
  */
-function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 让 `listener` 仅监听下一次 `event_type`, 当该次事件发生时运行 `listener`, 此后取消监听.
@@ -1902,7 +1839,7 @@ function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerTy
  * @example
  * eventOnce(要监听的事件, 要注册的函数);
  */
-function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 等待一次 `event_type` 事件
@@ -1912,7 +1849,7 @@ function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]
  * @example
  * await eventWaitOnce(tavern_events.MESSAGE_DELETED);
  */
-async function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
+declare function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
 
 /**
  * 等待 `listener` 监听到一次 `event_type` 且执行完成, 返回 `listener` 的执行结果
@@ -1928,7 +1865,7 @@ async function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
  * eventOnce("存档", save);
  * await eventWaitOnce("存档", save);
  */
-async function eventWaitOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): Promise<any | undefined>;
+declare function eventWaitOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): Promise<any | undefined>;
 
 /**
  * 发送 `event_type` 事件, 同时可以发送一些数据 `data`.
@@ -1950,7 +1887,7 @@ async function eventWaitOnce<T extends EventType>(event_type: T, listener: Liste
  * // 发送时携带数据 ["你好", 0]
  * eventEmit("事件", "你好", 0);
  */
-async function eventEmit<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): Promise<void>;
+declare function eventEmit<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): Promise<void>;
 
 /**
  * 携带 `data` 而发送 `event_type` 事件并等待事件处理结束.
@@ -1958,7 +1895,7 @@ async function eventEmit<T extends EventType>(event_type: T, ...data: Parameters
  * @param event_type 要发送的事件
  * @param data 要随着事件发送的数据
  */
-function eventEmitAndWait<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): void
+declare function eventEmitAndWait<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): void;
 
 /**
  * 让 `listener` 取消对 `event_type` 的监听.
@@ -1971,26 +1908,26 @@ function eventEmitAndWait<T extends EventType>(event_type: T, ...data: Parameter
  * @example
  * eventRemoveListener(要监听的事件, 要取消注册的函数);
  */
-function eventRemoveListener<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
+declare function eventRemoveListener<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
  * 取消本 iframe 中对 `event_type` 的所有监听
  *
  * @param event_type 要取消监听的事件
  */
-function eventClearEvent(event_type: EventType): void;
+declare function eventClearEvent(event_type: EventType): void;
 
 /**
  * 取消本 iframe 中 `listener` 的的所有监听
  *
  * @param listener 要取消注册的函数
  */
-function eventClearListener(listener: Function): void;
+declare function eventClearListener(listener: Function): void;
 
 /**
  * 取消本 iframe 中对所有事件的所有监听
  */
-function eventClearAll(): void;
+declare function eventClearAll(): void;
 
 //------------------------------------------------------------------------------------------------------------------------
 // 以下是可用的事件, 你可以发送和监听它们
@@ -1998,23 +1935,23 @@ function eventClearAll(): void;
 type IframeEventType = (typeof iframe_events)[keyof typeof iframe_events];
 
 // iframe 事件
-const iframe_events = {
-  MESSAGE_IFRAME_RENDER_STARTED: 'message_iframe_render_started',
-  MESSAGE_IFRAME_RENDER_ENDED: 'message_iframe_render_ended',
+declare const iframe_events: {
+  MESSAGE_IFRAME_RENDER_STARTED: 'message_iframe_render_started';
+  MESSAGE_IFRAME_RENDER_ENDED: 'message_iframe_render_ended';
   /** `generate` 函数开始生成 */
-  GENERATION_STARTED: 'js_generation_started',
+  GENERATION_STARTED: 'js_generation_started';
   /** 启用流式传输的 `generate` 函数传输当前完整文本: "这是", "这是一条", "这是一条流式传输" */
-  STREAM_TOKEN_RECEIVED_FULLY: 'js_stream_token_received_fully',
+  STREAM_TOKEN_RECEIVED_FULLY: 'js_stream_token_received_fully';
   /** 启用流式传输的 `generate` 函数传输当前增量文本: "这是", "一条", "流式传输" */
-  STREAM_TOKEN_RECEIVED_INCREMENTALLY: 'js_stream_token_received_incrementally',
+  STREAM_TOKEN_RECEIVED_INCREMENTALLY: 'js_stream_token_received_incrementally';
   /** `generate` 函数完成生成 */
-  GENERATION_ENDED: 'js_generation_ended',
-} as const;
+  GENERATION_ENDED: 'js_generation_ended';
+};
 
 type TavernEventType = (typeof tavern_events)[keyof typeof tavern_events];
 
 // 酒馆事件. **不建议自己发送酒馆事件, 因为你并不清楚它需要发送什么数据**
-const tavern_events = {
+declare const tavern_events: {
   APP_READY: 'app_ready',
   EXTRAS_CONNECTED: 'extras_connected',
   MESSAGE_SWIPED: 'message_swiped',
@@ -2078,7 +2015,7 @@ const tavern_events = {
   CONNECTION_PROFILE_LOADED: 'connection_profile_loaded',
   TOOL_CALLS_PERFORMED: 'tool_calls_performed',
   TOOL_CALLS_RENDERED: 'tool_calls_rendered',
-} as const;
+};
 
 type ListenerType = {
   [iframe_events.MESSAGE_IFRAME_RENDER_STARTED]: (iframe_name: string) => void;
@@ -2222,7 +2159,7 @@ type ListenerType = {
  * 提示词模板语法插件所提供的额外功能, 必须额外安装提示词模板语法插件, 具体内容见于 https://github.com/zonde306/ST-Prompt-Template
  * 你也可以在酒馆页面按 f12,在控制台中输入 `window.EjsTemplate` 来查看当前提示词模板语法所提供的接口
  */
-const EjsTemplate: {
+declare const EjsTemplate: {
   /**
    * 对文本进行模板语法处理
    * @note `context` 一般从 `prepareContext` 获取, 若要修改则应直接修改原始对象
@@ -2245,18 +2182,18 @@ const EjsTemplate: {
    * const result   = compiled({ 'user': 'fred' });;
    * => result === 'hello user!'
    */
-  evaltemplate: (code: string, context: Record<string, any> = {}, options: Record<string, any> = {}) => Promise<string>;
+  evaltemplate: (code: string, context?: Record<string, any>, options?: Record<string, any>) => Promise<string>;
 
   /**
    * 创建模板语法处理使用的执行环境 (上下文)
    *
    * @param additional_context 附加的执行环境 (上下文)
-   * @param last_message_id 合并消息变量的最大 ID
+   * @param last_message_id 合并消息变量的最大 ID; 默认为所有
    * @returns 执行环境 (上下文)
    */
   prepareContext: (
-    additional_context: Record<string, any> = {},
-    last_message_id: number = 65535,
+    additional_context?: Record<string, any>,
+    last_message_id?: number,
   ) => Promise<Record<string, any>>;
 
   /**
@@ -2264,10 +2201,10 @@ const EjsTemplate: {
    * 并不会实际执行
    *
    * @param content 模板代码
-   * @param output_line_count 发生错误时输出的附近行数
+   * @param output_line_count 发生错误时输出的附近行数; 默认为 4
    * @returns 语法错误信息, 无错误返回空字符串
    */
-  getSyntaxErrorInfo: (code: string, output_line_count: number = 4) => Promise<string>;
+  getSyntaxErrorInfo: (code: string, output_line_count?: number) => Promise<string>;
 
   /**
    * 获取全局变量、聊天变量、消息楼层变量的并集
@@ -2306,7 +2243,7 @@ const EjsTemplate: {
    */
   resetFeatures: () => void;
 };
-namespace SillyTavern {
+declare namespace SillyTavern {
   interface ChatMessage {
     message_id: number;
     name: string;
@@ -2327,13 +2264,250 @@ namespace SillyTavern {
     variables?: Record<string, any>[];
     extra?: Record<string, any>;
   }
+
+  /**
+   * V1 character data structure.
+   */
+  interface v1CharData {
+    /** the name of the character */
+    name: string;
+    /** the description of the character */
+    description: string;
+    /** a short personality description of the character */
+    personality: string;
+    /** a scenario description of the character */
+    scenario: string;
+    /** the first message in the conversation */
+    first_mes: string;
+    /** the example message in the conversation */
+    mes_example: string;
+    /** creator's notes of the character */
+    creatorcomment: string;
+    /** the tags of the character */
+    tags: string[];
+    /** talkativeness */
+    talkativeness: number;
+    /** fav */
+    fav: boolean | string;
+    /** create_date */
+    create_date: string;
+    /** v2 data extension */
+    data: v2CharData;
+    // Non-standard extensions added by the ST server (not part of the original data)
+    /** name of the current chat file chat */
+    chat: string;
+    /** file name of the avatar image (acts as a unique identifier) */
+    avatar: string;
+    /** the full raw JSON data of the character */
+    json_data: string;
+    /** if the data is shallow (lazy-loaded) */
+    shallow?: boolean;
+  }
+
+  /**
+   * V2 character data structure.
+   */
+  interface v2CharData {
+    /** The character's name. */
+    name: string;
+    /** A brief description of the character. */
+    description: string;
+    /** The character's data version. */
+    character_version: string;
+    /** A short summary of the character's personality traits. */
+    personality: string;
+    /** A description of the character's background or setting. */
+    scenario: string;
+    /** The character's opening message in a conversation. */
+    first_mes: string;
+    /** An example message demonstrating the character's conversation style. */
+    mes_example: string;
+    /** Internal notes or comments left by the character's creator. */
+    creator_notes: string;
+    /** A list of keywords or labels associated with the character. */
+    tags: string[];
+    /** The system prompt used to interact with the character. */
+    system_prompt: string;
+    /** Instructions for handling the character's conversation history. */
+    post_history_instructions: string;
+    /** The name of the person who created the character. */
+    creator: string;
+    /** Additional greeting messages the character can use. */
+    alternate_greetings: string[];
+    /** Data about the character's world or story (if applicable). */
+    character_book: v2WorldInfoBook;
+    /** Additional details specific to the character. */
+    extensions: v2CharDataExtensionInfos;
+  }
+
+  /**
+   * A world info book containing entries.
+   */
+  interface v2WorldInfoBook {
+    /** the name of the book */
+    name: string;
+    /** the entries of the book */
+    entries: v2DataWorldInfoEntry[];
+  }
+
+  /**
+   * A world info entry object.
+   */
+  interface v2DataWorldInfoEntry {
+    /** An array of primary keys associated with the entry. */
+    keys: string[];
+    /** An array of secondary keys associated with the entry (optional). */
+    secondary_keys: string[];
+    /** A human-readable description or explanation for the entry. */
+    comment: string;
+    /** The main content or data associated with the entry. */
+    content: string;
+    /** Indicates if the entry's content is fixed and unchangeable. */
+    constant: boolean;
+    /** Indicates if the entry's inclusion is controlled by specific conditions. */
+    selective: boolean;
+    /** Defines the order in which the entry is inserted during processing. */
+    insertion_order: number;
+    /** Controls whether the entry is currently active and used. */
+    enabled: boolean;
+    /** Specifies the location or context where the entry applies. */
+    position: string;
+    /** An object containing additional details for extensions associated with the entry. */
+    extensions: v2DataWorldInfoEntryExtensionInfos;
+    /** A unique identifier assigned to the entry. */
+    id: number;
+  }
+
+  /**
+   * An object containing additional details for extensions associated with the entry.
+   */
+  interface v2DataWorldInfoEntryExtensionInfos {
+    /** The order in which the extension is applied relative to other extensions. */
+    position: number;
+    /** Prevents the extension from being applied recursively. */
+    exclude_recursion: boolean;
+    /** The chance (between 0 and 1) of the extension being applied. */
+    probability: number;
+    /** Determines if the `probability` property is used. */
+    useProbability: boolean;
+    /** The maximum level of nesting allowed for recursive application of the extension. */
+    depth: number;
+    /** Defines the logic used to determine if the extension is applied selectively. */
+    selectiveLogic: number;
+    /** A category or grouping for the extension. */
+    group: string;
+    /** Overrides any existing group assignment for the extension. */
+    group_override: boolean;
+    /** A value used for prioritizing extensions within the same group. */
+    group_weight: number;
+    /** Completely disallows recursive application of the extension. */
+    prevent_recursion: boolean;
+    /** Will only be checked during recursion. */
+    delay_until_recursion: boolean;
+    /** The maximum depth to search for matches when applying the extension. */
+    scan_depth: number;
+    /** Specifies if only entire words should be matched during extension application. */
+    match_whole_words: boolean;
+    /** Indicates if group weight is considered when selecting extensions. */
+    use_group_scoring: boolean;
+    /** Controls whether case sensitivity is applied during matching for the extension. */
+    case_sensitive: boolean;
+    /** An identifier used for automation purposes related to the extension. */
+    automation_id: string;
+    /** The specific function or purpose of the extension. */
+    role: number;
+    /** Indicates if the extension is optimized for vectorized processing. */
+    vectorized: boolean;
+    /** The order in which the extension should be displayed for user interfaces. */
+    display_index: number;
+    /** Wether to match against the persona description. */
+    match_persona_description: boolean;
+    /** Wether to match against the persona description. */
+    match_character_description: boolean;
+    /** Wether to match against the character personality. */
+    match_character_personality: boolean;
+    /** Wether to match against the character depth prompt. */
+    match_character_depth_prompt: boolean;
+    /** Wether to match against the character scenario. */
+    match_scenario: boolean;
+    /** Wether to match against the character creator notes. */
+    match_creator_notes: boolean;
+  }
+
+  /**
+   * Additional details specific to the character.
+   */
+  interface v2CharDataExtensionInfos {
+    /** A numerical value indicating the character's propensity to talk. */
+    talkativeness: number;
+    /** A flag indicating whether the character is a favorite. */
+    fav: boolean;
+    /** The fictional world or setting where the character exists (if applicable). */
+    world: string;
+    /** Prompts used to explore the character's depth and complexity. */
+    depth_prompt: {
+      /** The level of detail or nuance targeted by the prompt. */
+      depth: number;
+      /** The actual prompt text used for deeper character interaction. */
+      prompt: string;
+      /** The role the character takes on during the prompted interaction (system, user, or assistant). */
+      role: 'system' | 'user' | 'assistant';
+    };
+    /** Custom regex scripts for the character. */
+    regex_scripts: RegexScriptData[];
+    // Non-standard extensions added by external tools
+    /** The unique identifier assigned to the character by the Pygmalion.chat. */
+    pygmalion_id?: string;
+    /** The gitHub repository associated with the character. */
+    github_repo?: string;
+    /** The source URL associated with the character. */
+    source_url?: string;
+    /** The Chub-specific data associated with the character. */
+    chub?: { full_path: string };
+    /** The RisuAI-specific data associated with the character. */
+    risuai?: { source: string[] };
+    /** SD-specific data associated with the character. */
+    sd_character_prompt?: { positive: string; negative: string };
+  }
+
+  /**
+   * Regex script data for character processing.
+   */
+  interface RegexScriptData {
+    /** UUID of the script */
+    id: string;
+    /** The name of the script */
+    scriptName: string;
+    /** The regex to find */
+    findRegex: string;
+    /** The string to replace */
+    replaceString: string;
+    /** The strings to trim */
+    trimStrings: string[];
+    /** The placement of the script */
+    placement: number[];
+    /** Whether the script is disabled */
+    disabled: boolean;
+    /** Whether the script only applies to Markdown */
+    markdownOnly: boolean;
+    /** Whether the script only applies to prompts */
+    promptOnly: boolean;
+    /** Whether the script runs on edit */
+    runOnEdit: boolean;
+    /** Whether the regex should be substituted */
+    substituteRegex: number;
+    /** The minimum depth */
+    minDepth: number;
+    /** The maximum depth */
+    maxDepth: number;
+  }
 }
 
 /**
  * 酒馆提供给插件的稳定接口, 具体内容见于 SillyTavern/public/scripts/st-context.js 或 https://github.com/SillyTavern/SillyTavern/blob/release/public/scripts/st-context.js
  * 你也可以在酒馆页面按 f12, 在控制台中输入 `window.SillyTavern.getContext()` 来查看当前酒馆所提供的接口
  */
-const SillyTavern: {
+declare const SillyTavern: {
   readonly accountStorage: any;
   readonly chat: Array<SillyTavern.ChatMessage>;
   readonly characters: any;
@@ -2358,13 +2532,13 @@ const SillyTavern: {
   readonly chatMetadata: Record<string, any>;
   readonly streamingProcessor: any;
   readonly eventSource: {
-    on: typeof eventOn,
-    makeLast: typeof eventMakeLast,
-    makeFirst: typeof eventMakeFirst,
-    removeListener: typeof eventRemoveListener,
-    emit: typeof eventEmit,
-    emitAndWait: typeof eventEmitAndWait,
-    once: typeof eventOnce,
+    on: typeof eventOn;
+    makeLast: typeof eventMakeLast;
+    makeFirst: typeof eventMakeFirst;
+    removeListener: typeof eventRemoveListener;
+    emit: typeof eventEmit;
+    emitAndWait: typeof eventEmitAndWait;
+    once: typeof eventOnce;
   };
   readonly eventTypes: typeof tavern_events;
   readonly addOneMessage: (mes: object, options: any) => Promise<void>;
@@ -2402,7 +2576,7 @@ const SillyTavern: {
     original?: string,
     group?: string,
     replace_character_card?: boolean,
-    additional_macro: Record<string, any>,
+    additional_macro?: Record<string, any>,
     post_process_function?: (text: string) => string,
   ) => Promise<void>;
   readonly substituteParamsExtended: (
@@ -2410,10 +2584,10 @@ const SillyTavern: {
     additional_macro?: Record<string, any>,
     post_process_function?: (text: string) => string,
   ) => Promise<void>;
-  readonly SlashCommandParser: Type;
-  readonly SlashCommand: Type;
-  readonly SlashCommandArgument: Type;
-  readonly SlashCommandNamedArgument: Type;
+  readonly SlashCommandParser: any;
+  readonly SlashCommand: any;
+  readonly SlashCommandArgument: any;
+  readonly SlashCommandNamedArgument: any;
   readonly ARGUMENT_TYPE: {
     STRING: string;
     NUMBER: string;
@@ -2433,7 +2607,7 @@ const SillyTavern: {
   readonly unregisterFunctionTool: (name: string) => void;
   readonly isToolCallingSupported: () => boolean;
   readonly canPerformToolCalls: (type: string) => boolean;
-  readonly ToolManager: Type;
+  readonly ToolManager: any;
   readonly registerDebugFunction: (function_id: string, name: string, description: string, fn: Function) => void;
   readonly renderExtensionTemplateAsync: (
     extension_name: string,
@@ -2454,7 +2628,7 @@ const SillyTavern: {
   readonly mainApi: any;
   /** extension_settings */
   readonly extensionSettings: Record<string, any>;
-  readonly ModuleWorkerWrapper: Type;
+  readonly ModuleWorkerWrapper: any;
   readonly getTokenizerModel: () => string;
   readonly generateQuietPrompt: () => (
     quiet_prompt: string,
@@ -2488,8 +2662,8 @@ const SillyTavern: {
     [identifier: string]: string[];
   };
   readonly menuType: any;
-  readonly createCharacterData: record<string, any>;
-  readonly Popup: Type;
+  readonly createCharacterData: Record<string, any>;
+  readonly Popup: any;
   readonly POPUP_TYPE: {
     TEXT: number;
     CONFIRM: number;
@@ -2557,9 +2731,9 @@ const SillyTavern: {
   readonly getChatCompletionModel: (source?: string) => string;
   readonly printMessages: () => Promise<void>;
   readonly clearChat: () => Promise<void>;
-  readonly ChatCompletionService: Type;
-  readonly TextCompletionService: Type;
-  readonly ConnectionManagerRequestService: Type;
+  readonly ChatCompletionService: any;
+  readonly TextCompletionService: any;
+  readonly ConnectionManagerRequestService: any;
   readonly updateReasoningUI: (
     message_id_or_element: number | JQuery<HTMLElement> | HTMLElement,
     { reset }?: { reset?: boolean },
@@ -2568,34 +2742,34 @@ const SillyTavern: {
   readonly unshallowCharacter: (character_id?: string) => Promise<void>;
   readonly unshallowGroupMembers: (group_id: string) => Promise<void>;
   readonly symbols: {
-    ignore: IGNORE_SYMBOL;
+    ignore: any;
   };
 };
 /**
  * 酒馆助手提供的额外功能, 具体内容见于 https://n0vi028.github.io/JS-Slash-Runner-Doc
  * 你也可以在酒馆页面按 f12, 在控制台中输入 `window.TavernHelper` 来查看当前酒馆助手所提供的接口
  */
-const TavernHelper: typeof window.TavernHelper;
+declare const TavernHelper: typeof window.TavernHelper;
 /**
  * 获取 iframe 的名称
  *
  * @returns 对于楼层消息是 `message-iframe-楼层id-是该楼层第几个iframe`; 对于全局脚本是 `script-iframe-脚本名称`; 对于脚本库是 `tavern-helper-script-脚本名称`
  */
-function getIframeName(): string;
+declare function getIframeName(): string;
 
 /**
  * 获取脚本的脚本库 id, **只能在脚本内使用**
  *
  * @returns 脚本库的 id
  */
-function getScriptId(): string;
+declare function getScriptId(): string;
 
 /**
  * 获取本消息楼层 iframe 所在楼层的楼层 id, **只能对楼层消息 iframe** 使用
  *
  * @returns 楼层 id
  */
-function getCurrentMessageId(): number;
+declare function getCurrentMessageId(): number;
 
 /**
  * 从消息楼层 iframe 的 `iframe_name` 获取它所在楼层的楼层 id, **只能对楼层消息 iframe** 使用
@@ -2603,7 +2777,7 @@ function getCurrentMessageId(): number;
  * @param iframe_name 消息楼层 iframe 的名称
  * @returns 楼层 id
  */
-function getMessageId(iframe_name: string): number;
+declare function getMessageId(iframe_name: string): number;
 /**
  * 获取合并后的变量表
  * - 如果在消息楼层 iframe 中调用本函数, 则获取 全局→角色卡→聊天→0号消息楼层→中间所有消息楼层→当前消息楼层 的合并结果
