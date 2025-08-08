@@ -4,7 +4,7 @@ import { getPresetManager } from '@sillytavern/scripts/preset-manager';
 import { uuidv4 } from '@sillytavern/scripts/utils';
 import { PartialDeep } from 'type-fest';
 
-interface PromptPreset {
+interface Preset {
   settings: {
     max_context: number;
     max_completion_tokens: number;
@@ -105,7 +105,7 @@ export function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is Prese
   ].includes(prompt.id);
 }
 
-export const default_preset: PromptPreset = {
+export const default_preset: Preset = {
   settings: {
     max_context: 2000000,
     max_completion_tokens: 300,
@@ -350,7 +350,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
   return result as _OriginalPrompt;
 }
 
-function toPreset(preset: _OriginalPreset): PromptPreset {
+function toPreset(preset: _OriginalPreset): Preset {
   const prompt_order =
     preset.prompt_order
       .find(order => order.character_id === 100001)
@@ -413,7 +413,7 @@ function toPreset(preset: _OriginalPreset): PromptPreset {
     extensions: preset.extensions,
   };
 }
-function fromPreset(preset: PromptPreset): _OriginalPreset {
+function fromPreset(preset: Preset): _OriginalPreset {
   const id_set = new Set<string>();
   const handle_id_collision = (id: string, is_normal_prompt: boolean): string => {
     if (!id_set.has(id)) {
@@ -506,7 +506,7 @@ export function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean {
 
 export async function createPreset(
   preset_name: Exclude<string, 'in_use'>,
-  preset: PromptPreset = default_preset,
+  preset: Preset = default_preset,
 ): Promise<boolean> {
   if (getPresetNames().includes(preset_name)) {
     return false;
@@ -554,7 +554,7 @@ function updateOriginalPresetData(
 }
 export async function createOrReplacePreset(
   preset_name: 'in_use' | string,
-  preset: PromptPreset = default_preset,
+  preset: Preset = default_preset,
 ): Promise<boolean> {
   const original_preset = fromPreset(preset);
 
@@ -598,7 +598,7 @@ export async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_n
   return true;
 }
 
-export function getPreset(preset_name: 'in_use' | string): PromptPreset | null {
+export function getPreset(preset_name: 'in_use' | string): Preset | null {
   const original_preset =
     preset_name === 'in_use' ? oai_settings : preset_manager.getCompletionPresetByName(preset_name);
   if (!original_preset) {
@@ -607,16 +607,16 @@ export function getPreset(preset_name: 'in_use' | string): PromptPreset | null {
   return structuredClone(toPreset(original_preset));
 }
 
-export async function replacePreset(preset_name: 'in_use' | string, preset: PromptPreset): Promise<void> {
+export async function replacePreset(preset_name: 'in_use' | string, preset: Preset): Promise<void> {
   if (!getPresetNames().includes(preset_name)) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
   await createOrReplacePreset(preset_name, preset);
 }
 
-type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: PromptPreset) => Promise<PromptPreset>);
+type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise<Preset>);
 
-export async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<PromptPreset> {
+export async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<Preset> {
   if (!getPresetNames().includes(preset_name)) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
@@ -627,8 +627,8 @@ export async function updatePresetWith(preset_name: 'in_use' | string, updater: 
 
 export async function setPreset(
   preset_name: 'in_use' | string,
-  preset: PartialDeep<PromptPreset>,
-): Promise<PromptPreset> {
+  preset: PartialDeep<Preset>,
+): Promise<Preset> {
   return await updatePresetWith(preset_name, old_preset => {
     return {
       settings: _.defaultsDeep(preset.settings, old_preset.settings),

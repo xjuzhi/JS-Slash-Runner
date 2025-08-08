@@ -1,6 +1,6 @@
 import { PartialDeep } from 'type-fest';
 
-interface PromptPreset {
+interface Preset {
   settings: {
     /** 最大上下文 token 数 */
     max_context: number;
@@ -119,7 +119,7 @@ declare function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNor
 declare function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
 declare function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
 
-declare const default_preset: PromptPreset;
+declare const default_preset: Preset;
 
 /**
  * 获取预设名称列表
@@ -157,7 +157,7 @@ declare function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
  */
 declare function createPreset(
   preset_name: Exclude<string, 'in_use'>,
-  preset?: PromptPreset,
+  preset?: Preset,
 ): Promise<boolean>;
 
 /**
@@ -170,7 +170,7 @@ declare function createPreset(
  */
 declare function createOrReplacePreset(
   preset_name: 'in_use' | string,
-  preset?: PromptPreset,
+  preset?: Preset,
 ): Promise<boolean>;
 
 /**
@@ -196,7 +196,7 @@ declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: 
  * @param preset_name 预设名称
  * @returns 预设内容
  */
-declare function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
+declare function getPreset(preset_name: 'in_use' | string): Preset | null;
 
 /**
  * 完全替换 `preset_name` 预设的内容为 `preset`
@@ -217,9 +217,9 @@ declare function getPreset(preset_name: 'in_use' | string): PromptPreset | null;
  * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
  * await replacePreset('预设B', preset_b);
  */
-declare function replacePreset(preset_name: 'in_use' | string, preset: PromptPreset): Promise<void>;
+declare function replacePreset(preset_name: 'in_use' | string, preset: Preset): Promise<void>;
 
-type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: PromptPreset) => Promise<PromptPreset>);
+type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise<Preset>);
 /**
  * 用 `updater` 函数更新 `preset_name` 预设
  *
@@ -243,7 +243,7 @@ type PresetUpdater = ((preset: PromptPreset) => PromptPreset) | ((preset: Prompt
  *   return preset;
  * });
  */
-declare function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<PromptPreset>;
+declare function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<Preset>;
 
 /**
  * 将预设内容修改回预设中, 如果某个内容不存在, 则该内容将会采用原来的值
@@ -263,4 +263,4 @@ declare function updatePresetWith(preset_name: 'in_use' | string, updater: Prese
  *   prompts: [...getPreset('预设A').prompts, ...getPreset('预设B').prompts],
  * });
  */
-declare function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<PromptPreset>): Promise<PromptPreset>;
+declare function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<Preset>): Promise<Preset>;
