@@ -37,7 +37,7 @@ jobs:
       - name: Merge @types files to a single file
         run: |
           mkdir -p dist
-          cat @types/**/*.d.ts > dist/types.d.ts
+          cat @types/**/*.d.ts > dist/@types.txt
         working-directory: public/scripts/extensions/third-party/JS-Slash-Runner
       - name: Compress @types files to a zip
         run: |
