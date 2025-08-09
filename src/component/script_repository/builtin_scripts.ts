@@ -31,6 +31,11 @@ export const DEFAULT_SCRIPT_CONFIGS: Record<string, ScriptConfig> = {
     content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/世界书强制自定义排序/index.js',
     info: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/世界书强制自定义排序/README.md',
   },
+  世界书强制用推荐的全局设置: {
+    name: '世界书强制用推荐的全局设置',
+    content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/世界书强制用推荐的全局设置/index.js',
+    info: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/世界书强制用推荐的全局设置/README.md',
+  },
   自动开启角色卡局部正则: {
     name: '自动开启角色卡局部正则',
     content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/自动开启角色卡局部正则/index.js',
