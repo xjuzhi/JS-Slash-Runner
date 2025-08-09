@@ -298,7 +298,9 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
     _.set(result, 'content', prompt.content ?? '');
   }
 
-  _.set(result, 'extra', prompt.extra ?? {});
+  if (prompt.extra) {
+    _.set(result, 'extra', prompt.extra);
+  }
 
   return result as PresetPrompt;
 }
@@ -343,7 +345,9 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
   _.set(result, 'system_prompt', is_system_prompt && is_placeholder_prompt);
   _.set(result, 'marker', is_placeholder_prompt);
 
-  _.set(result, 'extra', prompt.extra ?? {});
+  if (prompt.extra) {
+    _.set(result, 'extra', prompt.extra);
+  }
 
   _.set(result, 'forbid_overrides', false);
 
@@ -625,10 +629,7 @@ export async function updatePresetWith(preset_name: 'in_use' | string, updater: 
   return preset;
 }
 
-export async function setPreset(
-  preset_name: 'in_use' | string,
-  preset: PartialDeep<Preset>,
-): Promise<Preset> {
+export async function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<Preset>): Promise<Preset> {
   return await updatePresetWith(preset_name, old_preset => {
     return {
       settings: _.defaultsDeep(preset.settings, old_preset.settings),
