@@ -1,5 +1,9 @@
 ## 3.4.0
 
+### ⏫功能
+
+- 新增 `appendInexistentScriptButtons` 函数, 便于为已经有按钮的脚本新增脚本按钮, 例如角色卡作者可能在导入 mvu (`import 'https://testingcf.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@master/artifact/bundle.js'`) 的脚本中自己额外写了代码和按钮, mvu 则可以新增 "重新处理变量" 等按钮但不影响角色卡作者已经写的按钮.
+
 ### 🐛修复
 
 - 现在 `getLorebookEntries` 如果没能从现有世界书中找到世界书, 将会尝试从角色卡中尝试获取

@@ -6,11 +6,6 @@ interface ScriptButton {
   visible: boolean;
 }
 
-/**
- * 获取指定脚本的按钮数组
- * @param script_id 脚本ID
- * @returns 按钮数组
- */
 export function getScriptButtons(script_id: string): ScriptButton[] {
   if (!script_id) {
     throw new Error('脚本ID不能为空');
@@ -18,11 +13,6 @@ export function getScriptButtons(script_id: string): ScriptButton[] {
   return ScriptManager.getInstance().getScriptButton(script_id);
 }
 
-/**
- * 修改指定脚本的按钮数组
- * @param script_id 脚本ID
- * @param buttons 脚本数组
- */
 export function replaceScriptButtons(script_id: string, buttons: ScriptButton[]): void {
   if (!script_id) {
     throw new Error(`脚本ID不能为空`);
@@ -37,4 +27,14 @@ export function replaceScriptButtons(script_id: string, buttons: ScriptButton[])
 
   script.buttons = buttons;
   ScriptManager.getInstance().setScriptButton(script, type);
+}
+
+export function appendInexistentScriptButtons(script_id: string, buttons: ScriptButton[]): void {
+  const script_buttons = getScriptButtons(script_id);
+  const inexistent_buttons = buttons.filter(button => !script_buttons.some(sb => sb.name === button.name));
+  if (inexistent_buttons.length === 0) {
+    return;
+  }
+
+  replaceScriptButtons(script_id, [...script_buttons, ...inexistent_buttons]);
 }

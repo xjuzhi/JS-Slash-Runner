@@ -58,7 +58,7 @@ import {
   setPreset,
   updatePresetWith,
 } from '@/function/preset';
-import { getScriptButtons, replaceScriptButtons } from '@/function/script_repository';
+import { appendInexistentScriptButtons, getScriptButtons, replaceScriptButtons } from '@/function/script_repository';
 import { triggerSlash } from '@/function/slash';
 import {
   formatAsTavernRegexedString,
@@ -185,6 +185,7 @@ function getTavernHelper() {
     // script_repository
     getScriptButtons,
     replaceScriptButtons,
+    appendInexistentScriptButtons,
 
     // version
     getTavernHelperVersion,
