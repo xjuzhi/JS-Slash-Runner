@@ -1,3 +1,5 @@
+import { Character } from '@/function/character';
+
 import {
   characters,
   chat_metadata,
@@ -11,8 +13,7 @@ import {
   this_chid,
 } from '@sillytavern/script';
 // @ts-ignore
-import { selected_group } from '@sillytavern/scripts/group-chats';
-import { ensureImageFormatSupported, findChar, getCharaFilename } from '@sillytavern/scripts/utils';
+import { ensureImageFormatSupported, getCharaFilename } from '@sillytavern/scripts/utils';
 import {
   createNewWorldInfo,
   deleteWorldInfo,
@@ -237,14 +238,9 @@ export function getCharLorebooks({
   name = (characters as any)[this_chid as string]?.avatar ?? null,
   type = 'all',
 }: GetCharLorebooksOption = {}): CharLorebooks {
-  // @ts-ignore
-  if (selected_group && !name) {
-    throw Error(`不要在群组中调用这个功能`);
-  }
-  // @ts-ignore
-  const character = findChar({ name });
+  const character = Character.find({ name: name ?? 'current' });
   if (!character) {
-    throw Error(`未找到名为 '${name}' 的角色卡`);
+    throw Error(`未找到${name === 'current' ? '当前打开' : `名为 '${name}' `}的角色卡`);
   }
 
   const books: CharLorebooks = { primary: null, additional: [] };
@@ -253,25 +249,13 @@ export function getCharLorebooks({
     books.primary = character.data?.extensions?.world;
   }
 
-  const filename = getCharaFilename(characters.indexOf(character)) as string;
-  const extraCharLore = (world_info as { charLore: { name: string; extraBooks: string[] }[] }).charLore?.find(
+  // TODO: 提取成函数
+  const filename = character.avatar.replace(/\.[^/.]+$/, '');
+  const extra_charlore = (world_info as { charLore: { name: string; extraBooks: string[] }[] }).charLore?.find(
     e => e.name === filename,
   );
-  if (extraCharLore && Array.isArray(extraCharLore.extraBooks)) {
-    books.additional = extraCharLore.extraBooks;
-  }
-
-  // 根据 type 参数过滤结果
-  if (type) {
-    switch (type) {
-      case 'primary':
-        return { primary: books.primary, additional: [] };
-      case 'additional':
-        return { primary: null, additional: books.additional };
-      case 'all':
-      default:
-        return books;
-    }
+  if (extra_charlore && Array.isArray(extra_charlore.extraBooks)) {
+    books.additional = extra_charlore.extraBooks;
   }
 
   log.info(`获取角色卡绑定的世界书, 选项: ${JSON.stringify({ name, type })}, 获取结果: ${JSON.stringify(books)}`);
@@ -283,42 +267,32 @@ export function getCurrentCharPrimaryLorebook(): string | null {
 }
 
 export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>): Promise<void> {
-  // @ts-ignore
-  if (selected_group) {
-    throw Error(`不要在群组中调用这个功能`);
-  }
-  // @ts-ignore
   const filename = getCharaFilename(this_chid);
   if (!filename) {
     throw Error(`未打开任何角色卡`);
   }
 
-  const inexisting_lorebooks: string[] = [
-    ...(lorebooks.primary && !world_names.includes(lorebooks.primary) ? [lorebooks.primary] : []),
-    ...(lorebooks.additional ? lorebooks.additional.filter(lorebook => !world_names.includes(lorebook)) : []),
-  ];
+  const inexisting_lorebooks = _(_.concat(lorebooks.primary ? [lorebooks.primary] : [], lorebooks.additional))
+    .reject(_.isNull)
+    .reject(lorebook_name => getLorebooks().some(value => value === lorebook_name))
+    .value();
   if (inexisting_lorebooks.length > 0) {
     throw Error(`尝试修改 '${filename}' 绑定的世界书, 但未找到以下世界书: ${inexisting_lorebooks}`);
   }
 
   if (lorebooks.primary !== undefined) {
-    // @ts-ignore
     const previous_primary = String($('#character_world').val());
-    // @ts-ignore
     $('#character_world').val(lorebooks.primary ? lorebooks.primary : '');
 
-    // @ts-ignore
     $('.character_world_info_selector')
       .find('option:selected')
       .val(lorebooks.primary ? world_names.indexOf(lorebooks.primary) : '');
 
     if (previous_primary && !lorebooks.primary) {
-      // @ts-ignore
       const data = JSON.parse(String($('#character_json_data').val()));
       if (data?.data?.character_book) {
         data.data.character_book = undefined;
       }
-      // @ts-ignore
       $('#character_json_data').val(JSON.stringify(data));
     }
 
@@ -326,7 +300,7 @@ export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>)
       throw Error(`尝试为 '${filename}' 绑定主要世界书, 但在访问酒馆后端时出错`);
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     setWorldInfoButtonClass(undefined, !!lorebooks.primary);
   }
 
@@ -359,7 +333,7 @@ export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>)
   );
 }
 
-export async function getChatLorebook(): Promise<string | null> {
+export function getChatLorebook(): string | null {
   const chat_id = getCurrentChatId();
   if (!chat_id) {
     throw Error(`未打开任何聊天, 不可获取聊天世界书`);

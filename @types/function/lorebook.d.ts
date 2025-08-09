@@ -113,7 +113,7 @@ declare function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>): Pro
  *
  * @returns 当前聊天绑定的世界书名称, 或 null 表示没有绑定世界书
  */
-declare function getChatLorebook(): Promise<string | null>;
+declare function getChatLorebook(): string | null;
 
 /**
  * 设置当前聊天绑定的世界书
