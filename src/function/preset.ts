@@ -488,7 +488,7 @@ function fromPreset(preset: Preset): _OriginalPreset {
 const preset_manager = getPresetManager('openai');
 
 export function getPresetNames(): string[] {
-  return ['in_use', ...preset_manager.getAllPresets()];
+  return structuredClone(['in_use', ...preset_manager.getAllPresets()]);
 }
 
 export function getLoadedPresetName(): string {
@@ -582,7 +582,7 @@ export async function createOrReplacePreset(
     });
   }
 
-  return is_existing;
+  return !is_existing;
 }
 
 export async function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boolean> {
