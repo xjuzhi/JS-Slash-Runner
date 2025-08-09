@@ -119,6 +119,8 @@ declare function updateVariablesWith(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
+ * @returns 更新后的变量表
+ *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await insertOrAssignVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
@@ -127,7 +129,7 @@ declare function updateVariablesWith(
 declare function insertOrAssignVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
-): Promise<void>;
+): Promise<Record<string, any>>;
 
 /**
  * 插入新变量, 如果变量已经存在则什么也不做
@@ -140,6 +142,8 @@ declare function insertOrAssignVariables(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
+ * @returns 更新后的变量表
+ *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await insertVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
@@ -148,7 +152,7 @@ declare function insertOrAssignVariables(
 declare function insertVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
-): Promise<void>;
+): Promise<Record<string, any>>;
 
 /**
  * 删除变量, 如果变量不存在则什么也不做
@@ -161,7 +165,7 @@ declare function insertVariables(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
- * @returns 是否成功删除变量
+ * @returns 更新后的变量表, 以及是否成功删除变量
  *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
@@ -171,4 +175,4 @@ declare function insertVariables(
 declare function deleteVariable(
   variable_path: string,
   { type, message_id, script_id }?: VariableOption,
-): Promise<boolean>;
+): Promise<{ variables: Record<string, any>; delete_occurred: boolean }>;
