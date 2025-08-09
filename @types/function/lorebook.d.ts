@@ -15,11 +15,6 @@ interface LorebookSettings {
   overflow_alert: boolean;
 }
 
-interface GetCharLorebooksOption {
-  name?: string;
-  type?: 'all' | 'primary' | 'additional';
-}
-
 /**
  * 获取当前的世界书全局设置
  *
@@ -78,6 +73,12 @@ declare function createLorebook(lorebook: string): Promise<boolean>;
 interface CharLorebooks {
   primary: string | null;
   additional: string[];
+}
+
+
+interface GetCharLorebooksOption {
+  name?: string;
+  type?: 'all' | 'primary' | 'additional';
 }
 
 /**

@@ -1,4 +1,5 @@
 import { reloadEditorDebounced } from '@/compatibility';
+import { characters } from '@sillytavern/script';
 
 import { loadWorldInfo, saveWorldInfo, world_names } from '@sillytavern/scripts/world-info';
 
@@ -196,12 +197,18 @@ export async function getLorebookEntries(
   lorebook: string,
   { filter = 'none' }: GetLorebookEntriesOption = {},
 ): Promise<LorebookEntry[]> {
-  if (!world_names.includes(lorebook)) {
+  const original_lorebook = _.get(
+    ((await loadWorldInfo(lorebook)) as { entries?: _OriginalLorebookEntry[] }) ??
+      _(characters)
+        .map(character => _.get(character, 'data.character_book'))
+        .find(character_book => character_book.name === lorebook),
+    'entries',
+  );
+  if (!original_lorebook) {
     throw Error(`未能找到世界书 '${lorebook}'`);
   }
 
-  // @ts-ignore
-  let entries: LorebookEntry[] = Object.values((await loadWorldInfo(lorebook)).entries).map(toLorebookEntry);
+  let entries: LorebookEntry[] = Object.values(original_lorebook).map(toLorebookEntry);
   if (filter !== 'none') {
     entries = entries.filter(entry =>
       Object.entries(filter).every(([field, expected_value]) => {
@@ -225,13 +232,6 @@ export async function getLorebookEntries(
 function fromPartialLorebookEntry(
   entry: Pick<LorebookEntry, 'uid' | 'display_index'> & Partial<LorebookEntry>,
 ): Pick<_OriginalLorebookEntry, 'uid' | 'displayIndex'> & Partial<_OriginalLorebookEntry> {
-  if (_.has(entry, 'key') && !_.has(entry, 'keys')) {
-    _.set(entry, 'keys', entry.key);
-  }
-  if (_.has(entry, 'filter') && !_.has(entry, 'filters')) {
-    _.set(entry, 'filters', entry.filter);
-  }
-
   const transformers = {
     uid: (value: LorebookEntry['uid']) => ({ uid: value }),
     display_index: (value: LorebookEntry['display_index']) => ({ displayIndex: value }),
