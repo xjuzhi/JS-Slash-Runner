@@ -271,87 +271,84 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
   const is_system_prompt = prompt.system_prompt === true && prompt.marker === false;
   const is_placeholder_prompt = prompt.marker === true;
 
-  const result: Record<string, any> = {};
+  const result = _({})
+    .set('id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4())
+    .set('name', prompt.name ?? 'unnamed')
+    .set(
+      'enabled',
+      prompt_order.find(order => order.identifier === prompt.identifier)?.enabled ?? prompt.enabled ?? true,
+    );
 
-  _.set(result, 'id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4());
-  _.set(result, 'name', prompt.name ?? 'unnamed');
-  _.set(
-    result,
-    'enabled',
-    prompt_order.find(order => order.identifier === prompt.identifier)?.enabled ?? prompt.enabled ?? true,
-  );
   if (is_normal_prompt || is_placeholder_prompt) {
-    _.set(
-      result,
+    result.set(
       'position',
       (
         {
           0: 'relative',
           1: prompt.injection_depth ?? 4,
         } as const
-      )?.[prompt.injection_position ?? 0],
+      )[prompt.injection_position ?? 0],
     );
   }
+  result.set('role', prompt.role ?? 'system');
 
-  _.set(result, 'role', prompt.role ?? 'system');
   if (is_normal_prompt || is_system_prompt) {
-    _.set(result, 'content', prompt.content ?? '');
+    result.set('content', prompt.content ?? '');
   }
 
   if (prompt.extra) {
-    _.set(result, 'extra', prompt.extra);
+    result.set('extra', prompt.extra);
   }
 
-  return result as PresetPrompt;
+  return result.value() as PresetPrompt;
 }
 function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
   const is_normal_prompt = isPresetNormalPrompt(prompt);
   const is_system_prompt = isPresetSystemPrompt(prompt);
   const is_placeholder_prompt = isPresetPlaceholderPrompt(prompt);
 
-  const result: Record<string, any> = {};
+  const result = _({})
+    .set(
+      'identifier',
+      _.get(
+        {
+          enhance_definitions: 'enhanceDefinitions',
+          world_info_before: 'worldInfoBefore',
+          persona_description: 'personaDescription',
+          char_description: 'charDescription',
+          char_personality: 'charPersonality',
+          scenario: 'scenario',
+          world_info_after: 'worldInfoAfter',
+          dialogue_examples: 'dialogueExamples',
+          chat_history: 'chatHistory',
+        } as const,
+        prompt.id,
+        prompt.id,
+      ),
+    )
+    .set('name', prompt.name)
+    .set('enabled', prompt.enabled);
 
-  _.set(
-    result,
-    'identifier',
-    _.get(
-      {
-        enhance_definitions: 'enhanceDefinitions',
-        world_info_before: 'worldInfoBefore',
-        persona_description: 'personaDescription',
-        char_description: 'charDescription',
-        char_personality: 'charPersonality',
-        scenario: 'scenario',
-        world_info_after: 'worldInfoAfter',
-        dialogue_examples: 'dialogueExamples',
-        chat_history: 'chatHistory',
-      } as const,
-      prompt.id,
-      prompt.id,
-    ),
-  );
-  _.set(result, 'name', prompt.name);
-  _.set(result, 'enabled', prompt.enabled);
   if (is_normal_prompt || is_placeholder_prompt) {
-    _.set(result, 'injection_position', prompt.position === 'relative' ? 0 : 1);
-    _.set(result, 'injection_depth', prompt.position === 'relative' ? 4 : prompt.position);
+    result
+      .set('injection_position', prompt.position === 'relative' ? 0 : 1)
+      .set('injection_depth', prompt.position === 'relative' ? 4 : prompt.position);
   }
 
-  _.set(result, 'role', prompt.role);
+  result.set('role', prompt.role);
   if (is_normal_prompt || is_system_prompt) {
-    _.set(result, 'content', prompt.content);
+    result.set('content', prompt.content);
   }
 
-  _.set(result, 'system_prompt', is_system_prompt && is_placeholder_prompt);
-  _.set(result, 'marker', is_placeholder_prompt);
+  result.set('system_prompt', is_system_prompt && is_placeholder_prompt).set('marker', is_placeholder_prompt);
 
   if (prompt.extra) {
-    _.set(result, 'extra', prompt.extra);
+    result.set('extra', prompt.extra);
   }
 
-  _.set(result, 'forbid_overrides', false);
+  result.set('forbid_overrides', false);
 
-  return result as _OriginalPrompt;
+  return result.value() as _OriginalPrompt;
 }
 
 function toPreset(preset: _OriginalPreset): Preset {
