@@ -325,7 +325,7 @@ declare const SillyTavern: {
   readonly deactivateSendButtons: () => void;
   readonly saveReply: (options: any, ...args: any[]) => Promise<void>;
   readonly substituteParams: (
-    content,
+    content: string,
     name1?: string,
     name2?: string,
     original?: string,
