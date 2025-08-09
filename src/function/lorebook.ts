@@ -119,10 +119,8 @@ function toLorebookSettings(world_info_settings: ReturnType<typeof getWorldInfoS
 function assignPartialLorebookSettings(settings: Partial<LorebookSettings>): void {
   const for_eachs = {
     selected_global_lorebooks: (value: LorebookSettings['selected_global_lorebooks']) => {
-      // @ts-ignore
       $('#world_info').find('option[value!=""]').remove();
       world_names.forEach((item, i) =>
-        // @ts-ignore
         $('#world_info').append(`<option value='${i}'${value.includes(item) ? ' selected' : ''}>${item}</option>`),
       );
 
@@ -132,60 +130,46 @@ function assignPartialLorebookSettings(settings: Partial<LorebookSettings>): voi
     },
 
     scan_depth: (value: LorebookSettings['scan_depth']) => {
-      // @ts-ignore
       $('#world_info_depth').val(value).trigger('input');
     },
     context_percentage: (value: LorebookSettings['context_percentage']) => {
-      // @ts-ignore
       $('#world_info_budget').val(value).trigger('input');
     },
     budget_cap: (value: LorebookSettings['budget_cap']) => {
-      // @ts-ignore
       $('#world_info_budget_cap').val(value).trigger('input');
     },
     min_activations: (value: LorebookSettings['min_activations']) => {
-      // @ts-ignore
       $('#world_info_min_activations').val(value).trigger('input');
     },
     max_depth: (value: LorebookSettings['max_depth']) => {
-      // @ts-ignore
       $('#world_info_min_activations_depth_max').val(value).trigger('input');
     },
     max_recursion_steps: (value: LorebookSettings['max_recursion_steps']) => {
-      // @ts-ignore
       $('#world_info_max_recursion_steps').val(value).trigger('input');
     },
 
     insertion_strategy: (value: LorebookSettings['insertion_strategy']) => {
       const converted_value = { evenly: 0, character_first: 1, global_first: 2 }[value];
-      // @ts-ignore
       $(`#world_info_character_strategy option[value='${converted_value}']`).prop('selected', true);
-      // @ts-ignore
       $('#world_info_character_strategy').val(converted_value).trigger('change');
     },
 
     include_names: (value: LorebookSettings['include_names']) => {
-      // @ts-ignore
       $('#world_info_include_names').prop('checked', value).trigger('input');
     },
     recursive: (value: LorebookSettings['recursive']) => {
-      // @ts-ignore
       $('#world_info_recursive').prop('checked', value).trigger('input');
     },
     case_sensitive: (value: LorebookSettings['case_sensitive']) => {
-      // @ts-ignore
       $('#world_info_case_sensitive').prop('checked', value).trigger('input');
     },
     match_whole_words: (value: LorebookSettings['match_whole_words']) => {
-      // @ts-ignore
       $('#world_info_match_whole_words').prop('checked', value).trigger('input');
     },
     use_group_scoring: (value: LorebookSettings['use_group_scoring']) => {
-      // @ts-ignore
       $('#world_info_use_group_scoring').prop('checked', value).trigger('change');
     },
     overflow_alert: (value: LorebookSettings['overflow_alert']) => {
-      // @ts-ignore
       $('#world_info_overflow_alert').prop('checked', value).trigger('change');
     },
   };
@@ -218,6 +202,8 @@ export function setLorebookSettings(settings: Partial<LorebookSettings>): void {
     }
   }
 
+  const original_settings = getLorebookSettings();
+  settings = _.omitBy(settings, (value, key) => value === original_settings[key as keyof LorebookSettings]);
   assignPartialLorebookSettings(settings);
 
   log.info(`修改世界书全局设置:\n${JSON.stringify(settings)}`);
