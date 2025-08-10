@@ -274,7 +274,7 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
   const is_system_prompt = prompt.system_prompt === true && prompt.marker === false;
   const is_placeholder_prompt = prompt.marker === true;
 
-  const result = _({})
+  let result = _({})
     .set('id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4())
     .set('name', prompt.name ?? 'unnamed')
     .set(
@@ -283,7 +283,7 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
     );
 
   if (is_normal_prompt || is_placeholder_prompt) {
-    result.set(
+    result = result.set(
       'position',
       (
         {
@@ -293,14 +293,14 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
       )[prompt.injection_position ?? 0],
     );
   }
-  result.set('role', prompt.role ?? 'system');
+  result = result.set('role', prompt.role ?? 'system');
 
   if (is_normal_prompt || is_system_prompt) {
-    result.set('content', prompt.content ?? '');
+    result = result.set('content', prompt.content ?? '');
   }
 
   if (prompt.extra) {
-    result.set('extra', prompt.extra);
+    result = result.set('extra', prompt.extra);
   }
 
   return result.value() as PresetPrompt;
@@ -310,7 +310,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
   const is_system_prompt = isPresetSystemPrompt(prompt);
   const is_placeholder_prompt = isPresetPlaceholderPrompt(prompt);
 
-  const result = _({})
+  let result = _({})
     .set(
       'identifier',
       _.get(
@@ -333,23 +333,23 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
     .set('enabled', prompt.enabled);
 
   if ((is_normal_prompt || is_placeholder_prompt) && !['dialogue_examples', 'chat_history'].includes(prompt.id)) {
-    result
+    result = result
       .set('injection_position', prompt.position === 'relative' ? 0 : 1)
       .set('injection_depth', prompt.position === 'relative' ? 4 : prompt.position);
   }
 
-  result.set('role', prompt.role);
+  result = result.set('role', prompt.role);
   if (is_normal_prompt || is_system_prompt) {
-    result.set('content', prompt.content);
+    result = result.set('content', prompt.content);
   }
 
-  result.set('system_prompt', is_system_prompt && is_placeholder_prompt).set('marker', is_placeholder_prompt);
+  result = result.set('system_prompt', is_system_prompt && is_placeholder_prompt).set('marker', is_placeholder_prompt);
 
   if (prompt.extra) {
-    result.set('extra', prompt.extra);
+    result = result.set('extra', prompt.extra);
   }
 
-  result.set('forbid_overrides', false);
+  result = result.set('forbid_overrides', false);
 
   return result.value() as _OriginalPrompt;
 }
