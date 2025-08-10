@@ -140,7 +140,7 @@ declare namespace globalThis {
   let z: typeof z_object;
 }
 
-function initLogObject() {
+function initThirdPartyObject() {
   globalThis.log = log_object;
   globalThis.YAML = YAML_object;
   globalThis.z = z_object;
@@ -181,8 +181,8 @@ jQuery(async () => {
   }
 
   disableIncompatibleOption();
+  initThirdPartyObject();
   initTavernHelperObject();
-  initLogObject();
   await initDebugMode();
   // 默认显示主设置界面
   $('#main-settings-title').addClass('title-item-active');
