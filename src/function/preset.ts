@@ -1,5 +1,6 @@
+import { settingsToUpdate } from '@/compatibility';
 import { saveSettingsDebounced } from '@sillytavern/script';
-import { oai_settings, promptManager, settingsToUpdate } from '@sillytavern/scripts/openai';
+import { oai_settings, promptManager } from '@sillytavern/scripts/openai';
 import { getPresetManager } from '@sillytavern/scripts/preset-manager';
 import { uuidv4 } from '@sillytavern/scripts/utils';
 import { LiteralUnion, PartialDeep, SetRequired } from 'type-fest';
