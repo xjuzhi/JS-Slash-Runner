@@ -179,6 +179,7 @@ declare function createOrReplacePreset(preset_name: LiteralUnion<'in_use', strin
  * 删除 `preset_name` 预设
  *
  * @param preset_name 预设名称
+ *
  * @returns 是否成功删除, 可能因预设不存在等原因而失败
  */
 declare function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<boolean>;
@@ -188,6 +189,7 @@ declare function deletePreset(preset_name: Exclude<string, 'in_use'>): Promise<b
  *
  * @param preset_name 预设名称
  * @param new_name 新名称
+ *
  * @returns 是否成功重命名, 可能因预设不存在等原因而失败
  */
 declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: string): Promise<boolean>;
@@ -196,9 +198,10 @@ declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: 
  * 获取 `preset_name` 预设的内容
  *
  * @param preset_name 预设名称
+ *
  * @returns 预设内容
  */
-declare function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset | null;
+declare function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset;
 
 /**
  * 完全替换 `preset_name` 预设的内容为 `preset`

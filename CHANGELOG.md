@@ -2,6 +2,12 @@
 
 ### ⏫功能
 
+**世界书:**
+
+- 重新制作世界书接口 `Worldbook`, 原本的所有 `Lorebook` 函数均被弃用 (但仍可运行), 请使用 `Worldbook` 接口, 具体见于文档 (未完成) 或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/worldbook_entries.d.ts)
+  - 移除了 `getLorebookSettings` 等控制全局设置的功能, 因为很少有需要改动的时候, 取而代之的是内置库新增 `世界书强制用推荐的全局设置` 脚本.
+  - `getWorldbook` 将直接返回按世界书 "自定义顺序" 排序好的数组 (不知道自定义顺序是什么? 请查看内置库中的 "世界书强制自定义顺序" 说明)
+
 **MVU 变量框架:**
 
 - 新增了 mvu 接口, 现在你可以通过 `Mvu` 来使用 MVU 变量框架中的功能了 (解析 ai 输出的更新命令、监听 mvu 更新变量事件从而调整变量或触发剧情等), 具体见于[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/iframe_client/exported.mvu.d.ts), 例如:
@@ -93,7 +99,7 @@
 
 ### ⏫功能
 
-- 更新了一套操控预设的函数, 现在你可以**比酒馆接口更简单地**通过脚本操控酒馆的预设了! 具体函数请自行参考文档 (未完成) 或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/preset.d.ts), 如果已经配置了[编写模板](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/基本用法/如何正确使用酒馆助手.html)请`pnpm add -D type-fest`并下载新的`@types`文件夹!
+- 更新了一套操控预设的函数, 现在你可以**比酒馆接口更简单地**通过脚本操控酒馆的预设了! 具体函数请自行参考[文档](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/功能详情/预设操作/创建预设.html)或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/preset.d.ts), 如果已经配置了[编写模板](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/基本用法/如何正确使用酒馆助手.html)请`pnpm add -D type-fest`并下载新的`@types`文件夹!
 
   ```typescript
   // 为酒馆正在使用的预设开启流式传输

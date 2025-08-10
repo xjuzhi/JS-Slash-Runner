@@ -77,6 +77,22 @@ import {
   updateVariablesWith,
 } from '@/function/variables';
 import { getTavernHelperVersion, updateTavernHelper } from '@/function/version';
+import {
+  createOrReplaceWorldbook,
+  createWorldbook,
+  deleteWorldbook,
+  getCharWorldbookNames,
+  getChatWorldbookName,
+  getGlobalWorldbookNames,
+  getOrCreateChatWorldbook,
+  getWorldbook,
+  getWorldbookNames,
+  rebindCharWorldbooks,
+  rebindChatWorldbook,
+  rebindGlobalWorldbooks,
+  replaceWorldbook,
+  updateWorldbookWith,
+} from '@/function/worldbook';
 import { audioEnable, audioImport, audioMode, audioPlay, audioSelect } from '@/slash_command/audio';
 
 function getTavernHelper() {
@@ -192,6 +208,22 @@ function getTavernHelper() {
     updateTavernHelper,
     getFrontendVersion: getTavernHelperVersion,
     updateFrontendVersion: updateTavernHelper,
+
+    // worldbook
+    getWorldbookNames,
+    getGlobalWorldbookNames,
+    rebindGlobalWorldbooks,
+    getCharWorldbookNames,
+    rebindCharWorldbooks,
+    getChatWorldbookName,
+    rebindChatWorldbook,
+    getOrCreateChatWorldbook,
+    createWorldbook,
+    createOrReplaceWorldbook,
+    deleteWorldbook,
+    getWorldbook,
+    replaceWorldbook,
+    updateWorldbookWith,
   };
 }
 

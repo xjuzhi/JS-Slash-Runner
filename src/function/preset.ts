@@ -602,11 +602,11 @@ export async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_n
   return true;
 }
 
-export function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset | null {
+export function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset {
   const original_preset =
     preset_name === 'in_use' ? oai_settings : preset_manager.getCompletionPresetByName(preset_name);
   if (!original_preset) {
-    return null;
+    throw Error(`预设 '${preset_name}' 不存在`);
   }
   return structuredClone(toPreset(original_preset));
 }
