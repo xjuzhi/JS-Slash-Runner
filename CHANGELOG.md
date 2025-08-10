@@ -14,7 +14,7 @@
 
 **MVU 变量框架:**
 
-- 新增了 mvu 接口, 现在你可以通过 `Mvu` 来使用 MVU 变量框架中的功能了 (解析 ai 输出的更新命令、监听 mvu 更新变量事件从而调整变量或触发剧情等), 具体见于[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/iframe_client/exported.mvu.d.ts), 例如:
+- 新增了 mvu 接口, 现在你可以通过 `Mvu` 来使用 MVU 变量框架中的功能了 (解析 ai 输出的更新命令、监听 mvu 更新变量事件从而调整变量或触发剧情等), 具体见于[文档](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/%E5%8A%9F%E8%83%BD%E8%AF%A6%E6%83%85/%E6%8E%A5%E5%8F%A3%E8%AE%BF%E9%97%AE.html#mvu-%E5%8F%98%E9%87%8F%E6%A1%86%E6%9E%B6)和[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/iframe_client/exported.mvu.d.ts), 例如:
 
   ```typescript
   // 解析包含 _.set() 命令的消息, 从而更新络络好感度为 30
