@@ -499,7 +499,7 @@ type GenerateConfig = {
    * 是否启用流式传输; 默认为 `false`.
    *
    * 若启用流式传输, 每次得到流式传输结果时, 函数将会发送事件:
-   * - `ifraem_events.STREAM_TOKEN_RECEIVED_FULLY`: 监听它可以得到流式传输的当前完整文本 ("这是", "这是一条", "这是一条流式传输")
+   * - `iframe_events.STREAM_TOKEN_RECEIVED_FULLY`: 监听它可以得到流式传输的当前完整文本 ("这是", "这是一条", "这是一条流式传输")
    * - `iframe_events.STREAM_TOKEN_RECEIVED_INCREMENTALLY`: 监听它可以得到流式传输的当前增量文本 ("这是", "一条", "流式传输")
    *
    * @example
