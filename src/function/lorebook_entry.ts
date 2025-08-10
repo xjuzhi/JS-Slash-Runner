@@ -52,7 +52,7 @@ type LorebookEntry = {
   sticky: number | null;
   cooldown: number | null;
   delay: number | null;
-}
+};
 
 type _OriginalLorebookEntry = {
   uid: number;
@@ -93,7 +93,7 @@ type _OriginalLorebookEntry = {
   cooldown: number | null;
   delay: number | null;
   displayIndex: number;
-}
+};
 
 const default_original_lorebook_entry: Omit<_OriginalLorebookEntry, 'uid' | 'displayIndex'> = {
   key: [],
@@ -197,18 +197,11 @@ export async function getLorebookEntries(
   lorebook: string,
   { filter = 'none' }: GetLorebookEntriesOption = {},
 ): Promise<LorebookEntry[]> {
-  const original_lorebook = _.get(
-    ((await loadWorldInfo(lorebook)) as { entries?: _OriginalLorebookEntry[] }) ??
-      _(characters)
-        .map(character => _.get(character, 'data.character_book'))
-        .find(character_book => character_book.name === lorebook),
-    'entries',
-  );
-  if (!original_lorebook) {
+  if (!world_names.includes(lorebook)) {
     throw Error(`未能找到世界书 '${lorebook}'`);
   }
 
-  let entries: LorebookEntry[] = Object.values(original_lorebook).map(toLorebookEntry);
+  let entries: LorebookEntry[] = _(await loadWorldInfo(lorebook)).get('entries', []).map(toLorebookEntry);
   if (filter !== 'none') {
     entries = entries.filter(entry =>
       Object.entries(filter).every(([field, expected_value]) => {
