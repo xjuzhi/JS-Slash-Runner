@@ -10,19 +10,19 @@ export const extension_prompt_roles = {
 /**
  * 生成配置接口（使用预设）
  */
-export interface GenerateConfig {
+export type GenerateConfig = {
   user_input?: string;
   image?: File | string | (File | string)[];
   should_stream?: boolean;
   overrides?: Overrides;
   injects?: InjectionPrompt[];
   max_chat_history?: 'all' | number;
-}
+};
 
 /**
  * 原始生成配置接口（不使用预设）
  */
-export interface GenerateRawConfig {
+export type GenerateRawConfig = {
   user_input?: string;
   image?: File | string | (File | string)[];
   should_stream?: boolean;
@@ -30,43 +30,43 @@ export interface GenerateRawConfig {
   injects?: InjectionRawPrompt[];
   ordered_prompts?: (BuiltinPrompt | RolePrompt)[];
   max_chat_history?: 'all' | number;
-}
+};
 
 /**
  * 角色提示词接口
  */
-export interface RolePrompt {
+export type RolePrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   image?: File | string | (File | string)[];
-}
+};
 
 /**
  * 注入提示词接口
  */
-export interface InjectionPrompt {
+export type InjectionPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   position: 'before_prompt' | 'in_chat' | 'after_prompt' | 'none';
   depth: number;
   should_scan: boolean;
-}
+};
 
 /**
  * 原始注入提示词接口
  */
-export interface InjectionRawPrompt {
+export type InjectionRawPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   position: 'in_chat' | 'none';
   depth: number;
   should_scan: boolean;
-}
+};
 
 /**
  * 覆盖配置接口
  */
-export interface Overrides {
+export type Overrides = {
   world_info_before?: string; // 世界书(角色定义前)
   persona_description?: string; // 用户描述
   char_description?: string; // 角色描述
@@ -79,7 +79,7 @@ export interface Overrides {
     author_note?: string;
     prompts?: RolePrompt[];
   };
-}
+};
 
 /**
  * 内置提示词类型
@@ -113,7 +113,7 @@ export const builtin_prompt_default_order: BuiltinPrompt[] = [
 /**
  * 基础数据接口
  */
-export interface BaseData {
+export type BaseData = {
   characterInfo: {
     description: string;
     personality: string;
@@ -134,19 +134,19 @@ export interface BaseData {
     worldInfoExamples: Array<string>;
     worldInfoString: Array<string>;
   };
-}
+};
 
 /**
  * 详细配置命名空间
  */
 export namespace detail {
-  export interface CustomPrompt {
+  export type CustomPrompt = {
     role: 'system' | 'user' | 'assistant';
     content: string;
-  }
+  };
 
   // 覆盖配置类型
-  export interface OverrideConfig {
+  export type OverrideConfig = {
     world_info_before?: string; // 世界书（角色定义之前的部分）
     persona_description?: string; // 用户描述
     char_description?: string; // 角色描述
@@ -158,7 +158,7 @@ export namespace detail {
     with_depth_entries?: boolean; // 世界书深度
     author_note?: string; // 作者注释
     chat_history?: RolePrompt[]; // 聊天历史
-  }
+  };
 
   // 内置提示词条目类型
   export type BuiltinPromptEntry =
@@ -173,7 +173,7 @@ export namespace detail {
     | 'user_input'; // 用户输入
 
   // 生成参数类型
-  export interface GenerateParams {
+  export type GenerateParams = {
     user_input?: string;
     use_preset?: boolean;
     image?: File | string | (File | string)[];
@@ -182,7 +182,7 @@ export namespace detail {
     max_chat_history?: number;
     inject?: InjectionPrompt[];
     order?: Array<BuiltinPromptEntry | CustomPrompt>;
-  }
+  };
 }
 
 /**

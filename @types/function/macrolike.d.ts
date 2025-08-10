@@ -1,9 +1,9 @@
-interface MacroLike {
+type MacroLike = {
   regex: RegExp;
   replace: (context: Context, substring: string, ...args: any[]) => string;
 }
 
-interface Context {
+type Context = {
   message_id?: number;
   role?: 'user' | 'assistant' | 'system';
 }

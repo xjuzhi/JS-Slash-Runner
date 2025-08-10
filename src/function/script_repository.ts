@@ -1,7 +1,7 @@
 import { ScriptData } from '@/component/script_repository/data';
 import { ScriptManager } from '@/component/script_repository/script_controller';
 
-interface ScriptButton {
+type ScriptButton = {
   name: string;
   visible: boolean;
 }

@@ -1,4 +1,4 @@
-interface GenerateConfig {
+type GenerateConfig = {
   /** 用户输入 */
   user_input?: string;
 
@@ -33,9 +33,9 @@ interface GenerateConfig {
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
-}
+};
 
-interface GenerateRawConfig {
+type GenerateRawConfig = {
   /**
    * 用户输入.
    *
@@ -81,15 +81,15 @@ interface GenerateRawConfig {
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
-}
+};
 
-interface RolePrompt {
+type RolePrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   image?: File | string | (File | string)[];
-}
+};
 
-interface InjectionPrompt {
+type InjectionPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
 
@@ -100,9 +100,9 @@ interface InjectionPrompt {
 
   /** 是否要加入世界书扫描中 */
   should_scan: boolean;
-}
+};
 
-interface InjectionRawPrompt {
+type InjectionRawPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
 
@@ -113,9 +113,9 @@ interface InjectionRawPrompt {
 
   /** 是否要加入世界书扫描中 */
   should_scan: boolean;
-}
+};
 
-interface Overrides {
+type Overrides = {
   world_info_before?: string;
   persona_description?: string;
   char_description?: string;
@@ -135,7 +135,7 @@ interface Overrides {
     author_note?: string;
     prompts?: RolePrompt[];
   };
-}
+};
 
 /**
  * 预设为内置提示词设置的默认顺序

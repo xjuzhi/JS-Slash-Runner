@@ -1,6 +1,4 @@
-import { PartialDeep } from 'type-fest';
-
-interface Preset {
+type Preset = {
   settings: {
     /** 最大上下文 token 数 */
     max_context: number;
@@ -68,35 +66,18 @@ interface Preset {
   extensions: Record<string, any>;
 }
 
-type PresetPrompt = PresetNormalPrompt | PresetSystemPrompt | PresetPlaceholderPrompt;
-interface PresetNormalPrompt {
-  id: string;
-  name: string;
-  enabled: boolean;
-  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
-  position: 'relative' | number;
-
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-
-  /** 额外字段, 用于为预设提示词绑定额外数据 */
-  extra?: Record<string, any>;
-}
-/** 预设中的酒馆系统提示词, 但其实相比于手动添加的提示词没有任何优势 */
-interface PresetSystemPrompt {
-  id: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
-  name: string;
-  enabled: boolean;
-
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-
-  /** 额外字段, 用于为预设提示词绑定额外数据 */
-  extra?: Record<string, any>;
-}
-/** 预设提示词中的占位符提示词, 对应于世界书条目、角色卡、玩家角色、聊天记录等提示词 */
-interface PresetPlaceholderPrompt {
-  id:
+type PresetPrompt = {
+  /**
+   * 根据 id, 预设提示词分为以下三类:
+   * - 普通提示词 (`isPresetNormalPrompt`): 预设界面上可以手动添加的提示词
+   * - 系统提示词 (`isPresetSystemPrompt`): 酒馆所设置的系统提示词, 但其实相比于手动添加的提示词没有任何优势, 分为 `main`、`nsfw`、`jailbreak`、`enhance_definitions`
+   * - 占位符提示词 (`isPresetPlaceholderPrompt`): 用于表示世界书条目、角色卡、玩家角色、聊天记录等提示词的插入位置, 分为 `world_info_before`、`persona_description`、`char_description`、`char_personality`、`scenario`、`world_info_after`、`dialogue_examples`、`chat_history`
+   */
+  id: LiteralUnion<
+    | 'main'
+    | 'nsfw'
+    | 'jailbreak'
+    | 'enhance_definitions'
     | 'world_info_before'
     | 'persona_description'
     | 'char_description'
@@ -104,17 +85,39 @@ interface PresetPlaceholderPrompt {
     | 'scenario'
     | 'world_info_after'
     | 'dialogue_examples'
-    | 'chat_history';
+    | 'chat_history',
+    string
+  >;
   name: string;
   enabled: boolean;
-  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
-  position: 'relative' | number;
 
-  role: 'system' | 'user' | 'assistant';
+  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
+  position?: 'relative' | number;
+  role?: 'system' | 'user' | 'assistant';
+  content: string;
 
   /** 额外字段, 用于为预设提示词绑定额外数据 */
   extra?: Record<string, any>;
-}
+};
+type PresetNormalPrompt = SetRequired<{ id: string } & Omit<PresetPrompt, 'id'>, 'position' | 'content'>;
+type PresetSystemPrompt = SetRequired<
+  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions' } & Omit<PresetPrompt, 'id'>,
+  'content'
+>;
+type PresetPlaceholderPrompt = SetRequired<
+  {
+    id:
+      | 'world_info_before'
+      | 'persona_description'
+      | 'char_description'
+      | 'char_personality'
+      | 'scenario'
+      | 'world_info_after'
+      | 'dialogue_examples'
+      | 'chat_history';
+  } & Omit<PresetPrompt, 'id'>,
+  'position'
+>;
 declare function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt;
 declare function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
 declare function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
@@ -155,10 +158,7 @@ declare function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
  *
  * @returns 是否成功创建, 如果已经存在同名预设或尝试创建名为 `'in_use'` 的预设会失败
  */
-declare function createPreset(
-  preset_name: Exclude<string, 'in_use'>,
-  preset?: Preset,
-): Promise<boolean>;
+declare function createPreset(preset_name: Exclude<string, 'in_use'>, preset?: Preset): Promise<boolean>;
 
 /**
  * 创建或替换名为 `preset_name` 的预设, 内容为 `preset`
@@ -168,10 +168,7 @@ declare function createPreset(
  *
  * @returns 如果发生创建, 则返回 `true`; 如果发生替换, 则返回 `false`
  */
-declare function createOrReplacePreset(
-  preset_name: 'in_use' | string,
-  preset?: Preset,
-): Promise<boolean>;
+declare function createOrReplacePreset(preset_name: LiteralUnion<'in_use', string>, preset?: Preset): Promise<boolean>;
 
 /**
  * 删除 `preset_name` 预设
@@ -196,7 +193,7 @@ declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: 
  * @param preset_name 预设名称
  * @returns 预设内容
  */
-declare function getPreset(preset_name: 'in_use' | string): Preset | null;
+declare function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset | null;
 
 /**
  * 完全替换 `preset_name` 预设的内容为 `preset`
@@ -217,7 +214,7 @@ declare function getPreset(preset_name: 'in_use' | string): Preset | null;
  * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
  * await replacePreset('预设B', preset_b);
  */
-declare function replacePreset(preset_name: 'in_use' | string, preset: Preset): Promise<void>;
+declare function replacePreset(preset_name: LiteralUnion<'in_use', string>, preset: Preset): Promise<void>;
 
 type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise<Preset>);
 /**
@@ -243,7 +240,7 @@ type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise
  *   return preset;
  * });
  */
-declare function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<Preset>;
+declare function updatePresetWith(preset_name: LiteralUnion<'in_use', string>, updater: PresetUpdater): Promise<Preset>;
 
 /**
  * 将预设内容修改回预设中, 如果某个内容不存在, 则该内容将会采用原来的值
@@ -263,4 +260,4 @@ declare function updatePresetWith(preset_name: 'in_use' | string, updater: Prese
  *   prompts: [...getPreset('预设A').prompts, ...getPreset('预设B').prompts],
  * });
  */
-declare function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<Preset>): Promise<Preset>;
+declare function setPreset(preset_name: LiteralUnion<'in_use', string>, preset: PartialDeep<Preset>): Promise<Preset>;

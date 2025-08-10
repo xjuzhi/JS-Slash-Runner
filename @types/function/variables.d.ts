@@ -1,4 +1,4 @@
-interface VariableOption {
+type VariableOption = {
   /**
    * 对某一楼层的聊天变量 (`message`)、聊天变量 (`'chat'`)、角色卡变量 (`'character'`)、聊天变量 (`'script'`) 或全局变量 (`'global'`) 进行操作, 默认为 `'chat'`
    */

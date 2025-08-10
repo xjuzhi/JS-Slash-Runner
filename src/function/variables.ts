@@ -14,11 +14,11 @@ import { extension_settings, writeExtensionField } from '@sillytavern/scripts/ex
 
 import log from 'loglevel';
 
-interface VariableOption {
+type VariableOption = {
   type?: 'message' | 'chat' | 'character' | 'script' | 'global';
   message_id?: number | 'latest';
   script_id?: string;
-}
+};
 
 function getVariablesByType({ type = 'chat', message_id = 'latest', script_id }: VariableOption): Record<string, any> {
   switch (type) {
@@ -190,5 +190,5 @@ export async function deleteVariable(
     },
     { type, message_id, script_id },
   );
-  return {variables, delete_occurred};
+  return { variables, delete_occurred };
 }

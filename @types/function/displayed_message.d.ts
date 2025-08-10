@@ -1,7 +1,7 @@
-interface FormatAsDisplayedMessageOption {
+type FormatAsDisplayedMessageOption = {
   /** 消息所在的楼层, 要求该楼层已经存在, 即在 `[0, await getLastMessageId()]` 范围内; 默认为 'last' */
   message_id?: 'last' | 'last_user' | 'last_char' | number;
-}
+};
 
 /**
  * 将字符串处理为酒馆用于显示的 html 格式. 将会,

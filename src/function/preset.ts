@@ -2,9 +2,9 @@ import { saveSettingsDebounced } from '@sillytavern/script';
 import { oai_settings, promptManager, settingsToUpdate } from '@sillytavern/scripts/openai';
 import { getPresetManager } from '@sillytavern/scripts/preset-manager';
 import { uuidv4 } from '@sillytavern/scripts/utils';
-import { PartialDeep } from 'type-fest';
+import { LiteralUnion, PartialDeep, SetRequired } from 'type-fest';
 
-interface Preset {
+type Preset = {
   settings: {
     max_context: number;
     max_completion_tokens: number;
@@ -42,33 +42,14 @@ interface Preset {
   prompts_unused: PresetPrompt[];
 
   extensions: Record<string, any>;
-}
+};
 
-type PresetPrompt = PresetNormalPrompt | PresetSystemPrompt | PresetPlaceholderPrompt;
-interface PresetNormalPrompt {
-  id: string;
-  name: string;
-  enabled: boolean;
-
-  position: 'relative' | number;
-
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-
-  extra?: Record<string, any>;
-}
-interface PresetSystemPrompt {
-  id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions';
-  name: string;
-  enabled: boolean;
-
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-
-  extra?: Record<string, any>;
-}
-interface PresetPlaceholderPrompt {
-  id:
+type PresetPrompt = {
+  id: LiteralUnion<
+    | 'main'
+    | 'nsfw'
+    | 'jailbreak'
+    | 'enhance_definitions'
     | 'world_info_before'
     | 'persona_description'
     | 'char_description'
@@ -76,16 +57,38 @@ interface PresetPlaceholderPrompt {
     | 'scenario'
     | 'world_info_after'
     | 'dialogue_examples'
-    | 'chat_history';
+    | 'chat_history',
+    string
+  >;
   name: string;
   enabled: boolean;
 
-  position: 'relative' | number;
+  position?: 'relative' | number;
 
   role: 'system' | 'user' | 'assistant';
+  content?: string;
 
   extra?: Record<string, any>;
-}
+};
+type PresetNormalPrompt = SetRequired<{ id: string } & Omit<PresetPrompt, 'id'>, 'position' | 'content'>;
+type PresetSystemPrompt = SetRequired<
+  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions' } & Omit<PresetPrompt, 'id'>,
+  'content'
+>;
+type PresetPlaceholderPrompt = SetRequired<
+  {
+    id:
+      | 'world_info_before'
+      | 'persona_description'
+      | 'char_description'
+      | 'char_personality'
+      | 'scenario'
+      | 'world_info_after'
+      | 'dialogue_examples'
+      | 'chat_history';
+  } & Omit<PresetPrompt, 'id'>,
+  'position'
+>;
 export function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt {
   return !isPresetSystemPrompt(prompt) && !isPresetPlaceholderPrompt(prompt);
 }
@@ -152,7 +155,7 @@ export const default_preset: Preset = {
   extensions: {},
 } as const;
 
-interface _OriginalPreset {
+type _OriginalPreset = {
   max_context_unlocked: true;
   openai_max_context: number;
   openai_max_tokens: number;
@@ -194,12 +197,12 @@ interface _OriginalPreset {
 
   extensions: Record<string, any>;
 }
-interface _OriginalPromptOrder {
+type _OriginalPromptOrder = {
   identifier: string;
   enabled: boolean;
 }
 type _OriginalPrompt = _OriginalNormalPrompt | _OriginalSystemPrompt | _OriginalPlaceholderPrompt;
-interface _OriginalNormalPrompt {
+type _OriginalNormalPrompt = {
   identifier: string;
   name: string;
   enabled?: boolean;
@@ -217,7 +220,7 @@ interface _OriginalNormalPrompt {
 
   forbid_overrides: false;
 }
-interface _OriginalSystemPrompt {
+type _OriginalSystemPrompt = {
   identifier: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
   name: string;
   enabled?: boolean;
@@ -232,7 +235,7 @@ interface _OriginalSystemPrompt {
 
   forbid_overrides: false;
 }
-interface _OriginalPlaceholderPrompt {
+type _OriginalPlaceholderPrompt = {
   identifier:
     | 'worldInfoBefore'
     | 'personaDescription'
@@ -554,7 +557,7 @@ function updateOriginalPresetData(
   }
 }
 export async function createOrReplacePreset(
-  preset_name: 'in_use' | string,
+  preset_name: LiteralUnion<'in_use', string>,
   preset: Preset = default_preset,
 ): Promise<boolean> {
   const original_preset = fromPreset(preset);
@@ -599,7 +602,7 @@ export async function renamePreset(preset_name: Exclude<string, 'in_use'>, new_n
   return true;
 }
 
-export function getPreset(preset_name: 'in_use' | string): Preset | null {
+export function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset | null {
   const original_preset =
     preset_name === 'in_use' ? oai_settings : preset_manager.getCompletionPresetByName(preset_name);
   if (!original_preset) {
@@ -608,7 +611,7 @@ export function getPreset(preset_name: 'in_use' | string): Preset | null {
   return structuredClone(toPreset(original_preset));
 }
 
-export async function replacePreset(preset_name: 'in_use' | string, preset: Preset): Promise<void> {
+export async function replacePreset(preset_name: LiteralUnion<'in_use', string>, preset: Preset): Promise<void> {
   if (!getPresetNames().includes(preset_name)) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
@@ -617,7 +620,10 @@ export async function replacePreset(preset_name: 'in_use' | string, preset: Pres
 
 type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise<Preset>);
 
-export async function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<Preset> {
+export async function updatePresetWith(
+  preset_name: LiteralUnion<'in_use', string>,
+  updater: PresetUpdater,
+): Promise<Preset> {
   if (!getPresetNames().includes(preset_name)) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
@@ -626,7 +632,10 @@ export async function updatePresetWith(preset_name: 'in_use' | string, updater: 
   return preset;
 }
 
-export async function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<Preset>): Promise<Preset> {
+export async function setPreset(
+  preset_name: LiteralUnion<'in_use', string>,
+  preset: PartialDeep<Preset>,
+): Promise<Preset> {
   return await updatePresetWith(preset_name, old_preset => {
     return {
       settings: _.defaultsDeep(preset.settings, old_preset.settings),

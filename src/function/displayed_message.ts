@@ -3,9 +3,9 @@ import { getLastMessageId } from '@sillytavern/scripts/macros';
 
 import log from 'loglevel';
 
-interface FormatAsDisplayedMessageOption {
+type FormatAsDisplayedMessageOption = {
   message_id?: 'last' | 'last_user' | 'last_char' | number;
-}
+};
 
 export function formatAsDisplayedMessage(
   text: string,

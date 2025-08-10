@@ -5,6 +5,7 @@ import { characters, getPastCharacterChats, getRequestHeaders, getThumbnailUrl, 
 import { v1CharData } from '@sillytavern/scripts/char-data';
 
 import log from 'loglevel';
+import { LiteralUnion } from 'type-fest';
 
 export class Character {
   private character_data: v1CharData;
@@ -13,7 +14,13 @@ export class Character {
     this.character_data = character_data;
   }
 
-  static find({ name, allow_avatar = true }: { name: 'current' | string; allow_avatar?: boolean }): v1CharData | null {
+  static find({
+    name,
+    allow_avatar = true,
+  }: {
+    name: LiteralUnion<'current', string>;
+    allow_avatar?: boolean;
+  }): v1CharData | null {
     if (!name || name === 'current') {
       if (!this_chid) {
         return null;
@@ -163,7 +170,7 @@ export class Character {
   }
 }
 
-export function getCharData(name: 'current' | string, allowAvatar: boolean = true): v1CharData | null {
+export function getCharData(name: LiteralUnion<'current', string>, allowAvatar: boolean = true): v1CharData | null {
   try {
     // backward compatibility
     name = !name ? 'current' : name;
@@ -180,7 +187,7 @@ export function getCharData(name: 'current' | string, allowAvatar: boolean = tru
   }
 }
 
-export function getCharAvatarPath(name: 'current' | string, allowAvatar: boolean = true): string | null {
+export function getCharAvatarPath(name: LiteralUnion<'current', string>, allowAvatar: boolean = true): string | null {
   // backward compatibility
   name = !name ? 'current' : name;
 
@@ -202,7 +209,7 @@ export function getCharAvatarPath(name: 'current' | string, allowAvatar: boolean
 }
 
 export async function getChatHistoryBrief(
-  name: 'current' | string,
+  name: LiteralUnion<'current', string>,
   allowAvatar: boolean = true,
 ): Promise<any[] | null> {
   // backward compatibility

@@ -5,7 +5,7 @@ import { loadWorldInfo, saveWorldInfo, world_names } from '@sillytavern/scripts/
 
 import log from 'loglevel';
 
-interface LorebookEntry {
+type LorebookEntry = {
   uid: number;
   display_index: number;
 
@@ -54,7 +54,7 @@ interface LorebookEntry {
   delay: number | null;
 }
 
-interface _OriginalLorebookEntry {
+type _OriginalLorebookEntry = {
   uid: number;
   key: string[];
   keysecondary: string[];

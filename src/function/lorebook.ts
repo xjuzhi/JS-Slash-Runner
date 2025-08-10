@@ -27,7 +27,7 @@ import {
 
 import log from 'loglevel';
 
-interface LorebookSettings {
+type LorebookSettings = {
   selected_global_lorebooks: string[];
 
   scan_depth: number;
@@ -45,7 +45,7 @@ interface LorebookSettings {
   match_whole_words: boolean;
   use_group_scoring: boolean;
   overflow_alert: boolean;
-}
+};
 
 async function editCurrentCharacter(): Promise<boolean> {
   // @ts-ignore
@@ -183,10 +183,10 @@ function assignPartialLorebookSettings(settings: Partial<LorebookSettings>): voi
     });
 }
 
-interface GetCharLorebooksOption {
+type GetCharLorebooksOption = {
   name?: string;
   type?: 'all' | 'primary' | 'additional';
-}
+};
 
 export function getLorebookSettings(): LorebookSettings {
   const lorebook_settings = toLorebookSettings(getWorldInfoSettings());
@@ -229,10 +229,10 @@ export async function createLorebook(lorebook: string): Promise<boolean> {
   return success;
 }
 
-interface CharLorebooks {
+type CharLorebooks = {
   primary: string | null;
   additional: string[];
-}
+};
 
 export function getCharLorebooks({
   name = (characters as any)[this_chid as string]?.avatar ?? null,
@@ -305,10 +305,10 @@ export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>)
   }
 
   if (lorebooks.additional !== undefined) {
-    interface CharLoreEntry {
+    type CharLoreEntry = {
       name: string;
       extraBooks: string[];
-    }
+    };
     const char_lore = (world_info as { charLore: CharLoreEntry[] }).charLore ?? [];
 
     const existing_char_index = char_lore.findIndex(entry => entry.name === filename);

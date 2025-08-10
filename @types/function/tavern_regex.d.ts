@@ -1,4 +1,4 @@
-interface FormatAsTavernRegexedStringOption {
+type FormatAsTavernRegexedStringOption = {
   /** 文本所在的深度; 不填则不考虑酒馆正则的`深度`选项: 无论该深度是否在酒馆正则的`最小深度`和`最大深度`范围内都生效 */
   depth?: number;
   /** 角色卡名称; 不填则使用当前角色卡名称 */
@@ -27,7 +27,7 @@ declare function formatAsTavernRegexedString(
   { depth, character_name }?: FormatAsTavernRegexedStringOption,
 );
 
-interface TavernRegex {
+type TavernRegex = {
   id: string;
   script_name: string;
   enabled: boolean;
@@ -54,7 +54,7 @@ interface TavernRegex {
  */
 declare function isCharacterTavernRegexesEnabled(): boolean;
 
-interface GetTavernRegexesOption {
+type GetTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character';
   enable_state?: 'all' | 'enabled' | 'disabled';
 }
@@ -70,7 +70,7 @@ interface GetTavernRegexesOption {
  */
 declare function getTavernRegexes({ scope, enable_state }?: GetTavernRegexesOption): TavernRegex[];
 
-interface ReplaceTavernRegexesOption {
+type ReplaceTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character';
 }
 

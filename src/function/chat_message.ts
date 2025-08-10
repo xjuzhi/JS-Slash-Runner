@@ -14,7 +14,7 @@ import {
 
 import log from 'loglevel';
 
-interface ChatMessage {
+type ChatMessage = {
   message_id: number;
   name: string;
   role: 'system' | 'assistant' | 'user';
@@ -22,9 +22,9 @@ interface ChatMessage {
   message: string;
   data: Record<string, any>;
   extra: Record<string, any>;
-}
+};
 
-interface ChatMessageSwiped {
+type ChatMessageSwiped = {
   message_id: number;
   name: string;
   role: 'system' | 'assistant' | 'user';
@@ -33,13 +33,13 @@ interface ChatMessageSwiped {
   swipes: string[];
   swipes_data: Record<string, any>[];
   swipes_info: Record<string, any>[];
-}
+};
 
-interface GetChatMessagesOption {
+type GetChatMessagesOption = {
   role?: 'all' | 'system' | 'assistant' | 'user';
   hide_state?: 'all' | 'hidden' | 'unhidden';
   include_swipes?: boolean;
-}
+};
 
 function string_to_range(input: string, min: number, max: number) {
   let start, end;
@@ -171,9 +171,9 @@ export function getChatMessages(
   return structuredClone(chat_messages);
 }
 
-interface SetChatMessagesOption {
+type SetChatMessagesOption = {
   refresh?: 'none' | 'affected' | 'all';
-}
+};
 
 export async function setChatMessages(
   chat_messages: Array<{ message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>)>,
@@ -297,18 +297,18 @@ export async function setChatMessages(
   );
 }
 
-interface ChatMessageCreating {
+type ChatMessageCreating = {
   name?: string;
   role: 'system' | 'assistant' | 'user';
   is_hidden?: boolean;
   message: string;
   data?: Record<string, any>;
-}
+};
 
-interface CreateChatMessagesOption {
+type CreateChatMessagesOption = {
   insert_at?: number | 'end';
   refresh?: 'none' | 'affected' | 'all';
-}
+};
 
 export async function createChatMessages(
   chat_messages: ChatMessageCreating[],
@@ -363,9 +363,9 @@ export async function createChatMessages(
   );
 }
 
-interface DeleteChatMessagesOption {
+type DeleteChatMessagesOption = {
   refresh?: 'none' | 'all';
-}
+};
 
 export async function deleteChatMessages(
   message_ids: number[],
@@ -385,9 +385,9 @@ export async function deleteChatMessages(
   );
 }
 
-interface RotateChatMessagesOption {
+type RotateChatMessagesOption = {
   refresh?: 'none' | 'all';
-}
+};
 
 export async function rotateChatMessages(
   begin: number,

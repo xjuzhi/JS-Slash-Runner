@@ -1,4 +1,4 @@
-interface ScriptButton {
+type ScriptButton = {
   name: string;
   visible: boolean;
 }

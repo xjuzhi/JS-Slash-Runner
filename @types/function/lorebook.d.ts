@@ -1,4 +1,4 @@
-interface LorebookSettings {
+type LorebookSettings = {
   selected_global_lorebooks: string[];
   scan_depth: number;
   context_percentage: number;
@@ -70,13 +70,13 @@ declare function deleteLorebook(lorebook: string): Promise<boolean>;
  */
 declare function createLorebook(lorebook: string): Promise<boolean>;
 
-interface CharLorebooks {
+type CharLorebooks = {
   primary: string | null;
   additional: string[];
 }
 
 
-interface GetCharLorebooksOption {
+type GetCharLorebooksOption = {
   name?: string;
   type?: 'all' | 'primary' | 'additional';
 }

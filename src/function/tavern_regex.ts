@@ -14,10 +14,10 @@ import { getRegexedString, regex_placement } from '@sillytavern/scripts/extensio
 
 import log from 'loglevel';
 
-interface FormatAsTavernRegexedStringOption {
+type FormatAsTavernRegexedStringOption = {
   depth?: number;
   character_name?: string;
-}
+};
 
 export function formatAsTavernRegexedString(
   text: string,
@@ -67,7 +67,7 @@ export function formatAsTavernRegexedString(
   return result;
 }
 
-interface TavernRegex {
+type TavernRegex = {
   id: string;
   script_name: string;
   enabled: boolean;
@@ -91,7 +91,7 @@ interface TavernRegex {
 
   min_depth: number | null;
   max_depth: number | null;
-}
+};
 
 export function isCharacterTavernRegexEnabled(): boolean {
   // @ts-ignore 2345
@@ -172,10 +172,10 @@ export function isCharacterTavernRegexesEnabled(): boolean {
   return result;
 }
 
-interface GetTavernRegexesOption {
+type GetTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character'; // 按所在区域筛选正则
   enable_state?: 'all' | 'enabled' | 'disabled'; // 按是否被开启筛选正则
-}
+};
 
 export function getTavernRegexes({ scope = 'all', enable_state = 'all' }: GetTavernRegexesOption = {}): TavernRegex[] {
   if (!['all', 'enabled', 'disabled'].includes(enable_state)) {
@@ -199,9 +199,9 @@ export function getTavernRegexes({ scope = 'all', enable_state = 'all' }: GetTav
   return structuredClone(regexes);
 }
 
-interface ReplaceTavernRegexesOption {
+type ReplaceTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character'; // 要替换的酒馆正则部分
-}
+};
 
 export async function replaceTavernRegexes(
   regexes: TavernRegex[],
