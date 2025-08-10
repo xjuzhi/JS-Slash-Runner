@@ -1,5 +1,5 @@
 {
-  "name": "tavern_helper",
+  "name": "JS-Slash-Runner",
   "version": "3.3.4",
   "main": "./dist/index.js",
   "scripts": {
