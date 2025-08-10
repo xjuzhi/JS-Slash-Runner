@@ -91,10 +91,15 @@ type PresetPrompt = {
   name: string;
   enabled: boolean;
 
-  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
+  /**
+   * 插入位置, 仅用于普通和占位符提示词
+   *   - `'relative'`: 按提示词相对位置插入
+   *   - `number`: 插入到聊天记录的对应深度
+   */
   position?: 'relative' | number;
-  role?: 'system' | 'user' | 'assistant';
-  content: string;
+  role: 'system' | 'user' | 'assistant';
+  /** 仅用于普通和系统提示词 */
+  content?: string;
 
   /** 额外字段, 用于为预设提示词绑定额外数据 */
   extra?: Record<string, any>;

@@ -196,11 +196,11 @@ type _OriginalPreset = {
   }>;
 
   extensions: Record<string, any>;
-}
+};
 type _OriginalPromptOrder = {
   identifier: string;
   enabled: boolean;
-}
+};
 type _OriginalPrompt = _OriginalNormalPrompt | _OriginalSystemPrompt | _OriginalPlaceholderPrompt;
 type _OriginalNormalPrompt = {
   identifier: string;
@@ -219,7 +219,7 @@ type _OriginalNormalPrompt = {
   extra?: Record<string, any>;
 
   forbid_overrides: false;
-}
+};
 type _OriginalSystemPrompt = {
   identifier: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
   name: string;
@@ -234,7 +234,7 @@ type _OriginalSystemPrompt = {
   extra?: Record<string, any>;
 
   forbid_overrides: false;
-}
+};
 type _OriginalPlaceholderPrompt = {
   identifier:
     | 'worldInfoBefore'
@@ -257,7 +257,7 @@ type _OriginalPlaceholderPrompt = {
   marker: true;
 
   extra?: Record<string, any>;
-}
+};
 const identifier_to_id_map = {
   enhanceDefinitions: 'enhance_definitions',
   worldInfoBefore: 'world_info_before',
@@ -332,7 +332,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
     .set('name', prompt.name)
     .set('enabled', prompt.enabled);
 
-  if (is_normal_prompt || is_placeholder_prompt) {
+  if ((is_normal_prompt || is_placeholder_prompt) && !['dialogue_examples', 'chat_history'].includes(prompt.id)) {
     result
       .set('injection_position', prompt.position === 'relative' ? 0 : 1)
       .set('injection_depth', prompt.position === 'relative' ? 4 : prompt.position);
