@@ -17,3 +17,5 @@ const z = (window.parent as unknown as { z: any }).z;
 z.config(z.locales.zhCN());
 
 const EjsTemplate = (window.parent as unknown as { EjsTemplate: Record<string, any> }).EjsTemplate;
+
+const Mvu = (window.parent as unknown as { Mvu: Record<string, any> }).Mvu;

@@ -2,7 +2,31 @@
 
 ### ⏫功能
 
+**MVU 变量框架:**
+
+- 新增了 mvu 接口, 现在你可以通过 `Mvu` 来使用 MVU 变量框架中的功能了 (解析 ai 输出的更新命令、监听 mvu 更新变量事件从而调整变量或触发剧情等), 具体见于[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/iframe_client/exported.mvu.d.ts), 例如:
+
+  ```typescript
+  // 解析包含 _.set() 命令的消息, 从而更新络络好感度为 30
+  const old_data = Mvu.getMvuData({ type: 'message', message_id: 'latest' });
+  const new_data = await Mvu.parseMessage("_.set('角色.络络.好感度', 30); // 强制修改", old_data);
+  ```
+
+  ```typescript
+  // 在 mvu 变量更新结束时, 保持好感度不低于 0
+  eventOn('mag_variable_update_ended', (variables) => {
+    if (_.get(variables, 'stat_data.角色.络络.好感度') < 0) {
+      _.set(variables, 'stat_data.角色.络络.好感度', 0);
+    }
+  });
+  ```
+
+**变量:**
+
 - 让 `insertOrAssignVariables` 等变量函数返回更新后的变量表, 便于在脚本中使用
+
+**脚本按钮:**
+
 - 新增 `appendInexistentScriptButtons` 函数, 便于为已经有按钮的脚本新增脚本按钮, 例如角色卡作者可能在导入 mvu (`import 'https://testingcf.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@master/artifact/bundle.js'`) 的脚本中自己额外写了代码和按钮, mvu 则可以新增 "重新处理变量" 等按钮但不影响角色卡作者已经写的按钮.
 
 ### 📚脚本库

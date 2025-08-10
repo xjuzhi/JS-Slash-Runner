@@ -1,5 +1,5 @@
 declare namespace SillyTavern {
-  interface ChatMessage {
+  type ChatMessage = {
     message_id: number;
     name: string;
     /**
@@ -23,7 +23,7 @@ declare namespace SillyTavern {
   /**
    * V1 character data structure.
    */
-  interface v1CharData {
+  type v1CharData = {
     /** the name of the character */
     name: string;
     /** the description of the character */
@@ -62,7 +62,7 @@ declare namespace SillyTavern {
   /**
    * V2 character data structure.
    */
-  interface v2CharData {
+  type v2CharData = {
     /** The character's name. */
     name: string;
     /** A brief description of the character. */
@@ -98,7 +98,7 @@ declare namespace SillyTavern {
   /**
    * A world info book containing entries.
    */
-  interface v2WorldInfoBook {
+  type v2WorldInfoBook = {
     /** the name of the book */
     name: string;
     /** the entries of the book */
@@ -108,7 +108,7 @@ declare namespace SillyTavern {
   /**
    * A world info entry object.
    */
-  interface v2DataWorldInfoEntry {
+  type v2DataWorldInfoEntry = {
     /** An array of primary keys associated with the entry. */
     keys: string[];
     /** An array of secondary keys associated with the entry (optional). */
@@ -136,7 +136,7 @@ declare namespace SillyTavern {
   /**
    * An object containing additional details for extensions associated with the entry.
    */
-  interface v2DataWorldInfoEntryExtensionInfos {
+  type v2DataWorldInfoEntryExtensionInfos = {
     /** The order in which the extension is applied relative to other extensions. */
     position: number;
     /** Prevents the extension from being applied recursively. */
@@ -192,7 +192,7 @@ declare namespace SillyTavern {
   /**
    * Additional details specific to the character.
    */
-  interface v2CharDataExtensionInfos {
+  type v2CharDataExtensionInfos = {
     /** A numerical value indicating the character's propensity to talk. */
     talkativeness: number;
     /** A flag indicating whether the character is a favorite. */
@@ -228,7 +228,7 @@ declare namespace SillyTavern {
   /**
    * Regex script data for character processing.
    */
-  interface RegexScriptData {
+  type RegexScriptData = {
     /** UUID of the script */
     id: string;
     /** The name of the script */
