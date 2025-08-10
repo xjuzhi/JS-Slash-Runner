@@ -208,7 +208,7 @@ export async function getLorebookEntries(
     throw Error(`未能找到世界书 '${lorebook}'`);
   }
 
-  let entries: LorebookEntry[] = original_lorebook.map(toLorebookEntry);
+  let entries: LorebookEntry[] = Object.values(original_lorebook).map(toLorebookEntry);
   if (filter !== 'none') {
     entries = entries.filter(entry =>
       Object.entries(filter).every(([field, expected_value]) => {
