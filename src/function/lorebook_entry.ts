@@ -1,5 +1,4 @@
 import { reloadEditorDebounced } from '@/compatibility';
-import { characters } from '@sillytavern/script';
 
 import { loadWorldInfo, saveWorldInfo, world_names } from '@sillytavern/scripts/world-info';
 
@@ -201,7 +200,8 @@ export async function getLorebookEntries(
     throw Error(`未能找到世界书 '${lorebook}'`);
   }
 
-  let entries: LorebookEntry[] = _(await loadWorldInfo(lorebook)).get('entries', []).map(toLorebookEntry);
+  const data = (await loadWorldInfo(lorebook)) as { entries: { [uid: number]: _OriginalLorebookEntry } };
+  let entries: LorebookEntry[] = _(data.entries).values().map(toLorebookEntry).value();
   if (filter !== 'none') {
     entries = entries.filter(entry =>
       Object.entries(filter).every(([field, expected_value]) => {
