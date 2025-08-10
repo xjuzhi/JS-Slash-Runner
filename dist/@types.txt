@@ -64,7 +64,13 @@ declare class Character {
    * @param options 查找选项
    * @returns 找到的角色卡数据，找不到为null
    */
-  static find({ name, allowAvatar }?: { name?: string; allowAvatar?: boolean }): SillyTavern.v1CharData;
+  static find({
+    name,
+    allowAvatar,
+  }?: {
+    name: LiteralUnion<'current', string>;
+    allowAvatar?: boolean;
+  }): SillyTavern.v1CharData;
 
   /**
    * 根据名称查找角色卡数据在characters数组中的索引（类似this_chid）
@@ -150,7 +156,10 @@ declare class Character {
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 角色卡数据
  */
-declare function getCharData(name?: string, allowAvatar?: boolean): SillyTavern.v1CharData | null;
+declare function getCharData(
+  name: LiteralUnion<'current', string>,
+  allowAvatar?: boolean,
+): SillyTavern.v1CharData | null;
 
 /**
  * 获取角色头像路径
@@ -158,7 +167,7 @@ declare function getCharData(name?: string, allowAvatar?: boolean): SillyTavern.
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 角色头像路径
  */
-declare function getCharAvatarPath(name?: string, allowAvatar?: boolean): string | null;
+declare function getCharAvatarPath(name: LiteralUnion<'current', string>, allowAvatar?: boolean): string | null;
 
 /**
  * 获取角色聊天历史摘要
@@ -166,7 +175,10 @@ declare function getCharAvatarPath(name?: string, allowAvatar?: boolean): string
  * @param allowAvatar 是否允许通过头像ID查找
  * @returns 聊天历史摘要数组
  */
-declare function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Promise<any[] | null>;
+declare function getChatHistoryBrief(
+  name: LiteralUnion<'current', string>,
+  allowAvatar?: boolean,
+): Promise<any[] | null>;
 
 /**
  * 获取聊天历史详情
@@ -175,7 +187,7 @@ declare function getChatHistoryBrief(name?: string, allowAvatar?: boolean): Prom
  * @returns 聊天历史详情
  */
 declare function getChatHistoryDetail(data: any[], isGroupChat?: boolean): Promise<Record<string, any> | null>;
-interface ChatMessage {
+type ChatMessage = {
   message_id: number;
   name: string;
   role: 'system' | 'assistant' | 'user';
@@ -183,9 +195,9 @@ interface ChatMessage {
   message: string;
   data: Record<string, any>;
   extra: Record<string, any>;
-}
+};
 
-interface ChatMessageSwiped {
+type ChatMessageSwiped = {
   message_id: number;
   name: string;
   role: 'system' | 'assistant' | 'user';
@@ -194,16 +206,16 @@ interface ChatMessageSwiped {
   swipes: string[];
   swipes_data: Record<string, any>[];
   swipes_info: Record<string, any>[];
-}
+};
 
-interface GetChatMessagesOption {
+type GetChatMessagesOption = {
   /** 按 role 筛选消息; 默认为 `'all'` */
   role?: 'all' | 'system' | 'assistant' | 'user';
   /** 按是否被隐藏筛选消息; 默认为 `'all'` */
   hide_state?: 'all' | 'hidden' | 'unhidden';
   /** 是否包含未被 ai 使用的消息页信息, 如没选择的开局、通过点击箭头重 roll 的楼层. 如果不包含则返回类型为 `ChatMessage`, 否则返回类型为 `ChatMessageSwiped`; 默认为 `false` */
   include_swipes?: boolean;
-}
+};
 
 /**
  * 获取聊天消息, 仅获取每楼被 ai 使用的消息页
@@ -280,7 +292,7 @@ declare function getChatMessages(
   { role, hide_state, include_swipes }?: GetChatMessagesOption,
 ): (ChatMessage | ChatMessageSwiped)[];
 
-interface SetChatMessagesOption {
+type SetChatMessagesOption = {
   /**
    * 是否更新楼层在页面上的显示, 只会更新已经被加载在网页上的楼层, 并触发被更新楼层的 "仅格式显示" 正则; 默认为 `'affected'`
    * - `'none'`: 不更新页面的显示
@@ -325,7 +337,7 @@ declare function setChatMessages(
   { refresh }?: SetChatMessagesOption,
 );
 
-interface ChatMessageCreating {
+type ChatMessageCreating = {
   name?: string;
   role: 'system' | 'assistant' | 'user';
   is_hidden?: boolean;
@@ -333,7 +345,7 @@ interface ChatMessageCreating {
   data?: Record<string, any>;
 }
 
-interface CreateChatMessagesOption {
+type CreateChatMessagesOption = {
   /** 插入到指定楼层前或末尾 */
   insert_at?: number | 'end';
 
@@ -367,7 +379,7 @@ declare function createChatMessages(
   { insert_at, refresh }?: CreateChatMessagesOption,
 ): Promise<void>;
 
-interface DeleteChatMessagesOption {
+type DeleteChatMessagesOption = {
   /**
    * 是否更新楼层在页面上的显示, 只会更新已经被加载在网页上的楼层, 并触发被更新楼层的 "仅格式显示" 正则; 默认为 `'all'`
    * - `'none'`: 不更新页面的显示
@@ -393,7 +405,7 @@ interface DeleteChatMessagesOption {
  */
 declare function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
 
-interface RotateChatMessagesOption {
+type RotateChatMessagesOption = {
   /**
    * 是否更新楼层在页面上的显示, 只会更新已经被加载在网页上的楼层, 并触发被更新楼层的 "仅格式显示" 正则; 默认为 `'all'`
    * - `'none'`: 不更新页面的显示
@@ -427,10 +439,10 @@ declare function rotateChatMessages(
   end: number,
   { refresh }?: RotateChatMessagesOption,
 ): Promise<void>;
-interface FormatAsDisplayedMessageOption {
+type FormatAsDisplayedMessageOption = {
   /** 消息所在的楼层, 要求该楼层已经存在, 即在 `[0, await getLastMessageId()]` 范围内; 默认为 'last' */
   message_id?: 'last' | 'last_user' | 'last_char' | number;
-}
+};
 
 /**
  * 将字符串处理为酒馆用于显示的 html 格式. 将会,
@@ -471,7 +483,7 @@ declare function formatAsDisplayedMessage(text: string, { message_id }?: FormatA
  * retrieveDisplayedMessage(0).append(formatAsDisplayedMessage("{{char}} speaks in {{lastMessageId}}"));
  */
 declare function retrieveDisplayedMessage(message_id: number): JQuery<HTMLDivElement>;
-interface GenerateConfig {
+type GenerateConfig = {
   /** 用户输入 */
   user_input?: string;
 
@@ -506,9 +518,9 @@ interface GenerateConfig {
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
-}
+};
 
-interface GenerateRawConfig {
+type GenerateRawConfig = {
   /**
    * 用户输入.
    *
@@ -554,15 +566,15 @@ interface GenerateRawConfig {
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
-}
+};
 
-interface RolePrompt {
+type RolePrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   image?: File | string | (File | string)[];
-}
+};
 
-interface InjectionPrompt {
+type InjectionPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
 
@@ -573,9 +585,9 @@ interface InjectionPrompt {
 
   /** 是否要加入世界书扫描中 */
   should_scan: boolean;
-}
+};
 
-interface InjectionRawPrompt {
+type InjectionRawPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
 
@@ -586,9 +598,9 @@ interface InjectionRawPrompt {
 
   /** 是否要加入世界书扫描中 */
   should_scan: boolean;
-}
+};
 
-interface Overrides {
+type Overrides = {
   world_info_before?: string;
   persona_description?: string;
   char_description?: string;
@@ -608,7 +620,7 @@ interface Overrides {
     author_note?: string;
     prompts?: RolePrompt[];
   };
-}
+};
 
 /**
  * 预设为内置提示词设置的默认顺序
@@ -809,7 +821,7 @@ interface Window {
     readonly updateTavernHelper: typeof updateTavernHelper;
   };
 }
-interface LorebookSettings {
+type LorebookSettings = {
   selected_global_lorebooks: string[];
   scan_depth: number;
   context_percentage: number;
@@ -881,13 +893,13 @@ declare function deleteLorebook(lorebook: string): Promise<boolean>;
  */
 declare function createLorebook(lorebook: string): Promise<boolean>;
 
-interface CharLorebooks {
+type CharLorebooks = {
   primary: string | null;
   additional: string[];
 }
 
 
-interface GetCharLorebooksOption {
+type GetCharLorebooksOption = {
   name?: string;
   type?: 'all' | 'primary' | 'additional';
 }
@@ -924,7 +936,7 @@ declare function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>): Pro
  *
  * @returns 当前聊天绑定的世界书名称, 或 null 表示没有绑定世界书
  */
-declare function getChatLorebook(): Promise<string | null>;
+declare function getChatLorebook(): string | null;
 
 /**
  * 设置当前聊天绑定的世界书
@@ -941,7 +953,7 @@ declare function setChatLorebook(lorebook: string | null): Promise<void>;
  * @returns 聊天世界书的名称
  */
 declare function getOrCreateChatLorebook(lorebook?: string): Promise<string>;
-interface LorebookEntry {
+type LorebookEntry = {
   /** uid 是相对于世界书内部的, 不要跨世界书使用 */
   uid: number;
   /** 酒馆中将排序设置为 "自定义" 时的显示顺序 */
@@ -989,12 +1001,12 @@ interface LorebookEntry {
   sticky: number | null;
   cooldown: number | null;
   delay: number | null;
-}
+};
 
-interface GetLorebookEntriesOption {
+type GetLorebookEntriesOption = {
   /** 按照指定字段值筛选条目, 如 `{position: 'at_depth_as_system'}` 表示仅获取处于 @D⚙ 的条目; 默认为不进行筛选. 由于实现限制, 只能做到这样的简单筛选; 如果需要更复杂的筛选, 请获取所有条目然后自己筛选. */
   filter?: 'none' | Partial<LorebookEntry>;
-}
+};
 
 /**
  * 获取世界书中的条目信息
@@ -1086,12 +1098,12 @@ declare function deleteLorebookEntries(
   lorebook: string,
   uids: number[],
 ): Promise<{ entries: LorebookEntry[]; delete_occurred: boolean }>;
-interface MacroLike {
+type MacroLike = {
   regex: RegExp;
   replace: (context: Context, substring: string, ...args: any[]) => string;
 }
 
-interface Context {
+type Context = {
   message_id?: number;
   role?: 'user' | 'assistant' | 'system';
 }
@@ -1111,9 +1123,7 @@ declare function registerMacroLike(
   regex: RegExp,
   replace: (context: Context, substring: string, ...args: any[]) => string,
 ): void;
-import { PartialDeep } from 'type-fest';
-
-interface Preset {
+type Preset = {
   settings: {
     /** 最大上下文 token 数 */
     max_context: number;
@@ -1181,35 +1191,18 @@ interface Preset {
   extensions: Record<string, any>;
 }
 
-type PresetPrompt = PresetNormalPrompt | PresetSystemPrompt | PresetPlaceholderPrompt;
-interface PresetNormalPrompt {
-  id: string;
-  name: string;
-  enabled: boolean;
-  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
-  position: 'relative' | number;
-
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-
-  /** 额外字段, 用于为预设提示词绑定额外数据 */
-  extra?: Record<string, any>;
-}
-/** 预设中的酒馆系统提示词, 但其实相比于手动添加的提示词没有任何优势 */
-interface PresetSystemPrompt {
-  id: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions';
-  name: string;
-  enabled: boolean;
-
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-
-  /** 额外字段, 用于为预设提示词绑定额外数据 */
-  extra?: Record<string, any>;
-}
-/** 预设提示词中的占位符提示词, 对应于世界书条目、角色卡、玩家角色、聊天记录等提示词 */
-interface PresetPlaceholderPrompt {
-  id:
+type PresetPrompt = {
+  /**
+   * 根据 id, 预设提示词分为以下三类:
+   * - 普通提示词 (`isPresetNormalPrompt`): 预设界面上可以手动添加的提示词
+   * - 系统提示词 (`isPresetSystemPrompt`): 酒馆所设置的系统提示词, 但其实相比于手动添加的提示词没有任何优势, 分为 `main`、`nsfw`、`jailbreak`、`enhance_definitions`
+   * - 占位符提示词 (`isPresetPlaceholderPrompt`): 用于表示世界书条目、角色卡、玩家角色、聊天记录等提示词的插入位置, 分为 `world_info_before`、`persona_description`、`char_description`、`char_personality`、`scenario`、`world_info_after`、`dialogue_examples`、`chat_history`
+   */
+  id: LiteralUnion<
+    | 'main'
+    | 'nsfw'
+    | 'jailbreak'
+    | 'enhance_definitions'
     | 'world_info_before'
     | 'persona_description'
     | 'char_description'
@@ -1217,17 +1210,39 @@ interface PresetPlaceholderPrompt {
     | 'scenario'
     | 'world_info_after'
     | 'dialogue_examples'
-    | 'chat_history';
+    | 'chat_history',
+    string
+  >;
   name: string;
   enabled: boolean;
-  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
-  position: 'relative' | number;
 
-  role: 'system' | 'user' | 'assistant';
+  /** 插入位置: `'relative'` 则按提示词相对位置插入, `number` 则插入到聊天记录中的对应深度 */
+  position?: 'relative' | number;
+  role?: 'system' | 'user' | 'assistant';
+  content: string;
 
   /** 额外字段, 用于为预设提示词绑定额外数据 */
   extra?: Record<string, any>;
-}
+};
+type PresetNormalPrompt = SetRequired<{ id: string } & Omit<PresetPrompt, 'id'>, 'position' | 'content'>;
+type PresetSystemPrompt = SetRequired<
+  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions' } & Omit<PresetPrompt, 'id'>,
+  'content'
+>;
+type PresetPlaceholderPrompt = SetRequired<
+  {
+    id:
+      | 'world_info_before'
+      | 'persona_description'
+      | 'char_description'
+      | 'char_personality'
+      | 'scenario'
+      | 'world_info_after'
+      | 'dialogue_examples'
+      | 'chat_history';
+  } & Omit<PresetPrompt, 'id'>,
+  'position'
+>;
 declare function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNormalPrompt;
 declare function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt;
 declare function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt;
@@ -1268,10 +1283,7 @@ declare function loadPreset(preset_name: Exclude<string, 'in_use'>): boolean;
  *
  * @returns 是否成功创建, 如果已经存在同名预设或尝试创建名为 `'in_use'` 的预设会失败
  */
-declare function createPreset(
-  preset_name: Exclude<string, 'in_use'>,
-  preset?: Preset,
-): Promise<boolean>;
+declare function createPreset(preset_name: Exclude<string, 'in_use'>, preset?: Preset): Promise<boolean>;
 
 /**
  * 创建或替换名为 `preset_name` 的预设, 内容为 `preset`
@@ -1281,10 +1293,7 @@ declare function createPreset(
  *
  * @returns 如果发生创建, 则返回 `true`; 如果发生替换, 则返回 `false`
  */
-declare function createOrReplacePreset(
-  preset_name: 'in_use' | string,
-  preset?: Preset,
-): Promise<boolean>;
+declare function createOrReplacePreset(preset_name: LiteralUnion<'in_use', string>, preset?: Preset): Promise<boolean>;
 
 /**
  * 删除 `preset_name` 预设
@@ -1309,7 +1318,7 @@ declare function renamePreset(preset_name: Exclude<string, 'in_use'>, new_name: 
  * @param preset_name 预设名称
  * @returns 预设内容
  */
-declare function getPreset(preset_name: 'in_use' | string): Preset | null;
+declare function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset | null;
 
 /**
  * 完全替换 `preset_name` 预设的内容为 `preset`
@@ -1330,7 +1339,7 @@ declare function getPreset(preset_name: 'in_use' | string): Preset | null;
  * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
  * await replacePreset('预设B', preset_b);
  */
-declare function replacePreset(preset_name: 'in_use' | string, preset: Preset): Promise<void>;
+declare function replacePreset(preset_name: LiteralUnion<'in_use', string>, preset: Preset): Promise<void>;
 
 type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise<Preset>);
 /**
@@ -1356,7 +1365,7 @@ type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise
  *   return preset;
  * });
  */
-declare function updatePresetWith(preset_name: 'in_use' | string, updater: PresetUpdater): Promise<Preset>;
+declare function updatePresetWith(preset_name: LiteralUnion<'in_use', string>, updater: PresetUpdater): Promise<Preset>;
 
 /**
  * 将预设内容修改回预设中, 如果某个内容不存在, 则该内容将会采用原来的值
@@ -1376,8 +1385,8 @@ declare function updatePresetWith(preset_name: 'in_use' | string, updater: Prese
  *   prompts: [...getPreset('预设A').prompts, ...getPreset('预设B').prompts],
  * });
  */
-declare function setPreset(preset_name: 'in_use' | string, preset: PartialDeep<Preset>): Promise<Preset>;
-interface ScriptButton {
+declare function setPreset(preset_name: LiteralUnion<'in_use', string>, preset: PartialDeep<Preset>): Promise<Preset>;
+type ScriptButton = {
   name: string;
   visible: boolean;
 }
@@ -1440,7 +1449,7 @@ declare function appendInexistentScriptButtons(script_id: string, buttons: Scrip
  * const last_message_id = await triggerSlash('/pass {{lastMessageId}}');
  */
 declare function triggerSlash(command: string): Promise<string>;
-interface FormatAsTavernRegexedStringOption {
+type FormatAsTavernRegexedStringOption = {
   /** 文本所在的深度; 不填则不考虑酒馆正则的`深度`选项: 无论该深度是否在酒馆正则的`最小深度`和`最大深度`范围内都生效 */
   depth?: number;
   /** 角色卡名称; 不填则使用当前角色卡名称 */
@@ -1469,7 +1478,7 @@ declare function formatAsTavernRegexedString(
   { depth, character_name }?: FormatAsTavernRegexedStringOption,
 );
 
-interface TavernRegex {
+type TavernRegex = {
   id: string;
   script_name: string;
   enabled: boolean;
@@ -1496,7 +1505,7 @@ interface TavernRegex {
  */
 declare function isCharacterTavernRegexesEnabled(): boolean;
 
-interface GetTavernRegexesOption {
+type GetTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character';
   enable_state?: 'all' | 'enabled' | 'disabled';
 }
@@ -1512,7 +1521,7 @@ interface GetTavernRegexesOption {
  */
 declare function getTavernRegexes({ scope, enable_state }?: GetTavernRegexesOption): TavernRegex[];
 
-interface ReplaceTavernRegexesOption {
+type ReplaceTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character';
 }
 
@@ -1590,7 +1599,7 @@ declare function getLastMessageId(): number;
  * errorCatched(test)();
  */
 declare function errorCatched<T extends any[], U>(fn: (...args: T) => U): (...args: T) => U;
-interface VariableOption {
+type VariableOption = {
   /**
    * 对某一楼层的聊天变量 (`message`)、聊天变量 (`'chat'`)、角色卡变量 (`'character'`)、聊天变量 (`'script'`) 或全局变量 (`'global'`) 进行操作, 默认为 `'chat'`
    */
@@ -1711,6 +1720,8 @@ declare function updateVariablesWith(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
+ * @returns 更新后的变量表
+ *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await insertOrAssignVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
@@ -1719,7 +1730,7 @@ declare function updateVariablesWith(
 declare function insertOrAssignVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
-): Promise<void>;
+): Promise<Record<string, any>>;
 
 /**
  * 插入新变量, 如果变量已经存在则什么也不做
@@ -1732,6 +1743,8 @@ declare function insertOrAssignVariables(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
+ * @returns 更新后的变量表
+ *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await insertVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
@@ -1740,7 +1753,7 @@ declare function insertOrAssignVariables(
 declare function insertVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
-): Promise<void>;
+): Promise<Record<string, any>>;
 
 /**
  * 删除变量, 如果变量不存在则什么也不做
@@ -1753,7 +1766,7 @@ declare function insertVariables(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
- * @returns 是否成功删除变量
+ * @returns 更新后的变量表, 以及是否成功删除变量
  *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
@@ -1763,7 +1776,7 @@ declare function insertVariables(
 declare function deleteVariable(
   variable_path: string,
   { type, message_id, script_id }?: VariableOption,
-): Promise<boolean>;
+): Promise<{ variables: Record<string, any>; delete_occurred: boolean }>;
 /**
  * 获取酒馆助手版本号
  */
@@ -2585,7 +2598,7 @@ declare const SillyTavern: {
   readonly deactivateSendButtons: () => void;
   readonly saveReply: (options: any, ...args: any[]) => Promise<void>;
   readonly substituteParams: (
-    content,
+    content: string,
     name1?: string,
     name2?: string,
     original?: string,
