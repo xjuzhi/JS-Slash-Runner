@@ -1776,6 +1776,7 @@ type WorldbookEntry = {
   content: string;
 
   probability: number;
+  /** 递归表示某世界书条目被激活后, 该条目的提示词又激活了其他条目 */
   recursion: {
     /** 禁止其他条目递归激活本条目 */
     prevent_incoming: boolean;
