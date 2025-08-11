@@ -4,7 +4,7 @@ import { loadWorldInfo, saveWorldInfo, world_names } from '@sillytavern/scripts/
 
 import log from 'loglevel';
 
-interface LorebookEntry {
+type LorebookEntry = {
   uid: number;
   display_index: number;
 
@@ -51,9 +51,9 @@ interface LorebookEntry {
   sticky: number | null;
   cooldown: number | null;
   delay: number | null;
-}
+};
 
-interface _OriginalLorebookEntry {
+type _OriginalLorebookEntry = {
   uid: number;
   key: string[];
   keysecondary: string[];
@@ -62,7 +62,7 @@ interface _OriginalLorebookEntry {
   constant: boolean;
   vectorized: boolean;
   selective: boolean;
-  selectiveLogic: 0 | 1 | 2 | 3; // 0: and_any, 1: and_all, 2: not_any, 3: not_all
+  selectiveLogic: 0 | 1 | 2 | 3; // 0: and_any, 1: not_all, 2: not_any, 3: and_all
   addMemo: boolean;
   order: number;
   position: number;
@@ -92,7 +92,7 @@ interface _OriginalLorebookEntry {
   cooldown: number | null;
   delay: number | null;
   displayIndex: number;
-}
+};
 
 const default_original_lorebook_entry: Omit<_OriginalLorebookEntry, 'uid' | 'displayIndex'> = {
   key: [],
@@ -160,9 +160,9 @@ function toLorebookEntry(entry: _OriginalLorebookEntry): LorebookEntry {
     keys: entry.key,
     logic: {
       0: 'and_any',
-      1: 'and_all',
+      1: 'not_all',
       2: 'not_any',
-      3: 'not_all',
+      3: 'and_all',
     }[entry.selectiveLogic as number] as 'and_any' | 'and_all' | 'not_any' | 'not_all',
     filter: entry.keysecondary,
     filters: entry.keysecondary,
@@ -200,8 +200,8 @@ export async function getLorebookEntries(
     throw Error(`未能找到世界书 '${lorebook}'`);
   }
 
-  // @ts-ignore
-  let entries: LorebookEntry[] = Object.values((await loadWorldInfo(lorebook)).entries).map(toLorebookEntry);
+  const data = (await loadWorldInfo(lorebook)) as { entries: { [uid: number]: _OriginalLorebookEntry } };
+  let entries: LorebookEntry[] = _(data.entries).values().map(toLorebookEntry).value();
   if (filter !== 'none') {
     entries = entries.filter(entry =>
       Object.entries(filter).every(([field, expected_value]) => {
@@ -225,13 +225,6 @@ export async function getLorebookEntries(
 function fromPartialLorebookEntry(
   entry: Pick<LorebookEntry, 'uid' | 'display_index'> & Partial<LorebookEntry>,
 ): Pick<_OriginalLorebookEntry, 'uid' | 'displayIndex'> & Partial<_OriginalLorebookEntry> {
-  if (_.has(entry, 'key') && !_.has(entry, 'keys')) {
-    _.set(entry, 'keys', entry.key);
-  }
-  if (_.has(entry, 'filter') && !_.has(entry, 'filters')) {
-    _.set(entry, 'filters', entry.filter);
-  }
-
   const transformers = {
     uid: (value: LorebookEntry['uid']) => ({ uid: value }),
     display_index: (value: LorebookEntry['display_index']) => ({ displayIndex: value }),
@@ -270,9 +263,9 @@ function fromPartialLorebookEntry(
     logic: (value: LorebookEntry['logic']) => ({
       selectiveLogic: {
         and_any: 0,
-        and_all: 1,
+        not_all: 1,
         not_any: 2,
-        not_all: 3,
+        and_all: 3,
       }[value],
     }),
     filters: (value: LorebookEntry['filter']) => ({ keysecondary: value }),

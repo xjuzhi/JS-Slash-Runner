@@ -1,13 +1,14 @@
 import { defaultAudioSettings, initAudioComponents } from '@/component/audio';
+import { initExtensionMainPanel } from '@/component/index';
 import { initListener } from '@/component/listener';
 import { renderAllMacros } from '@/component/macrolike';
-import { initExtensionMainPanel } from '@/component/main';
 import { defaultIframeSettings, initIframePanel } from '@/component/message_iframe';
 import { initPromptView } from '@/component/prompt_view';
 import { initReference } from '@/component/reference';
 import { buildScriptRepository } from '@/component/script_repository/index';
 import { defaultScriptSettings } from '@/component/script_repository/types';
 import { initVariableManager } from '@/component/variable_manager';
+import { disableIncompatibleOption } from '@/disable_incompatible_option';
 import { initTavernHelperObject } from '@/function';
 import { initAudioSlashCommands } from '@/slash_command/audio';
 import { initSlashEventEmit } from '@/slash_command/event';
@@ -32,6 +33,8 @@ import { event_types, eventSource, saveSettings } from '@sillytavern/script';
 import { extension_settings, renderExtensionTemplateAsync } from '@sillytavern/scripts/extensions';
 
 import log_object from 'loglevel';
+import YAML_object from 'yaml';
+import z_object from 'zod';
 
 const defaultSettings = {
   enabled_extension: true,
@@ -136,10 +139,14 @@ async function handleVersionUpdate() {
 
 declare namespace globalThis {
   let log: typeof log_object;
+  let YAML: typeof YAML_object;
+  let z: typeof z_object;
 }
 
-function initLogObject() {
+function initThirdPartyObject() {
   globalThis.log = log_object;
+  globalThis.YAML = YAML_object;
+  globalThis.z = z_object;
 }
 
 async function initDebugMode() {
@@ -176,8 +183,9 @@ jQuery(async () => {
     await saveSettings();
   }
 
+  disableIncompatibleOption();
+  initThirdPartyObject();
   initTavernHelperObject();
-  initLogObject();
   await initDebugMode();
   // 默认显示主设置界面
   $('#main-settings-title').addClass('title-item-active');

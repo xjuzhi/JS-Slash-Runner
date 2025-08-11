@@ -10,15 +10,15 @@ import {
   saveSettings,
   this_chid,
 } from '@sillytavern/script';
-import { extension_settings } from '@sillytavern/scripts/extensions';
+import { extension_settings, writeExtensionField } from '@sillytavern/scripts/extensions';
 
 import log from 'loglevel';
 
-interface VariableOption {
+type VariableOption = {
   type?: 'message' | 'chat' | 'character' | 'script' | 'global';
   message_id?: number | 'latest';
   script_id?: string;
-}
+};
 
 function getVariablesByType({ type = 'chat', message_id = 'latest', script_id }: VariableOption): Record<string, any> {
   switch (type) {
@@ -163,28 +163,32 @@ export async function updateVariablesWith(
 export async function insertOrAssignVariables(
   variables: Record<string, any>,
   { type = 'chat', message_id = 'latest', script_id }: VariableOption = {},
-): Promise<void> {
-  await updateVariablesWith(old_variables => _.merge(old_variables, variables), { type, message_id, script_id });
+): Promise<Record<string, any>> {
+  return await updateVariablesWith(old_variables => _.merge(old_variables, variables), { type, message_id, script_id });
 }
 
 export async function insertVariables(
   variables: Record<string, any>,
   { type = 'chat', message_id = 'latest', script_id }: VariableOption = {},
-): Promise<void> {
-  await updateVariablesWith(old_variables => _.defaultsDeep(old_variables, variables), { type, message_id, script_id });
+): Promise<Record<string, any>> {
+  return await updateVariablesWith(old_variables => _.defaultsDeep(old_variables, variables), {
+    type,
+    message_id,
+    script_id,
+  });
 }
 
 export async function deleteVariable(
   variable_path: string,
   { type = 'chat', message_id = 'latest', script_id }: VariableOption = {},
-): Promise<boolean> {
-  let result: boolean = false;
-  await updateVariablesWith(
+): Promise<{ variables: Record<string, any>; delete_occurred: boolean }> {
+  let delete_occurred: boolean = false;
+  const variables = await updateVariablesWith(
     old_variables => {
-      result = _.unset(old_variables, variable_path);
+      delete_occurred = _.unset(old_variables, variable_path);
       return old_variables;
     },
     { type, message_id, script_id },
   );
-  return result;
+  return { variables, delete_occurred };
 }

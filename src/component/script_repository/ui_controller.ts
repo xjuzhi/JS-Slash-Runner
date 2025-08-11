@@ -1,3 +1,4 @@
+import { createDefaultScripts } from '@/component/script_repository/builtin_scripts';
 import { ButtonManager, initScriptButton } from '@/component/script_repository/button';
 import { scriptEvents, ScriptRepositoryEventType } from '@/component/script_repository/events';
 import { ScriptManager } from '@/component/script_repository/script_controller';
@@ -976,7 +977,6 @@ export class UIController {
    * 加载默认脚本库
    */
   private async loadDefaultScriptsRepository(): Promise<void> {
-    const createDefaultScripts = (await import('./builtin_scripts')).createDefaultScripts;
     const container = this.createDefaultScriptContainer();
 
     const defaultScripts = await createDefaultScripts();

@@ -1,7 +1,7 @@
-interface FormatAsDisplayedMessageOption {
+type FormatAsDisplayedMessageOption = {
   /** 消息所在的楼层, 要求该楼层已经存在, 即在 `[0, await getLastMessageId()]` 范围内; 默认为 'last' */
   message_id?: 'last' | 'last_user' | 'last_char' | number;
-}
+};
 
 /**
  * 将字符串处理为酒馆用于显示的 html 格式. 将会,
@@ -19,7 +19,7 @@ interface FormatAsDisplayedMessageOption {
  * const text = formatAsDisplayedMessage("{{char}} speaks in {{lastMessageId}}");
  * => "<p>少女歌剧 speaks in 5</p>";
  */
-function formatAsDisplayedMessage(text: string, { message_id }?: FormatAsDisplayedMessageOption): string;
+declare function formatAsDisplayedMessage(text: string, { message_id }?: FormatAsDisplayedMessageOption): string;
 
 /**
  * 获取消息楼层号对应的消息内容 JQuery
@@ -41,4 +41,4 @@ function formatAsDisplayedMessage(text: string, { message_id }?: FormatAsDisplay
  * retrieveDisplayedMessage(0).append("<pre>new text</pre>");
  * retrieveDisplayedMessage(0).append(formatAsDisplayedMessage("{{char}} speaks in {{lastMessageId}}"));
  */
-function retrieveDisplayedMessage(message_id: number): JQuery<HTMLDivElement>;
+declare function retrieveDisplayedMessage(message_id: number): JQuery<HTMLDivElement>;

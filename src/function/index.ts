@@ -1,4 +1,5 @@
 import { registerMacroLike } from '@/component/macrolike';
+import { builtin } from '@/function/builtin';
 import {
   Character,
   getCharAvatarPath,
@@ -40,9 +41,27 @@ import {
   setLorebookEntries,
   updateLorebookEntriesWith,
 } from '@/function/lorebook_entry';
-import { getScriptButtons, replaceScriptButtons } from '@/function/script_repository';
+import {
+  createOrReplacePreset,
+  createPreset,
+  default_preset,
+  deletePreset,
+  getLoadedPresetName,
+  getPreset,
+  getPresetNames,
+  isPresetNormalPrompt,
+  isPresetPlaceholderPrompt,
+  isPresetSystemPrompt,
+  loadPreset,
+  renamePreset,
+  replacePreset,
+  setPreset,
+  updatePresetWith,
+} from '@/function/preset';
+import { appendInexistentScriptButtons, getScriptButtons, replaceScriptButtons } from '@/function/script_repository';
 import { triggerSlash } from '@/function/slash';
 import {
+  formatAsTavernRegexedString,
   getTavernRegexes,
   isCharacterTavernRegexesEnabled,
   replaceTavernRegexes,
@@ -58,8 +77,23 @@ import {
   updateVariablesWith,
 } from '@/function/variables';
 import { getTavernHelperVersion, updateTavernHelper } from '@/function/version';
+import {
+  createOrReplaceWorldbook,
+  createWorldbook,
+  deleteWorldbook,
+  getCharWorldbookNames,
+  getChatWorldbookName,
+  getGlobalWorldbookNames,
+  getOrCreateChatWorldbook,
+  getWorldbook,
+  getWorldbookNames,
+  rebindCharWorldbooks,
+  rebindChatWorldbook,
+  rebindGlobalWorldbooks,
+  replaceWorldbook,
+  updateWorldbookWith,
+} from '@/function/worldbook';
 import { audioEnable, audioImport, audioMode, audioPlay, audioSelect } from '@/slash_command/audio';
-import { builtin } from './builtin';
 
 function getTavernHelper() {
   return {
@@ -120,6 +154,23 @@ function getTavernHelper() {
     setChatLorebook,
     getOrCreateChatLorebook,
 
+    // preset
+    isPresetNormalPrompt,
+    isPresetSystemPrompt,
+    isPresetPlaceholderPrompt,
+    default_preset,
+    getPresetNames,
+    getLoadedPresetName,
+    loadPreset,
+    createPreset,
+    createOrReplacePreset,
+    deletePreset,
+    renamePreset,
+    getPreset,
+    replacePreset,
+    updatePresetWith,
+    setPreset,
+
     // macrolike
     registerMacroLike,
 
@@ -128,6 +179,7 @@ function getTavernHelper() {
     triggerSlashWithResult: triggerSlash,
 
     // tavern_regex
+    formatAsTavernRegexedString,
     isCharacterTavernRegexesEnabled,
     getTavernRegexes,
     replaceTavernRegexes,
@@ -149,12 +201,29 @@ function getTavernHelper() {
     // script_repository
     getScriptButtons,
     replaceScriptButtons,
+    appendInexistentScriptButtons,
 
     // version
     getTavernHelperVersion,
     updateTavernHelper,
     getFrontendVersion: getTavernHelperVersion,
     updateFrontendVersion: updateTavernHelper,
+
+    // worldbook
+    getWorldbookNames,
+    getGlobalWorldbookNames,
+    rebindGlobalWorldbooks,
+    getCharWorldbookNames,
+    rebindCharWorldbooks,
+    getChatWorldbookName,
+    rebindChatWorldbook,
+    getOrCreateChatWorldbook,
+    createWorldbook,
+    createOrReplaceWorldbook,
+    deleteWorldbook,
+    getWorldbook,
+    replaceWorldbook,
+    updateWorldbookWith,
   };
 }
 

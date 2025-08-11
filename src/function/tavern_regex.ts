@@ -1,11 +1,73 @@
-import { characters, reloadCurrentChat, saveChatConditional, saveSettings, this_chid } from '@sillytavern/script';
+import { macros } from '@/component/macrolike';
+import {
+  characters,
+  chat,
+  reloadCurrentChat,
+  saveChatConditional,
+  saveSettings,
+  substituteParams,
+  this_chid,
+} from '@sillytavern/script';
 import { RegexScriptData } from '@sillytavern/scripts/char-data';
 import { extension_settings, writeExtensionField } from '@sillytavern/scripts/extensions';
-import { regex_placement } from '@sillytavern/scripts/extensions/regex/engine';
+import { getRegexedString, regex_placement } from '@sillytavern/scripts/extensions/regex/engine';
 
 import log from 'loglevel';
 
-interface TavernRegex {
+type FormatAsTavernRegexedStringOption = {
+  depth?: number;
+  character_name?: string;
+};
+
+export function formatAsTavernRegexedString(
+  text: string,
+  source: 'user_input' | 'ai_output' | 'slash_command' | 'world_info' | 'reasoning',
+  destination: 'display' | 'prompt',
+  { depth, character_name }: FormatAsTavernRegexedStringOption = {},
+) {
+  let result = getRegexedString(
+    text,
+    (
+      {
+        user_input: regex_placement.USER_INPUT,
+        ai_output: regex_placement.AI_OUTPUT,
+        slash_command: regex_placement.SLASH_COMMAND,
+        world_info: regex_placement.WORLD_INFO,
+        reasoning: regex_placement.REASONING,
+      } as const
+    )[source],
+    {
+      characterOverride: character_name,
+      isMarkdown: destination === 'display',
+      isPrompt: destination === 'prompt',
+      depth,
+    },
+  );
+  result = substituteParams(result, undefined, character_name, undefined, undefined);
+  macros.forEach(macro => {
+    result = result.replace(macro.regex, (substring, ...args) =>
+      macro.replace(
+        {
+          role: (
+            {
+              user_input: 'user',
+              ai_output: 'assistant',
+              slash_command: 'system',
+              world_info: 'system',
+              reasoning: 'system',
+            } as const
+          )[source],
+          message_id: depth !== undefined ? chat.length - depth - 1 : undefined,
+        },
+        substring,
+        ...args,
+      ),
+    );
+  });
+  return result;
+}
+
+type TavernRegex = {
   id: string;
   script_name: string;
   enabled: boolean;
@@ -29,7 +91,7 @@ interface TavernRegex {
 
   min_depth: number | null;
   max_depth: number | null;
-}
+};
 
 export function isCharacterTavernRegexEnabled(): boolean {
   // @ts-ignore 2345
@@ -110,10 +172,10 @@ export function isCharacterTavernRegexesEnabled(): boolean {
   return result;
 }
 
-interface GetTavernRegexesOption {
+type GetTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character'; // 按所在区域筛选正则
   enable_state?: 'all' | 'enabled' | 'disabled'; // 按是否被开启筛选正则
-}
+};
 
 export function getTavernRegexes({ scope = 'all', enable_state = 'all' }: GetTavernRegexesOption = {}): TavernRegex[] {
   if (!['all', 'enabled', 'disabled'].includes(enable_state)) {
@@ -137,9 +199,9 @@ export function getTavernRegexes({ scope = 'all', enable_state = 'all' }: GetTav
   return structuredClone(regexes);
 }
 
-interface ReplaceTavernRegexesOption {
+type ReplaceTavernRegexesOption = {
   scope?: 'all' | 'global' | 'character'; // 要替换的酒馆正则部分
-}
+};
 
 export async function replaceTavernRegexes(
   regexes: TavernRegex[],

@@ -330,7 +330,7 @@ export async function updateTavernHelper() {
   const global = getExtensionType(extensionName) === 'global' ? true : false;
 
   const reload = () => {
-    toastr.success(t`成功更新酒馆助手, 准备刷新页面以生效...`);
+    toastr.success(`成功更新酒馆助手, 准备刷新页面以生效...`);
     log.info(`成功更新酒馆助手, 准备刷新页面以生效...`);
     setTimeout(() => location.reload(), 3000);
   };
@@ -338,11 +338,22 @@ export async function updateTavernHelper() {
   const update_response = await update_extension(extensionName, global);
   if (update_response.ok) {
     if ((await update_response.json()).isUpToDate) {
+      toastr.success(`酒馆助手已是最新版本, 无需更新`);
       log.info(`酒馆助手已是最新版本, 无需更新`);
     } else {
       reload();
     }
     return true;
+  }
+  const comfirm_reinstall = await callGenericPopup(
+    `更新失败: ${(await update_response.text()) || update_response.statusText}
+  是否尝试通过卸载重装来更新?
+  (可能因为网络问题而只卸载了没能重装, 请先复制 \`https://gitlab.com/novi028/JS-Slash-Runner\`)
+  `,
+    POPUP_TYPE.CONFIRM,
+  );
+  if (!comfirm_reinstall) {
+    return;
   }
 
   const reinstall_response = await reinstall_extension(extensionName, global);

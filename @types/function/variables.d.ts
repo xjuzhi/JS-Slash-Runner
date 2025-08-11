@@ -1,4 +1,4 @@
-interface VariableOption {
+type VariableOption = {
   /**
    * 对某一楼层的聊天变量 (`message`)、聊天变量 (`'chat'`)、角色卡变量 (`'character'`)、聊天变量 (`'script'`) 或全局变量 (`'global'`) 进行操作, 默认为 `'chat'`
    */
@@ -46,7 +46,7 @@ interface VariableOption {
  * // 在脚本内获取该脚本绑定的变量
  * const variables = getVariables({type: 'script', script_id: getScriptId()});
  */
-function getVariables({ type, message_id, script_id }?: VariableOption): Record<string, any>;
+declare function getVariables({ type, message_id, script_id }?: VariableOption): Record<string, any>;
 
 /**
  * 完全替换变量表为 `variables`
@@ -75,7 +75,7 @@ function getVariables({ type, message_id, script_id }?: VariableOption): Record<
  * // 在脚本内替换该脚本绑定的变量
  * await replaceVariables({神乐光: {好感度: 5, 认知度: 0}}, {type: 'script', script_id: getScriptId()});
  */
-async function replaceVariables(
+declare function replaceVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<void>;
@@ -103,7 +103,7 @@ type VariablesUpdater =
  * // 更新 "爱城华恋.好感度" 为原来的 2 倍, 如果该变量不存在则设置为 0
  * await updateVariablesWith(variables => _.update(variables, "爱城华恋.好感度", value => value ? value * 2 : 0));
  */
-async function updateVariablesWith(
+declare function updateVariablesWith(
   updater: VariablesUpdater,
   { type, message_id, script_id }?: VariableOption,
 ): Promise<Record<string, any>>;
@@ -119,15 +119,17 @@ async function updateVariablesWith(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
+ * @returns 更新后的变量表
+ *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await insertOrAssignVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
  * // 执行后变量: `{爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}}`
  */
-async function insertOrAssignVariables(
+declare function insertOrAssignVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
-): Promise<void>;
+): Promise<Record<string, any>>;
 
 /**
  * 插入新变量, 如果变量已经存在则什么也不做
@@ -140,15 +142,17 @@ async function insertOrAssignVariables(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
+ * @returns 更新后的变量表
+ *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await insertVariables({爱城华恋: {好感度: 10}, 神乐光: {好感度: 5, 认知度: 0}});
  * // 执行后变量: `{爱城华恋: {好感度: 5}, 神乐光: {好感度: 5, 认知度: 0}}`
  */
-async function insertVariables(
+declare function insertVariables(
   variables: Record<string, any>,
   { type, message_id, script_id }?: VariableOption,
-): Promise<void>;
+): Promise<Record<string, any>>;
 
 /**
  * 删除变量, 如果变量不存在则什么也不做
@@ -161,14 +165,14 @@ async function insertVariables(
  *   - `message_id?:number|'latest'`: 当 `type` 为 `'message'` 时, 该参数指定要获取的消息楼层号, 如果为负数则为深度索引, 例如 `-1` 表示获取最新的消息楼层; 默认为 `'latest'`
  *   - `script_id?:string`: 当 `type` 为 `'script'` 时, 该参数指定要获取的脚本 ID; 如果在脚本内调用, 则你可以用 `getScriptId()` 获取该脚本 ID
  *
- * @returns 是否成功删除变量
+ * @returns 更新后的变量表, 以及是否成功删除变量
  *
  * @example
  * // 执行前变量: `{爱城华恋: {好感度: 5}}`
  * await deleteVariable("爱城华恋.好感度");
  * // 执行后变量: `{爱城华恋: {}}`
  */
-async function deleteVariable(
+declare function deleteVariable(
   variable_path: string,
   { type, message_id, script_id }?: VariableOption,
-): Promise<boolean>;
+): Promise<{ variables: Record<string, any>; delete_occurred: boolean }>;

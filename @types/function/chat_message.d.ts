@@ -1,4 +1,4 @@
-interface ChatMessage {
+type ChatMessage = {
   message_id: number;
   name: string;
   role: 'system' | 'assistant' | 'user';
@@ -6,9 +6,9 @@ interface ChatMessage {
   message: string;
   data: Record<string, any>;
   extra: Record<string, any>;
-}
+};
 
-interface ChatMessageSwiped {
+type ChatMessageSwiped = {
   message_id: number;
   name: string;
   role: 'system' | 'assistant' | 'user';
@@ -17,16 +17,16 @@ interface ChatMessageSwiped {
   swipes: string[];
   swipes_data: Record<string, any>[];
   swipes_info: Record<string, any>[];
-}
+};
 
-interface GetChatMessagesOption {
+type GetChatMessagesOption = {
   /** 按 role 筛选消息; 默认为 `'all'` */
   role?: 'all' | 'system' | 'assistant' | 'user';
   /** 按是否被隐藏筛选消息; 默认为 `'all'` */
   hide_state?: 'all' | 'hidden' | 'unhidden';
   /** 是否包含未被 ai 使用的消息页信息, 如没选择的开局、通过点击箭头重 roll 的楼层. 如果不包含则返回类型为 `ChatMessage`, 否则返回类型为 `ChatMessageSwiped`; 默认为 `false` */
   include_swipes?: boolean;
-}
+};
 
 /**
  * 获取聊天消息, 仅获取每楼被 ai 使用的消息页
@@ -53,7 +53,7 @@ interface GetChatMessagesOption {
  * // 获取所有楼层被 ai 使用的消息页
  * const chat_messages = getChatMessages('0-{{lastMessageId}}');
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: Omit<GetChatMessagesOption, 'include_swipes'> & { include_swipes?: false },
 ): ChatMessage[];
@@ -82,7 +82,7 @@ function getChatMessages(
  * // 获取所有楼层所有的消息页
  * const chat_messages = getChatMessages('0-{{lastMessageId}}', { include_swipes: true });
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: Omit<GetChatMessagesOption, 'include_swipes'> & { include_swipes?: true },
 ): ChatMessageSwiped[];
@@ -98,12 +98,12 @@ function getChatMessages(
  *
  * @returns 一个数组, 数组的元素是每楼的消息, 依据 message_id 从低到高排序, 类型为 `ChatMessage` 或 `ChatMessageSwiped` (取决于 `include_swipes` 的值, 默认为 `ChatMessage`).
  */
-function getChatMessages(
+declare function getChatMessages(
   range: string | number,
   { role, hide_state, include_swipes }?: GetChatMessagesOption,
 ): (ChatMessage | ChatMessageSwiped)[];
 
-interface SetChatMessagesOption {
+type SetChatMessagesOption = {
   /**
    * 是否更新楼层在页面上的显示, 只会更新已经被加载在网页上的楼层, 并触发被更新楼层的 "仅格式显示" 正则; 默认为 `'affected'`
    * - `'none'`: 不更新页面的显示
@@ -143,12 +143,12 @@ interface SetChatMessagesOption {
  * const last_message_id = getLastMessageId();
  * await setChatMessages(_.range(last_message_id + 1).map(message_id => ({message_id, is_hidden: true})));
  */
-async function setChatMessages(
+declare function setChatMessages(
   chat_messages: Array<{ message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>)>,
   { refresh }?: SetChatMessagesOption,
 );
 
-interface ChatMessageCreating {
+type ChatMessageCreating = {
   name?: string;
   role: 'system' | 'assistant' | 'user';
   is_hidden?: boolean;
@@ -156,7 +156,7 @@ interface ChatMessageCreating {
   data?: Record<string, any>;
 }
 
-interface CreateChatMessagesOption {
+type CreateChatMessagesOption = {
   /** 插入到指定楼层前或末尾 */
   insert_at?: number | 'end';
 
@@ -185,12 +185,12 @@ interface CreateChatMessagesOption {
  * // 在末尾插入一条消息
  * await createChatMessages([{role: 'user', message: '你好'}]);
  */
-async function createChatMessages(
+declare function createChatMessages(
   chat_messages: ChatMessageCreating[],
   { insert_at, refresh }?: CreateChatMessagesOption,
 ): Promise<void>;
 
-interface DeleteChatMessagesOption {
+type DeleteChatMessagesOption = {
   /**
    * 是否更新楼层在页面上的显示, 只会更新已经被加载在网页上的楼层, 并触发被更新楼层的 "仅格式显示" 正则; 默认为 `'all'`
    * - `'none'`: 不更新页面的显示
@@ -214,9 +214,9 @@ interface DeleteChatMessagesOption {
  * // 删除所有楼层
  * await deleteChatMessages(_.range(getLastMessageId() + 1));
  */
-async function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
+declare function deleteChatMessages(message_ids: number[], { refresh }?: DeleteChatMessagesOption): Promise<void>;
 
-interface RotateChatMessagesOption {
+type RotateChatMessagesOption = {
   /**
    * 是否更新楼层在页面上的显示, 只会更新已经被加载在网页上的楼层, 并触发被更新楼层的 "仅格式显示" 正则; 默认为 `'all'`
    * - `'none'`: 不更新页面的显示
@@ -244,7 +244,7 @@ interface RotateChatMessagesOption {
  * // 将前 3 楼放到最后
  * await rotateChatMessages(0, 3, getLastMessageId() + 1);
  */
-async function rotateChatMessages(
+declare function rotateChatMessages(
   begin: number,
   middle: number,
   end: number,

@@ -87,7 +87,6 @@ export class VariableController {
     const variables = await this.model.loadFromTavern(type);
 
     if (variables.length === 0) {
-      toastr.warning(`${type}变量为空`);
       return;
     }
 
@@ -252,7 +251,7 @@ export class VariableController {
     } else {
       sameNameVariables = this.model.getVariablesByName(newVariable.name);
     }
-    
+
     const otherSameNameVariables = sameNameVariables.filter(v => v.id !== newVariable.id);
     if (otherSameNameVariables.length > 0) {
       toastr.error('变量名重复');

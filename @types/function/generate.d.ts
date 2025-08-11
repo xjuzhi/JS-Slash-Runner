@@ -1,4 +1,4 @@
-interface GenerateConfig {
+type GenerateConfig = {
   /** 用户输入 */
   user_input?: string;
 
@@ -8,13 +8,13 @@ interface GenerateConfig {
    * - Base64 字符串：图片的 base64 编码
    * - URL 字符串：图片的在线地址
    */
-  image?: File | string;
+  image?: File | string | (File | string)[];
 
   /**
    * 是否启用流式传输; 默认为 `false`.
    *
    * 若启用流式传输, 每次得到流式传输结果时, 函数将会发送事件:
-   * - `ifraem_events.STREAM_TOKEN_RECEIVED_FULLY`: 监听它可以得到流式传输的当前完整文本 ("这是", "这是一条", "这是一条流式传输")
+   * - `iframe_events.STREAM_TOKEN_RECEIVED_FULLY`: 监听它可以得到流式传输的当前完整文本 ("这是", "这是一条", "这是一条流式传输")
    * - `iframe_events.STREAM_TOKEN_RECEIVED_INCREMENTALLY`: 监听它可以得到流式传输的当前增量文本 ("这是", "一条", "流式传输")
    *
    * @example
@@ -33,9 +33,9 @@ interface GenerateConfig {
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
-}
+};
 
-interface GenerateRawConfig {
+type GenerateRawConfig = {
   /**
    * 用户输入.
    *
@@ -49,7 +49,7 @@ interface GenerateRawConfig {
    * - Base64 字符串：图片的 base64 编码
    * - URL 字符串：图片的在线地址
    */
-  image?: File | string;
+  image?: File | string | (File | string)[];
 
   /**
    * 是否启用流式传输; 默认为 `false`.
@@ -81,15 +81,15 @@ interface GenerateRawConfig {
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
-}
+};
 
-interface RolePrompt {
+type RolePrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
-  image?: File | string;
-}
+  image?: File | string | (File | string)[];
+};
 
-interface InjectionPrompt {
+type InjectionPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
 
@@ -100,9 +100,9 @@ interface InjectionPrompt {
 
   /** 是否要加入世界书扫描中 */
   should_scan: boolean;
-}
+};
 
-interface InjectionRawPrompt {
+type InjectionRawPrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
 
@@ -113,9 +113,9 @@ interface InjectionRawPrompt {
 
   /** 是否要加入世界书扫描中 */
   should_scan: boolean;
-}
+};
 
-interface Overrides {
+type Overrides = {
   world_info_before?: string;
   persona_description?: string;
   char_description?: string;
@@ -135,12 +135,12 @@ interface Overrides {
     author_note?: string;
     prompts?: RolePrompt[];
   };
-}
+};
 
 /**
  * 预设为内置提示词设置的默认顺序
  */
-const builtin_prompt_default_order: BuiltinPrompt[];
+declare const builtin_prompt_default_order: BuiltinPrompt[];
 
 type BuiltinPrompt =
   | 'world_info_before'
@@ -193,7 +193,7 @@ type BuiltinPrompt =
  *   }
  * });
  */
-async function generate(config: GenerateConfig): Promise<string>;
+declare function generate(config: GenerateConfig): Promise<string>;
 
 /**
  * 不使用酒馆当前启用的预设, 让 ai 生成一段文本.
@@ -226,4 +226,4 @@ async function generate(config: GenerateConfig): Promise<string>;
  *   ]
  * })
  */
-async function generateRaw(config: GenerateRawConfig): Promise<string>;
+declare function generateRaw(config: GenerateRawConfig): Promise<string>;

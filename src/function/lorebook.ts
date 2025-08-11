@@ -1,3 +1,5 @@
+import { Character } from '@/function/character';
+
 import {
   characters,
   chat_metadata,
@@ -11,8 +13,7 @@ import {
   this_chid,
 } from '@sillytavern/script';
 // @ts-ignore
-import { selected_group } from '@sillytavern/scripts/group-chats';
-import { ensureImageFormatSupported, findChar, getCharaFilename } from '@sillytavern/scripts/utils';
+import { ensureImageFormatSupported, getCharaFilename } from '@sillytavern/scripts/utils';
 import {
   createNewWorldInfo,
   deleteWorldInfo,
@@ -26,7 +27,7 @@ import {
 
 import log from 'loglevel';
 
-interface LorebookSettings {
+type LorebookSettings = {
   selected_global_lorebooks: string[];
 
   scan_depth: number;
@@ -44,7 +45,7 @@ interface LorebookSettings {
   match_whole_words: boolean;
   use_group_scoring: boolean;
   overflow_alert: boolean;
-}
+};
 
 async function editCurrentCharacter(): Promise<boolean> {
   // @ts-ignore
@@ -119,10 +120,8 @@ function toLorebookSettings(world_info_settings: ReturnType<typeof getWorldInfoS
 function assignPartialLorebookSettings(settings: Partial<LorebookSettings>): void {
   const for_eachs = {
     selected_global_lorebooks: (value: LorebookSettings['selected_global_lorebooks']) => {
-      // @ts-ignore
       $('#world_info').find('option[value!=""]').remove();
       world_names.forEach((item, i) =>
-        // @ts-ignore
         $('#world_info').append(`<option value='${i}'${value.includes(item) ? ' selected' : ''}>${item}</option>`),
       );
 
@@ -132,60 +131,46 @@ function assignPartialLorebookSettings(settings: Partial<LorebookSettings>): voi
     },
 
     scan_depth: (value: LorebookSettings['scan_depth']) => {
-      // @ts-ignore
       $('#world_info_depth').val(value).trigger('input');
     },
     context_percentage: (value: LorebookSettings['context_percentage']) => {
-      // @ts-ignore
       $('#world_info_budget').val(value).trigger('input');
     },
     budget_cap: (value: LorebookSettings['budget_cap']) => {
-      // @ts-ignore
       $('#world_info_budget_cap').val(value).trigger('input');
     },
     min_activations: (value: LorebookSettings['min_activations']) => {
-      // @ts-ignore
       $('#world_info_min_activations').val(value).trigger('input');
     },
     max_depth: (value: LorebookSettings['max_depth']) => {
-      // @ts-ignore
       $('#world_info_min_activations_depth_max').val(value).trigger('input');
     },
     max_recursion_steps: (value: LorebookSettings['max_recursion_steps']) => {
-      // @ts-ignore
       $('#world_info_max_recursion_steps').val(value).trigger('input');
     },
 
     insertion_strategy: (value: LorebookSettings['insertion_strategy']) => {
       const converted_value = { evenly: 0, character_first: 1, global_first: 2 }[value];
-      // @ts-ignore
       $(`#world_info_character_strategy option[value='${converted_value}']`).prop('selected', true);
-      // @ts-ignore
       $('#world_info_character_strategy').val(converted_value).trigger('change');
     },
 
     include_names: (value: LorebookSettings['include_names']) => {
-      // @ts-ignore
       $('#world_info_include_names').prop('checked', value).trigger('input');
     },
     recursive: (value: LorebookSettings['recursive']) => {
-      // @ts-ignore
       $('#world_info_recursive').prop('checked', value).trigger('input');
     },
     case_sensitive: (value: LorebookSettings['case_sensitive']) => {
-      // @ts-ignore
       $('#world_info_case_sensitive').prop('checked', value).trigger('input');
     },
     match_whole_words: (value: LorebookSettings['match_whole_words']) => {
-      // @ts-ignore
       $('#world_info_match_whole_words').prop('checked', value).trigger('input');
     },
     use_group_scoring: (value: LorebookSettings['use_group_scoring']) => {
-      // @ts-ignore
       $('#world_info_use_group_scoring').prop('checked', value).trigger('change');
     },
     overflow_alert: (value: LorebookSettings['overflow_alert']) => {
-      // @ts-ignore
       $('#world_info_overflow_alert').prop('checked', value).trigger('change');
     },
   };
@@ -198,10 +183,10 @@ function assignPartialLorebookSettings(settings: Partial<LorebookSettings>): voi
     });
 }
 
-interface GetCharLorebooksOption {
+type GetCharLorebooksOption = {
   name?: string;
   type?: 'all' | 'primary' | 'additional';
-}
+};
 
 export function getLorebookSettings(): LorebookSettings {
   const lorebook_settings = toLorebookSettings(getWorldInfoSettings());
@@ -218,6 +203,8 @@ export function setLorebookSettings(settings: Partial<LorebookSettings>): void {
     }
   }
 
+  const original_settings = getLorebookSettings();
+  settings = _.omitBy(settings, (value, key) => value === original_settings[key as keyof LorebookSettings]);
   assignPartialLorebookSettings(settings);
 
   log.info(`修改世界书全局设置:\n${JSON.stringify(settings)}`);
@@ -242,23 +229,18 @@ export async function createLorebook(lorebook: string): Promise<boolean> {
   return success;
 }
 
-interface CharLorebooks {
+type CharLorebooks = {
   primary: string | null;
   additional: string[];
-}
+};
 
 export function getCharLorebooks({
   name = (characters as any)[this_chid as string]?.avatar ?? null,
   type = 'all',
 }: GetCharLorebooksOption = {}): CharLorebooks {
-  // @ts-ignore
-  if (selected_group && !name) {
-    throw Error(`不要在群组中调用这个功能`);
-  }
-  // @ts-ignore
-  const character = findChar({ name });
+  const character = Character.find({ name: name ?? 'current' });
   if (!character) {
-    throw Error(`未找到名为 '${name}' 的角色卡`);
+    throw Error(`未找到${name === 'current' ? '当前打开' : `名为 '${name}' `}的角色卡`);
   }
 
   const books: CharLorebooks = { primary: null, additional: [] };
@@ -267,25 +249,13 @@ export function getCharLorebooks({
     books.primary = character.data?.extensions?.world;
   }
 
-  const filename = getCharaFilename(characters.indexOf(character)) as string;
-  const extraCharLore = (world_info as { charLore: { name: string; extraBooks: string[] }[] }).charLore?.find(
+  // TODO: 提取成函数
+  const filename = character.avatar.replace(/\.[^/.]+$/, '');
+  const extra_charlore = (world_info as { charLore: { name: string; extraBooks: string[] }[] }).charLore?.find(
     e => e.name === filename,
   );
-  if (extraCharLore && Array.isArray(extraCharLore.extraBooks)) {
-    books.additional = extraCharLore.extraBooks;
-  }
-
-  // 根据 type 参数过滤结果
-  if (type) {
-    switch (type) {
-      case 'primary':
-        return { primary: books.primary, additional: [] };
-      case 'additional':
-        return { primary: null, additional: books.additional };
-      case 'all':
-      default:
-        return books;
-    }
+  if (extra_charlore && Array.isArray(extra_charlore.extraBooks)) {
+    books.additional = extra_charlore.extraBooks;
   }
 
   log.info(`获取角色卡绑定的世界书, 选项: ${JSON.stringify({ name, type })}, 获取结果: ${JSON.stringify(books)}`);
@@ -297,42 +267,32 @@ export function getCurrentCharPrimaryLorebook(): string | null {
 }
 
 export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>): Promise<void> {
-  // @ts-ignore
-  if (selected_group) {
-    throw Error(`不要在群组中调用这个功能`);
-  }
-  // @ts-ignore
   const filename = getCharaFilename(this_chid);
   if (!filename) {
     throw Error(`未打开任何角色卡`);
   }
 
-  const inexisting_lorebooks: string[] = [
-    ...(lorebooks.primary && !world_names.includes(lorebooks.primary) ? [lorebooks.primary] : []),
-    ...(lorebooks.additional ? lorebooks.additional.filter(lorebook => !world_names.includes(lorebook)) : []),
-  ];
+  const inexisting_lorebooks = _(_.concat(lorebooks.primary ? [lorebooks.primary] : [], lorebooks.additional))
+    .reject(_.isNull)
+    .reject(lorebook_name => getLorebooks().some(value => value === lorebook_name))
+    .value();
   if (inexisting_lorebooks.length > 0) {
     throw Error(`尝试修改 '${filename}' 绑定的世界书, 但未找到以下世界书: ${inexisting_lorebooks}`);
   }
 
   if (lorebooks.primary !== undefined) {
-    // @ts-ignore
     const previous_primary = String($('#character_world').val());
-    // @ts-ignore
     $('#character_world').val(lorebooks.primary ? lorebooks.primary : '');
 
-    // @ts-ignore
     $('.character_world_info_selector')
       .find('option:selected')
       .val(lorebooks.primary ? world_names.indexOf(lorebooks.primary) : '');
 
     if (previous_primary && !lorebooks.primary) {
-      // @ts-ignore
       const data = JSON.parse(String($('#character_json_data').val()));
       if (data?.data?.character_book) {
         data.data.character_book = undefined;
       }
-      // @ts-ignore
       $('#character_json_data').val(JSON.stringify(data));
     }
 
@@ -340,15 +300,15 @@ export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>)
       throw Error(`尝试为 '${filename}' 绑定主要世界书, 但在访问酒馆后端时出错`);
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     setWorldInfoButtonClass(undefined, !!lorebooks.primary);
   }
 
   if (lorebooks.additional !== undefined) {
-    interface CharLoreEntry {
+    type CharLoreEntry = {
       name: string;
       extraBooks: string[];
-    }
+    };
     const char_lore = (world_info as { charLore: CharLoreEntry[] }).charLore ?? [];
 
     const existing_char_index = char_lore.findIndex(entry => entry.name === filename);
@@ -373,7 +333,7 @@ export async function setCurrentCharLorebooks(lorebooks: Partial<CharLorebooks>)
   );
 }
 
-export async function getChatLorebook(): Promise<string | null> {
+export function getChatLorebook(): string | null {
   const chat_id = getCurrentChatId();
   if (!chat_id) {
     throw Error(`未打开任何聊天, 不可获取聊天世界书`);

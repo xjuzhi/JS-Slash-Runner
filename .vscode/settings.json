@@ -40,4 +40,5 @@
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml",
   },
+  "typescript.tsdk": "node_modules/typescript/lib",
 }

@@ -6,4 +6,4 @@
  * @example
  * const variables = getAllVariables();
  */
-function getAllVariables(): Record<string, any>;
+declare function getAllVariables(): Record<string, any>;

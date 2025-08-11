@@ -1,52 +1,46 @@
+// TODO: 重新设计这里的接口, set 部分直接访问后端
 import { charsPath } from '@/util/extension_variables';
 
 import { characters, getPastCharacterChats, getRequestHeaders, getThumbnailUrl, this_chid } from '@sillytavern/script';
 import { v1CharData } from '@sillytavern/scripts/char-data';
 
 import log from 'loglevel';
+import { LiteralUnion } from 'type-fest';
 
 export class Character {
-  private charData: v1CharData;
+  private character_data: v1CharData;
 
-  constructor(characterData: v1CharData) {
-    this.charData = characterData;
+  constructor(character_data: v1CharData) {
+    this.character_data = character_data;
   }
 
-  static find({ name, allowAvatar = true }: { name?: string; allowAvatar?: boolean } = {}): v1CharData {
-    if (name === undefined) {
-      // @ts-ignore
-      const currentChar = characters[this_chid];
-      if (currentChar) {
-        name = currentChar.avatar;
-        // 确保allowAvatar为true，以便可以通过avatar准确查找角色
-        allowAvatar = true;
+  static find({
+    name,
+    allow_avatar = true,
+  }: {
+    name: LiteralUnion<'current', string>;
+    allow_avatar?: boolean;
+  }): v1CharData | null {
+    if (!name || name === 'current') {
+      if (!this_chid) {
+        return null;
+      }
+      return characters[Number(this_chid)];
+    }
+
+    if (allow_avatar) {
+      const character_by_avatar = characters.find(char => char.avatar === name);
+      if (character_by_avatar) {
+        return character_by_avatar;
       }
     }
 
-    const matches = (char: { avatar: string; name: string }) =>
-      !name || char.name === name || (allowAvatar && char.avatar === name);
-
-    const filteredCharacters = characters;
-
-    // 如果有确定的角色头像id提供，则返回该角色
-    if (allowAvatar && name) {
-      const characterByAvatar = filteredCharacters.find(char => char.avatar === name);
-      if (characterByAvatar) {
-        return characterByAvatar;
-      }
+    const matching_characters = characters.filter(char => char.name === name || (allow_avatar && char.avatar === name));
+    if (matching_characters.length > 1) {
+      log.warn(`找到多个符合条件的角色, 返回导入时间最早的角色: ${name}`);
     }
 
-    // 查找所有匹配的角色
-    const matchingCharacters = name ? filteredCharacters.filter(matches) : filteredCharacters;
-    if (matchingCharacters.length > 1) {
-      log.warn(`找到多个符合条件的角色，返回导入时间最早的角色: ${name}`);
-    }
-
-    if (matchingCharacters.length === 0) {
-      throw new Error(`提供的名称或头像ID为: ${name}，未找到符合条件的角色`);
-    }
-
-    return matchingCharacters[0];
+    return matching_characters[0] || null;
   }
 
   static findCharacterIndex(name: string): number {
@@ -127,11 +121,11 @@ export class Character {
   }
 
   getCardData(): v1CharData {
-    return this.charData;
+    return this.character_data;
   }
 
   getAvatarId(): string {
-    return this.charData.avatar || '';
+    return this.character_data.avatar || '';
   }
 
   getRegexScripts(): Array<{
@@ -149,7 +143,7 @@ export class Character {
     minDepth: number;
     maxDepth: number;
   }> {
-    return this.charData.data?.extensions?.regex_scripts || [];
+    return this.character_data.data?.extensions?.regex_scripts || [];
   }
 
   getCharacterBook(): {
@@ -168,17 +162,20 @@ export class Character {
       id: number;
     }>;
   } | null {
-    return this.charData.data?.character_book || null;
+    return this.character_data.data?.character_book || null;
   }
 
   getWorldName(): string {
-    return this.charData.data?.extensions?.world || '';
+    return this.character_data.data?.extensions?.world || '';
   }
 }
 
-export function getCharData(name?: string, allowAvatar: boolean = true): v1CharData | null {
+export function getCharData(name: LiteralUnion<'current', string>, allowAvatar: boolean = true): v1CharData | null {
   try {
-    const characterData = Character.find({ name, allowAvatar });
+    // backward compatibility
+    name = !name ? 'current' : name;
+
+    const characterData = Character.find({ name, allow_avatar: allowAvatar });
     if (!characterData) return null;
 
     const character = new Character(characterData);
@@ -190,56 +187,55 @@ export function getCharData(name?: string, allowAvatar: boolean = true): v1CharD
   }
 }
 
-export function getCharAvatarPath(name?: string, allowAvatar: boolean = true): string | null {
-  try {
-    const characterData = Character.find({ name, allowAvatar });
-    if (!characterData) return null;
+export function getCharAvatarPath(name: LiteralUnion<'current', string>, allowAvatar: boolean = true): string | null {
+  // backward compatibility
+  name = !name ? 'current' : name;
 
-    const character = new Character(characterData);
-    const avatarId = character.getAvatarId();
-
-    // 使用getThumbnailUrl获取缩略图URL，然后提取实际文件名
-    const thumbnailPath = getThumbnailUrl('avatar', avatarId);
-    const targetAvatarImg = thumbnailPath.substring(thumbnailPath.lastIndexOf('=') + 1);
-
-    // 假设charsPath在其他地方定义
-    log.info(`获取角色头像路径成功, 角色: ${name || '未知'}`);
-    return charsPath + targetAvatarImg;
-  } catch (error) {
-    log.error(`获取角色头像路径失败, 角色: ${name || '未知'}`, error);
+  const characterData = Character.find({ name, allow_avatar: allowAvatar });
+  if (!characterData) {
     return null;
   }
+
+  const character = new Character(characterData);
+  const avatarId = character.getAvatarId();
+
+  // 使用getThumbnailUrl获取缩略图URL，然后提取实际文件名
+  const thumbnailPath = getThumbnailUrl('avatar', avatarId);
+  const targetAvatarImg = thumbnailPath.substring(thumbnailPath.lastIndexOf('=') + 1);
+
+  // 假设charsPath在其他地方定义
+  log.info(`获取角色头像路径成功, 角色: ${name || '未知'}`);
+  return charsPath + targetAvatarImg;
 }
 
-export async function getChatHistoryBrief(name?: string, allowAvatar: boolean = true): Promise<any[] | null> {
-  try {
-    const characterData = Character.find({ name, allowAvatar });
-    if (!characterData) return null;
+export async function getChatHistoryBrief(
+  name: LiteralUnion<'current', string>,
+  allowAvatar: boolean = true,
+): Promise<any[] | null> {
+  // backward compatibility
+  name = !name ? 'current' : name;
 
-    const character = new Character(characterData);
-    const index = Character.findCharacterIndex(character.getAvatarId());
-
-    if (index === -1) return null;
-
-    const chats = await getPastCharacterChats(index);
-    log.info(`获取角色聊天历史摘要成功, 角色: ${name || '未知'}`);
-    return chats;
-  } catch (error) {
-    log.error(`获取角色聊天历史摘要失败, 角色: ${name || '未知'}`, error);
+  const character_data = Character.find({ name, allow_avatar: allowAvatar });
+  if (!character_data) {
     return null;
   }
+
+  const character = new Character(character_data);
+  const index = Character.findCharacterIndex(character.getAvatarId());
+  if (index === -1) {
+    return null;
+  }
+
+  const chats = await getPastCharacterChats(index);
+  log.info(`获取角色聊天历史摘要成功, 角色: ${name || '未知'}`);
+  return chats;
 }
 
 export async function getChatHistoryDetail(
   data: any[],
   isGroupChat: boolean = false,
 ): Promise<Record<string, any> | null> {
-  try {
-    const result = await Character.getChatsFromFiles(data, isGroupChat);
-    log.info(`获取聊天文件详情成功`);
-    return result;
-  } catch (error) {
-    log.error(`获取聊天文件详情失败`, error);
-    return null;
-  }
+  const result = await Character.getChatsFromFiles(data, isGroupChat);
+  log.info(`获取聊天文件详情成功`);
+  return result;
 }
