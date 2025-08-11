@@ -375,7 +375,7 @@ export async function getWorldbook(worldbook_name: string): Promise<WorldbookEnt
   );
 
   return structuredClone(
-    _(original_worldbook_entries.entries).values().sortBy('display_index').map(toWorldbookEntry).value(),
+    _(original_worldbook_entries.entries).values().sortBy('displayIndex').map(toWorldbookEntry).value(),
   );
 }
 
