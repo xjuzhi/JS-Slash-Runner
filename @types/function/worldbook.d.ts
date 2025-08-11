@@ -67,9 +67,10 @@ type WorldbookEntry = {
   name: string;
   enabled: boolean;
 
+  /** 激活策略: 条目应该何时激活 */
   strategy: {
     /**
-     * 激活策略
+     * 激活策略类型:
      * - `'constant'`: 常量🔵, 俗称蓝灯. 只需要满足 "启用"、"激活概率%" 等别的要求即可.
      * - `'selective'`: 可选项🟢, 俗称绿灯. 除了蓝灯条件, 还需要满足 `keys` 扫描条件
      * - `'vectorized'`: 向量化🔗. 一般不使用
@@ -88,6 +89,7 @@ type WorldbookEntry = {
     /** 扫描深度: 1 为仅扫描最后一个楼层, 2 为扫描最后两个楼层, 以此类推 */
     scan_depth: 'same_as_global' | number;
   };
+  /** 插入位置: 如果条目激活应该插入到什么地方 */
   position: {
     /**
      * 位置类型:
@@ -129,12 +131,13 @@ type WorldbookEntry = {
   effect: {
     /** 黏性: 条目激活后, 在之后 `n` 条消息内始终激活, 无视激活策略、激活概率% */
     sticky: null | number;
-    /** 冷却: 条目激活后, 在之后 `n` 条消息内不能再激活*/
+    /** 冷却: 条目激活后, 在之后 `n` 条消息内不能再激活 */
     cooldown: null | number;
     /** 延迟: 聊天中至少有 `1` 楼消息时, 才能激活条目 */
     delay: null | number;
   };
 
+  /** 额外字段, 用于为世界书条目绑定额外数据 */
   extra?: Record<string, any>;
 };
 
