@@ -1044,7 +1044,7 @@ type Preset = {
 
   /** 提示词列表里已经添加的提示词 */
   prompts: PresetPrompt[];
-  /** 下拉框里没添加进来的提示词 */
+  /** 下拉框里的, 没有添加进提示词列表的提示词 */
   prompts_unused: PresetPrompt[];
 
   /** 额外字段, 用于为预设绑定额外数据 */
