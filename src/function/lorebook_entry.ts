@@ -151,7 +151,7 @@ function toLorebookEntry(entry: _OriginalLorebookEntry): LorebookEntry {
         2: 'before_author_note',
         3: 'after_author_note',
       }[entry.position] ??
-      (entry.role === 0 ? 'at_depth_as_system' : entry.role === 1 ? 'at_depth_as_user' : 'at_depth_as_assistant'),
+      (entry.role === 1 ? 'at_depth_as_user' : entry.role === 2 ? 'at_depth_as_assistant' : 'at_depth_as_system'),
     depth: entry.position === 4 ? entry.depth : null,
     order: entry.order,
     probability: entry.probability,

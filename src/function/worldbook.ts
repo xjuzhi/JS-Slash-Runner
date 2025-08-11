@@ -165,7 +165,7 @@ type _OriginalWorldbookEntry = {
   scanDepth: number | null;
   vectorized: boolean;
   position: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-  role: 0 | 1 | 2; // 0: system, 1: user, 2: assistant
+  role: 0 | 1 | 2 | null; // 0: system, 1: user, 2: assistant
   depth: number;
   order: number;
 
@@ -211,7 +211,7 @@ function toWorldbookEntry(entry: _OriginalWorldbookEntry & _ImplicitKeys): World
         4: 'at_depth',
       }[entry.position],
     )
-    .set('position.role', ({ 0: 'system', 1: 'user', 2: 'assistant' } as const)[entry.role])
+    .set('position.role', ({ 0: 'system', 1: 'user', 2: 'assistant' } as const)[entry.role ?? 0])
     .set('position.depth', entry.depth)
     .set('position.order', entry.order)
 
