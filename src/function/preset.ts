@@ -300,7 +300,10 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
     .set('name', prompt.name ?? 'unnamed')
     .set(
       'enabled',
-      prompt_order.find(order => order.identifier === prompt.identifier)?.enabled ?? prompt.enabled ?? true,
+      prompt_order.find(order => order.identifier === prompt.identifier)
+        ?.enabled ??
+        prompt.enabled ??
+        true,
     );
 
   if (is_normal_prompt || is_placeholder_prompt) {
@@ -376,16 +379,12 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
 }
 
 function toPreset(preset: _OriginalPreset, { in_use }: { in_use: boolean }): Preset {
-  const prompt_order =
-    preset.prompt_order
-      .find(order => order.character_id === 100001)
-      ?.order.map(order => ({
-        identifier: _.get(identifier_to_id_map, order.identifier, order.identifier),
-        enabled: order.enabled,
-      })) ?? [];
-  const prompt_order_identifiers = prompt_order.map(order => order.identifier);
+  const prompt_order = preset.prompt_order.find(order => order.character_id === 100001)?.order ?? [];
   const prompts_all = preset.prompts.map(prompt => toPresetPrompt(prompt, prompt_order));
 
+  const prompt_order_identifiers = prompt_order.map(order =>
+    _.get(identifier_to_id_map, order.identifier, order.identifier),
+  );
   const [prompts_used, prompts_unused] = _.partition(prompts_all, prompt =>
     prompt_order_identifiers.includes(prompt.id),
   );
