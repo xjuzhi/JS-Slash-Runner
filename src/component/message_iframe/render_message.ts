@@ -619,8 +619,7 @@ export function destroyIframe(iframe: HTMLIFrameElement): void {
     }
   }
 
-  // 从DOM中移除
-  $iframe.remove();
+  $iframe.trigger('unload').remove();
 
   if (window._observedElements?.size === 0 && window._sharedResizeObserver) {
     window._sharedResizeObserver.disconnect();

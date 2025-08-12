@@ -32,7 +32,7 @@ class ScriptExecutor {
       )[0] as IFrameElement;
 
       if (iframeElement) {
-        await destroyIframe(iframeElement);
+        destroyIframe(iframeElement);
       }
 
       const htmlContent = this.createScriptHtml(script);
@@ -117,7 +117,7 @@ class ScriptExecutor {
   async clearAllScriptsIframe(): Promise<void> {
     const $iframes = $('iframe[id^="tavern-helper-script-"]');
     for (const iframe of $iframes) {
-      await destroyIframe(iframe as IFrameElement);
+      destroyIframe(iframe as IFrameElement);
     }
   }
 }
