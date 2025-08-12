@@ -165,8 +165,8 @@ declare const Mvu: {
    * @param mvu_data MvuData 数据表
    * @param path 变量路径, 支持嵌套路径如 `'player.health'` 或数组索引 `'items[0]'`
    * @param option 可选参数
-   *   - `reason?:string`: 更新原因, 会显示在 `display_data` 中
-   *   - `is_recursive?:boolean`: 是否触发 `Mvu.events.SINGLE_VARIABLE_UPDATED` 事件, 默认为 `false`
+   *   - `category?:'stat' | 'display' | 'delta'`: 要获取的变量数据类型, 默认为 `'stat'`
+   *   - `default_value?:any`: 如果变量不存在, 则返回该默认值
    *
    * @returns 变量值。如果是 ValueWithDescription 类型，返回第一个元素（实际值）
    *

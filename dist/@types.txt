@@ -1001,9 +1001,9 @@ type Preset = {
     frequency_penalty: number;
     /** 存在惩罚 */
     presence_penalty: number;
+    top_p: number;
     /** 重复惩罚 */
     repetition_penalty: number;
-    top_p: number;
     min_p: number;
     top_k: number;
     top_a: number;
@@ -1026,9 +1026,9 @@ type Preset = {
     enable_web_search: boolean;
 
     /** 是否允许发送图片作为提示词 */
-    allow_images: 'disabled' | 'auto' | 'low' | 'high';
+    allow_sending_images: 'disabled' | 'auto' | 'low' | 'high';
     /** 是否允许发送视频作为提示词 */
-    allow_videos: boolean;
+    allow_sending_videos: boolean;
 
     /**
      * 角色名称前缀: 是否要为消息添加角色名称前缀, 以及怎么添加
@@ -1044,7 +1044,7 @@ type Preset = {
 
   /** 提示词列表里已经添加的提示词 */
   prompts: PresetPrompt[];
-  /** 下拉框里没添加进来的提示词 */
+  /** 下拉框里的, 没有添加进提示词列表的提示词 */
   prompts_unused: PresetPrompt[];
 
   /** 额外字段, 用于为预设绑定额外数据 */
@@ -1723,8 +1723,10 @@ type WorldbookEntry = {
   name: string;
   enabled: boolean;
 
+  /** 激活策略: 条目应该何时激活 */
   strategy: {
     /**
+     * 激活策略类型:
      * - `'constant'`: 常量🔵, 俗称蓝灯. 只需要满足 "启用"、"激活概率%" 等别的要求即可.
      * - `'selective'`: 可选项🟢, 俗称绿灯. 除了蓝灯条件, 还需要满足 `keys` 扫描条件
      * - `'vectorized'`: 向量化🔗. 一般不使用
@@ -1733,7 +1735,7 @@ type WorldbookEntry = {
     /** 主要关键字. 绿灯条目必须在欲扫描文本中扫描到其中任意一个关键字才能激活 */
     keys: (string | RegExp)[];
     /**
-     * 次要关键字. 如果数组不为空, 则条目除了在主要关键字中匹配到任意一个关键字外, 还需要满足:
+     * 次要关键字. 如果次要关键字的 `keys` 数组不为空, 则条目除了在主要关键字中匹配到任意一个关键字外, 还需要满足 `logic`:
      * - `'and_any'`: 次要关键字中任意一个关键字能在欲扫描文本中匹配到
      * - `'and_all'`: 次要关键字中所有关键字都能在欲扫描文本中匹配到
      * - `'not_all'`: 次要关键字中至少有一个关键字没能在欲扫描文本中匹配到
@@ -1743,6 +1745,7 @@ type WorldbookEntry = {
     /** 扫描深度: 1 为仅扫描最后一个楼层, 2 为扫描最后两个楼层, 以此类推 */
     scan_depth: 'same_as_global' | number;
   };
+  /** 插入位置: 如果条目激活应该插入到什么地方 */
   position: {
     /**
      * 位置类型:
@@ -1773,6 +1776,7 @@ type WorldbookEntry = {
   content: string;
 
   probability: number;
+  /** 递归表示某世界书条目被激活后, 该条目的提示词又激活了其他条目 */
   recursion: {
     /** 禁止其他条目递归激活本条目 */
     prevent_incoming: boolean;
@@ -1782,14 +1786,15 @@ type WorldbookEntry = {
     delay_until: null | number;
   };
   effect: {
-    /** 黏性: 条目激活后, 在之后 `n` 条消息内始终激活, 无视激活策略、激活概率% */
+    /** 黏性: 条目激活后, 在之后 n 条消息内始终激活, 无视激活策略、激活概率% */
     sticky: null | number;
-    /** 冷却: 条目激活后, 在之后 `n` 条消息内不能再激活*/
+    /** 冷却: 条目激活后, 在之后 n 条消息内不能再激活 */
     cooldown: null | number;
-    /** 延迟: 聊天中至少有 `1` 楼消息时, 才能激活条目 */
+    /** 延迟: 聊天中至少有 n 楼消息时, 才能激活条目 */
     delay: null | number;
   };
 
+  /** 额外字段, 用于为世界书条目绑定额外数据 */
   extra?: Record<string, any>;
 };
 
@@ -1815,14 +1820,6 @@ declare function createOrReplaceWorldbook(
 ): Promise<boolean>;
 
 /**
- * 删除 `preset_name` 预设
- *
- * @param preset_name 预设名称
- *
- * @returns 是否成功删除, 可能因预设不存在等原因而失败
- */
-
-/**
  * 删除 `worldbook_name` 世界书
  *
  * @param worldbook_name 世界书名称
@@ -1842,26 +1839,6 @@ declare function deleteWorldbook(worldbook_name: string): Promise<boolean>;
  * @returns 世界书内容
  */
 declare function getWorldbook(worldbook_name: string): Promise<WorldbookEntry[]>;
-
-/**
- * 完全替换 `preset_name` 预设的内容为 `preset`
- *
- * @param preset_name 预设名称
- * @param preset 预设内容
- *
- * @example
- * // 为酒馆正在使用的预设开启流式传输
- * const preset = getPreset('in_use');
- * preset.settings.should_stream = true;
- * await replacePreset('in_use', preset);
- *
- * @example
- * // 将 '预设A' 的条目按顺序复制到 '预设B' 开头
- * const preset_a = getPreset('预设A');
- * const preset_b = getPreset('预设B');
- * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
- * await replacePreset('预设B', preset_b);
- */
 
 /**
  * 完全替换 `worldbook_name` 世界书的内容为 `worldbook`
@@ -2238,7 +2215,7 @@ interface ListenerType {
   [tavern_events.OAI_PRESET_IMPORT_READY]: (result: { data: Object; presetName: string }) => void;
   [tavern_events.WORLDINFO_SETTINGS_UPDATED]: () => void;
   [tavern_events.WORLDINFO_UPDATED]: (name: string, data: { entries: Object[] }) => void;
-  [tavern_events.CHARACTER_EDITED]: (result: { detail: { id: string; character: Object } }) => void;
+  [tavern_events.CHARACTER_EDITED]: (result: { detail: { id: string; character: SillyTavern.v1CharData } }) => void;
   [tavern_events.CHARACTER_PAGE_LOADED]: () => void;
   [tavern_events.CHARACTER_GROUP_OVERLAY_STATE_CHANGE_BEFORE]: (state: number) => void;
   [tavern_events.CHARACTER_GROUP_OVERLAY_STATE_CHANGE_AFTER]: (state: number) => void;
@@ -2284,7 +2261,7 @@ interface ListenerType {
     output: string;
     character: Object;
   }) => void;
-  [tavern_events.CHARACTER_DELETED]: (result: { id: string; character: Object }) => void;
+  [tavern_events.CHARACTER_DELETED]: (result: { id: string; character: SillyTavern.v1CharData }) => void;
   [tavern_events.CHARACTER_DUPLICATED]: (result: { oldAvatar: string; newAvatar: string }) => void;
   [tavern_events.STREAM_TOKEN_RECEIVED]: (text: string) => void;
   [tavern_events.FILE_ATTACHMENT_DELETED]: (url: string) => void;
@@ -2556,8 +2533,8 @@ declare const Mvu: {
    * @param mvu_data MvuData 数据表
    * @param path 变量路径, 支持嵌套路径如 `'player.health'` 或数组索引 `'items[0]'`
    * @param option 可选参数
-   *   - `reason?:string`: 更新原因, 会显示在 `display_data` 中
-   *   - `is_recursive?:boolean`: 是否触发 `Mvu.events.SINGLE_VARIABLE_UPDATED` 事件, 默认为 `false`
+   *   - `category?:'stat' | 'display' | 'delta'`: 要获取的变量数据类型, 默认为 `'stat'`
+   *   - `default_value?:any`: 如果变量不存在, 则返回该默认值
    *
    * @returns 变量值。如果是 ValueWithDescription 类型，返回第一个元素（实际值）
    *

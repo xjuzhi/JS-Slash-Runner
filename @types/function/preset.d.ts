@@ -16,9 +16,9 @@ type Preset = {
     frequency_penalty: number;
     /** 存在惩罚 */
     presence_penalty: number;
+    top_p: number;
     /** 重复惩罚 */
     repetition_penalty: number;
-    top_p: number;
     min_p: number;
     top_k: number;
     top_a: number;
@@ -41,9 +41,9 @@ type Preset = {
     enable_web_search: boolean;
 
     /** 是否允许发送图片作为提示词 */
-    allow_images: 'disabled' | 'auto' | 'low' | 'high';
+    allow_sending_images: 'disabled' | 'auto' | 'low' | 'high';
     /** 是否允许发送视频作为提示词 */
-    allow_videos: boolean;
+    allow_sending_videos: boolean;
 
     /**
      * 角色名称前缀: 是否要为消息添加角色名称前缀, 以及怎么添加
@@ -59,7 +59,7 @@ type Preset = {
 
   /** 提示词列表里已经添加的提示词 */
   prompts: PresetPrompt[];
-  /** 下拉框里没添加进来的提示词 */
+  /** 下拉框里的, 没有添加进提示词列表的提示词 */
   prompts_unused: PresetPrompt[];
 
   /** 额外字段, 用于为预设绑定额外数据 */

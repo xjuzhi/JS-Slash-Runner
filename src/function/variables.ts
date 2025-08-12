@@ -44,11 +44,17 @@ function getVariablesByType({ type = 'chat', message_id = 'latest', script_id }:
     }
     case 'global':
       return extension_settings.variables.global;
-    case 'script':
+    case 'script': {
       if (!script_id) {
         throw Error('获取脚本变量失败, 未指定 script_id');
       }
-      return ScriptManager.getInstance().getScriptVariables(script_id);
+      const script_manager = ScriptManager.getInstance();
+      const script = script_manager.getScriptById(script_id);
+      if (!script) {
+        throw Error(`获取脚本变量失败, '${script_id}' 脚本不存在`);
+      }
+      return script_manager.getScriptVariables(script_id);
+    }
   }
 }
 
@@ -110,7 +116,7 @@ export async function replaceVariables(
         const script_manager = ScriptManager.getInstance();
         const script = script_manager.getScriptById(script_id);
         if (!script) {
-          throw Error(`'${script_id}' 脚本不存在`);
+          throw Error(`保存变量失败, '${script_id}' 脚本不存在`);
         }
         const script_type = script_manager['scriptData'].getScriptType(script);
         await script_manager.updateScriptVariables(script_id, variables, script_type);

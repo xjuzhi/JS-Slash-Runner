@@ -1,14 +1,14 @@
-import { stopGeneration } from '@sillytavern/script';
-import { GenerateConfig, GenerateRawConfig, InjectionPrompt, Overrides, detail } from './types';
-
-import log from 'loglevel';
-
 import { prepareAndOverrideData } from '@/function/generate/dataProcessor';
 import { handlePresetPath } from '@/function/generate/generate';
 import { handleCustomPath } from '@/function/generate/generateRaw';
 import { processUserInputWithImages } from '@/function/generate/inputProcessor';
 import { generateResponse } from '@/function/generate/responseGenerator';
+import { detail, GenerateConfig, GenerateRawConfig, InjectionPrompt, Overrides } from '@/function/generate/types';
 import { setupImageArrayProcessing, unblockGeneration } from '@/function/generate/utils';
+
+import { event_types, eventSource, stopGeneration } from '@sillytavern/script';
+
+import log from 'loglevel';
 
 declare const $: any;
 
@@ -23,9 +23,9 @@ function cleanupImageProcessing(): void {
   if (currentImageProcessingSetup) {
     try {
       currentImageProcessingSetup.cleanup();
-      
+
       currentImageProcessingSetup.rejectImageProcessing(new Error('Generation stopped by user'));
-      
+
       log.info('[Generate:停止] 已清理图片处理相关逻辑');
     } catch (error) {
       log.warn('[Generate:停止] 清理图片处理时出错:', error);
@@ -139,7 +139,7 @@ async function iframeGenerate({
   // 1. 处理用户输入和图片（正则，宏，图片数组）
   const inputResult = await processUserInputWithImages(user_input, use_preset, image);
   const { processedUserInput, imageProcessingSetup, processedImageArray } = inputResult;
-  
+
   currentImageProcessingSetup = imageProcessingSetup;
 
   // 2. 准备过滤后的基础数据
@@ -170,26 +170,28 @@ async function iframeGenerate({
           max_chat_history,
           inject,
           order,
-          processedImageArray, 
+          processedImageArray,
         },
         processedUserInput,
       );
+
+  await eventSource.emit(event_types.GENERATE_AFTER_DATA, generate_data);
 
   try {
     // 4. 根据 stream 参数决定生成方式
     log.info('[Generate:发送提示词]', generate_data);
     const result = await generateResponse(generate_data, stream, imageProcessingSetup, abortController);
-    
+
     currentImageProcessingSetup = undefined;
-    
+
     return result;
   } catch (error) {
     if (imageProcessingSetup) {
       imageProcessingSetup.rejectImageProcessing(error);
     }
-    
+
     currentImageProcessingSetup = undefined;
-    
+
     throw error;
   }
 }
@@ -213,9 +215,9 @@ $(document).on('click', '#mes_stop', function () {
     if (abortController) {
       abortController.abort('Clicked stop button');
     }
-    
+
     cleanupImageProcessing();
-    
+
     unblockGeneration();
   }
 });

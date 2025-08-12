@@ -332,7 +332,7 @@ interface ListenerType {
   [tavern_events.OAI_PRESET_IMPORT_READY]: (result: { data: Object; presetName: string }) => void;
   [tavern_events.WORLDINFO_SETTINGS_UPDATED]: () => void;
   [tavern_events.WORLDINFO_UPDATED]: (name: string, data: { entries: Object[] }) => void;
-  [tavern_events.CHARACTER_EDITED]: (result: { detail: { id: string; character: Object } }) => void;
+  [tavern_events.CHARACTER_EDITED]: (result: { detail: { id: string; character: SillyTavern.v1CharData } }) => void;
   [tavern_events.CHARACTER_PAGE_LOADED]: () => void;
   [tavern_events.CHARACTER_GROUP_OVERLAY_STATE_CHANGE_BEFORE]: (state: number) => void;
   [tavern_events.CHARACTER_GROUP_OVERLAY_STATE_CHANGE_AFTER]: (state: number) => void;
@@ -378,7 +378,7 @@ interface ListenerType {
     output: string;
     character: Object;
   }) => void;
-  [tavern_events.CHARACTER_DELETED]: (result: { id: string; character: Object }) => void;
+  [tavern_events.CHARACTER_DELETED]: (result: { id: string; character: SillyTavern.v1CharData }) => void;
   [tavern_events.CHARACTER_DUPLICATED]: (result: { oldAvatar: string; newAvatar: string }) => void;
   [tavern_events.STREAM_TOKEN_RECEIVED]: (text: string) => void;
   [tavern_events.FILE_ATTACHMENT_DELETED]: (url: string) => void;

@@ -170,10 +170,14 @@ export class ScriptData {
    */
   getScriptById(id: string): Script | undefined {
     let script = this.globalScripts.find((s: Script) => s.id === id);
-    if (script) return script;
+    if (script) {
+      return script;
+    }
 
     script = this.characterScripts.find((s: Script) => s.id === id);
-    if (script) return script;
+    if (script) {
+      return script;
+    }
 
     return undefined;
   }
