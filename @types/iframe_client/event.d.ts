@@ -378,7 +378,7 @@ interface ListenerType {
     output: string;
     character: Object;
   }) => void;
-  [tavern_events.CHARACTER_DELETED]: (result: { id: string; character: Object }) => void;
+  [tavern_events.CHARACTER_DELETED]: (result: { id: string; character: SillyTavern.v1CharData }) => void;
   [tavern_events.CHARACTER_DUPLICATED]: (result: { oldAvatar: string; newAvatar: string }) => void;
   [tavern_events.STREAM_TOKEN_RECEIVED]: (text: string) => void;
   [tavern_events.FILE_ATTACHMENT_DELETED]: (url: string) => void;
