@@ -1,15 +1,17 @@
 ## 3.4.0
 
-### 💻界面
+### 📚脚本库
 
-- 无法通过脚本库点开内置库
+**内置库:**
+
+- 新增 `世界书强制用推荐的全局设置` 脚本. 这是大多数作者写卡时的默认设置, 本来就没有玩家去修改的必要
 
 ### ⏫功能
 
 **世界书:**
 
 - 重新制作世界书接口 `Worldbook`, 原本的所有 `Lorebook` 函数均被弃用 (但仍可运行), 请使用 `Worldbook` 接口, 具体见于[文档](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/%E5%8A%9F%E8%83%BD%E8%AF%A6%E6%83%85/%E4%B8%96%E7%95%8C%E4%B9%A6/%E4%BF%AE%E6%94%B9%E4%B8%96%E7%95%8C%E4%B9%A6.html)或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/worldbook.d.ts)
-  - 移除了 `getLorebookSettings` 等控制全局设置的功能, 因为很少有需要改动的时候, 取而代之的是内置库新增 `世界书强制用推荐的全局设置` 脚本.
+  - 移除了 `getLorebookSettings` 等控制全局设置的功能, 因为很少有需要改动的时候, 取而代之的是内置库新增 `世界书强制用推荐的全局设置` 脚本
   - `getWorldbook` 将直接返回按世界书 "自定义顺序" 排序好的数组 (不知道自定义顺序是什么? 请查看内置库中的 "世界书强制自定义顺序" 说明)
 
 **MVU 变量框架:**
@@ -39,15 +41,10 @@
 
 - 新增 `appendInexistentScriptButtons` 函数, 便于为已经有按钮的脚本新增脚本按钮, 例如角色卡作者可能在导入 mvu (`import 'https://testingcf.jsdelivr.net/gh/MagicalAstrogy/MagVarUpdate@master/artifact/bundle.js'`) 的脚本中自己额外写了代码和按钮, mvu 则可以新增 "重新处理变量" 等按钮但不影响角色卡作者已经写的按钮.
 
-### 📚脚本库
-
-**内置库:**
-
-- 新增 `世界书强制用推荐的全局设置` 脚本. 这是大多数作者写卡时的默认设置, 本来就没有玩家去修改的必要.
-
 ### 🐛修复
 
 - 与酒馆 1.12.10 的兼容性
+- 修复了无法通过脚本库点开内置库的问题
 - 修复了预设对当前加载到设置中的预设内容 (`'in_use'`) 的获取和修改功能
 - 修复了 `getPreset` 对预设提示词列表中占位提示词 (如 Chat History) 等开启状态的获取
 - 补充了事件发送, 修复了提示词模板更换时间后 `generate` 函数不会触发提示词模板的问题
