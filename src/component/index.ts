@@ -13,6 +13,7 @@ import {
   tampermonkey_script,
   viewport_adjust_script,
 } from '@/component/message_iframe/render_message';
+import { addRenderQuickButton } from '@/component/message_iframe/index';
 import {
   addRenderingOptimizeSettings,
   removeRenderingOptimizeSettings,
@@ -27,6 +28,8 @@ import { iframe_client } from '@/iframe_client/index';
 import { script_url } from '@/script_url';
 import { getSettingValue, saveSettingValue } from '@/util/extension_variables';
 import { eventSource, event_types, reloadCurrentChat, saveSettingsDebounced, this_chid } from '@sillytavern/script';
+import { addPromptViewQuickButton } from '@/component/prompt_view';
+import { addVariableManagerQuickButton } from '@/component/variable_manager';
 
 const handleChatLoaded = async () => {
   await renderAllIframes();
@@ -65,6 +68,27 @@ export function initExtensionMainPanel() {
     });
 }
 
+/**
+ * 添加所有快捷入口
+ */
+function addAllShortcut() {
+  addRenderQuickButton();
+  addPromptViewQuickButton();
+  addVariableManagerQuickButton();
+}
+
+/**
+ * 移除所有添加的快捷入口
+ */
+function removeAllShortcut() {
+  $('#extensionsMenu').find('.tavern-helper-shortcut-item').remove();
+}
+
+/**
+ * 扩展总开关切换
+ * @param userAction 是否为用户触发
+ * @param enable 是否启用
+ */
 async function handleExtensionToggle(userAction: boolean = true, enable: boolean = true) {
   if (userAction) {
     saveSettingValue('enabled_extension', enable);
@@ -82,6 +106,8 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
     initializeMacroOnExtension();
     initializeCharacterLevelOnExtension();
     buildScriptRepositoryOnExtension();
+
+    addAllShortcut();
 
     // 重新注入前端卡优化的样式和设置
     if (userAction && getSettingValue('render.rendering_optimize')) {
@@ -114,6 +140,8 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
     destroyMacroOnExtension();
     destroyCharacterLevelOnExtension();
     destroyScriptRepositoryOnExtension();
+
+    removeAllShortcut();
 
     if (getSettingValue('render.rendering_optimize')) {
       removeRenderingOptimizeSettings();

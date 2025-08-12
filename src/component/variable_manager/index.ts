@@ -44,21 +44,22 @@ export async function openVariableManager() {
 /**
  * 添加变量管理快速按钮
  */
-function addVariableManagerQuickButton() {
+export function addVariableManagerQuickButton() {
   const buttonHtml = $(`
-  <div id="tavern-helper-variable-container" class="list-group-item flex-container flexGap5 interactable">
+  <div id="tavern-helper-variable-container" class="list-group-item flex-container flexGap5 interactable tavern-helper-shortcut-item">
       <div class="fa-solid fa-square-root-variable extensionsMenuExtensionButton" /></div>
       <span id="tavern-helper-variable-text">变量管理器</span>
   </div>`);
   buttonHtml.css('display', 'flex');
-  $('#extensionsMenu').append(buttonHtml);
-  $('#tavern-helper-variable-container').on('click', async function () {
+  if ($('#tavern-helper-variable-container').length === 0) {
+    $('#extensionsMenu').append(buttonHtml);
+  }
+  $('#tavern-helper-variable-container').off('click').on('click', async function () {
     await openVariableManager();
   });
 }
 
 export function initVariableManager() {
-  addVariableManagerQuickButton();
   const $button = $('#open-variable-manager');
   if ($button.length) {
     $button.on('click', async () => {

@@ -1,0 +1,57 @@
+.prompt-view-content {
+  padding: 15px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.prompt-view-content .prompt-view-header {
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.prompt-view-content .prompt-total-tokens {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--SmartThemeQuoteColor);
+}
+
+.prompt-view-content .prompt-count {
+  font-size: 12px;
+  color: var(--SmartThemeQuoteColor);
+}
+
+.prompt-view-content .prompt-empty {
+  text-align: center;
+  color: var(--SmartThemeQuoteColor);
+  margin-top: 50px;
+}
+
+.prompt-view-content .prompt-view-item {
+  margin-bottom: 10px;
+  border: 1px solid var(--SmartThemeBorderColor);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.prompt-view-content .prompt-view-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 5px 5px 0 0;
+}
+
+.prompt-view-content .prompt-view-item-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: none;
+  border-radius: 0 0 5px 5px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: 5px;
+}

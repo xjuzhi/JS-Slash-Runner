@@ -5,14 +5,14 @@ export interface FloatingDialogOptions {
   title: string;
   /** 浮窗唯一标识符，用于防止重复打开 */
   id: string;
-  /** 最小宽度（像素） */
-  minWidth?: number;
-  /** 最小高度（像素） */
-  minHeight?: number;
-  /** 初始宽度（像素） */
-  width?: number;
-  /** 初始高度（像素） */
-  height?: number;
+  /** 最小宽度（支持数字像素或CSS单位，如'40vw'、'50%'） */
+  minWidth?: number | string;
+  /** 最小高度（支持数字像素或CSS单位，如'40vh'、'50%'） */
+  minHeight?: number | string;
+  /** 初始宽度（支持数字像素或CSS单位，如'80vw'、'50%'） */
+  width?: number | string;
+  /** 初始高度（支持数字像素或CSS单位，如'80vh'、'50%'） */
+  height?: number | string;
   /** 是否可调整大小 */
   resizable?: boolean;
   /** 是否可拖拽 */
@@ -60,7 +60,6 @@ export class FloatingDialog {
    * @returns 浮窗实例，如果已存在则返回现有实例
    */
   public static create(options: FloatingDialogOptions): FloatingDialog | null {
-    // 检查是否已存在同ID的浮窗
     const existing = FloatingDialog.instances.get(options.id);
     if (existing) {
       existing.focus();
@@ -123,8 +122,10 @@ export class FloatingDialog {
     this.content = this.dialog.find('.dialog-content');
 
     this.dialog.css({
-      width: this.options.width,
-      height: this.options.height,
+      width: this.resolveCssSize(this.options.width, 'w'),
+      height: this.resolveCssSize(this.options.height, 'h'),
+      minWidth: this.resolveCssSize(this.options.minWidth, 'w'),
+      minHeight: this.resolveCssSize(this.options.minHeight, 'h'),
     });
 
     this.bindEvents();
@@ -134,6 +135,69 @@ export class FloatingDialog {
     this.centerDialog();
 
     return this.content;
+  }
+
+  /**
+   * 将宽高选项解析为CSS尺寸字符串。
+   * - 若为数字，则追加px
+   * - 若为字符串，则原样返回
+   */
+  private resolveCssSize(value: number | string | undefined, axis: 'w' | 'h'): string {
+    if (typeof value === 'number' || typeof value === 'undefined') {
+      const fallback = axis === 'w' ? FloatingDialog.DEFAULT_WIDTH : FloatingDialog.DEFAULT_HEIGHT;
+      const numeric = typeof value === 'number' ? value : fallback;
+      return `${numeric}px`;
+    }
+    return value;
+  }
+
+  /**
+   * 将宽高选项计算为像素值（用于jQuery UI resizable）。
+   * - 数字：直接返回
+   * - 百分比：按窗口尺寸计算
+   * - vw/vh：按视口宽高计算
+   * - 其它单位：尝试通过临时元素计算，否则回退默认像素
+   */
+  private computePixelSize(value: number | string | undefined, axis: 'w' | 'h'): number {
+    const viewportW = $(window).width() || 0;
+    const viewportH = $(window).height() || 0;
+
+    const fallback = axis === 'w' ? FloatingDialog.DEFAULT_MIN_WIDTH : FloatingDialog.DEFAULT_MIN_HEIGHT;
+
+    if (typeof value === 'number' || typeof value === 'undefined') {
+      return typeof value === 'number' ? value : fallback;
+    }
+
+    const trimmed = value.trim();
+    // 百分比
+    const percentMatch = trimmed.match(/^([0-9]+(?:\.[0-9]+)?)%$/);
+    if (percentMatch) {
+      const ratio = parseFloat(percentMatch[1]) / 100;
+      return Math.max(0, Math.round((axis === 'w' ? viewportW : viewportH) * ratio));
+    }
+    // vw/vh
+    const vwMatch = trimmed.match(/^([0-9]+(?:\.[0-9]+)?)vw$/i);
+    if (vwMatch && axis === 'w') {
+      const ratio = parseFloat(vwMatch[1]) / 100;
+      return Math.max(0, Math.round(viewportW * ratio));
+    }
+    const vhMatch = trimmed.match(/^([0-9]+(?:\.[0-9]+)?)vh$/i);
+    if (vhMatch && axis === 'h') {
+      const ratio = parseFloat(vhMatch[1]) / 100;
+      return Math.max(0, Math.round(viewportH * ratio));
+    }
+
+    // 其它单位：尝试通过临时元素计算
+    const temp = $('<div/>').css({
+      position: 'absolute',
+      visibility: 'hidden',
+      width: axis === 'w' ? trimmed : 'auto',
+      height: axis === 'h' ? trimmed : 'auto',
+    });
+    $('body').append(temp);
+    const measured = axis === 'w' ? temp.outerWidth() || 0 : temp.outerHeight() || 0;
+    temp.remove();
+    return measured || fallback;
   }
 
   /**
@@ -263,11 +327,15 @@ export class FloatingDialog {
     if (this.options.resizable) {
       (this.dialog as any).resizable({
         handles: isMobileDevice ? 'se' : 'n,e,s,w,ne,se,sw,nw',
-        minHeight: this.options.minHeight,
-        minWidth: this.options.minWidth,
+        minHeight: this.computePixelSize(this.options.minHeight, 'h'),
+        minWidth: this.computePixelSize(this.options.minWidth, 'w'),
         start: () => {
           this.dialog?.addClass('resizing');
           this.focus();
+          const minW = this.computePixelSize(this.options.minWidth, 'w');
+          const minH = this.computePixelSize(this.options.minHeight, 'h');
+          (this.dialog as any).resizable('option', 'minWidth', minW);
+          (this.dialog as any).resizable('option', 'minHeight', minH);
         },
         stop: () => {
           this.dialog?.removeClass('resizing');
@@ -290,8 +358,8 @@ export class FloatingDialog {
     const windowWidth = $(window).width() || 0;
     const windowHeight = $(window).height() || 0;
 
-    const dialogWidth = this.dialog.outerWidth() || this.options.width;
-    const dialogHeight = this.dialog.outerHeight() || this.options.height;
+    const dialogWidth = this.dialog.outerWidth() || 0;
+    const dialogHeight = this.dialog.outerHeight() || 0;
 
     const left = Math.max(0, (windowWidth - dialogWidth) / 2);
     const top = Math.max(0, (windowHeight - dialogHeight) / 2);
