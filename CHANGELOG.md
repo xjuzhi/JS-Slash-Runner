@@ -8,7 +8,7 @@
 
 **世界书:**
 
-- 重新制作世界书接口 `Worldbook`, 原本的所有 `Lorebook` 函数均被弃用 (但仍可运行), 请使用 `Worldbook` 接口, 具体见于文档 (未完成) 或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/worldbook.d.ts)
+- 重新制作世界书接口 `Worldbook`, 原本的所有 `Lorebook` 函数均被弃用 (但仍可运行), 请使用 `Worldbook` 接口, 具体见于[文档](https://n0vi028.github.io/JS-Slash-Runner-Doc/guide/%E5%8A%9F%E8%83%BD%E8%AF%A6%E6%83%85/%E4%B8%96%E7%95%8C%E4%B9%A6/%E4%BF%AE%E6%94%B9%E4%B8%96%E7%95%8C%E4%B9%A6.html)或[类型文件 (可以直接发给 ai)](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/worldbook.d.ts)
   - 移除了 `getLorebookSettings` 等控制全局设置的功能, 因为很少有需要改动的时候, 取而代之的是内置库新增 `世界书强制用推荐的全局设置` 脚本.
   - `getWorldbook` 将直接返回按世界书 "自定义顺序" 排序好的数组 (不知道自定义顺序是什么? 请查看内置库中的 "世界书强制自定义顺序" 说明)
 
