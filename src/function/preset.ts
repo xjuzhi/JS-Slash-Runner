@@ -32,8 +32,8 @@ type Preset = {
     enable_function_calling: boolean;
     enable_web_search: boolean;
 
-    allow_images: 'disabled' | 'auto' | 'low' | 'high';
-    allow_videos: boolean;
+    allow_sending_images: 'disabled' | 'auto' | 'low' | 'high';
+    allow_sending_videos: boolean;
 
     character_name_prefix: 'none' | 'default' | 'content' | 'completion';
     wrap_user_messages_in_quotes: boolean;
@@ -136,8 +136,8 @@ export const default_preset: Preset = {
     enable_function_calling: false,
     enable_web_search: false,
 
-    allow_images: 'disabled',
-    allow_videos: false,
+    allow_sending_images: 'disabled',
+    allow_sending_videos: false,
 
     character_name_prefix: 'none',
     wrap_user_messages_in_quotes: false,
@@ -398,8 +398,8 @@ function toPreset(preset: _OriginalPreset): Preset {
       enable_function_calling: preset.function_calling,
       enable_web_search: preset.enable_web_search,
 
-      allow_images: preset.image_inlining === false ? 'disabled' : preset.inline_image_quality,
-      allow_videos: preset.video_inlining,
+      allow_sending_images: preset.image_inlining === false ? 'disabled' : preset.inline_image_quality,
+      allow_sending_videos: preset.video_inlining,
 
       character_name_prefix: (
         {
@@ -464,9 +464,9 @@ function fromPreset(preset: Preset): _OriginalPreset {
     function_calling: preset.settings.enable_function_calling,
     enable_web_search: preset.settings.enable_web_search,
 
-    image_inlining: preset.settings.allow_images !== 'disabled',
-    inline_image_quality: preset.settings.allow_images === 'disabled' ? 'auto' : preset.settings.allow_images,
-    video_inlining: preset.settings.allow_videos,
+    image_inlining: preset.settings.allow_sending_images !== 'disabled',
+    inline_image_quality: preset.settings.allow_sending_images === 'disabled' ? 'auto' : preset.settings.allow_sending_images,
+    video_inlining: preset.settings.allow_sending_videos,
 
     names_behavior: (
       {

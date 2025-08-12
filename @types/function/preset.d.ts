@@ -41,9 +41,9 @@ type Preset = {
     enable_web_search: boolean;
 
     /** 是否允许发送图片作为提示词 */
-    allow_images: 'disabled' | 'auto' | 'low' | 'high';
+    allow_sending_images: 'disabled' | 'auto' | 'low' | 'high';
     /** 是否允许发送视频作为提示词 */
-    allow_videos: boolean;
+    allow_sending_videos: boolean;
 
     /**
      * 角色名称前缀: 是否要为消息添加角色名称前缀, 以及怎么添加
