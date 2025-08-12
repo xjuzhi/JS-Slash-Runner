@@ -164,14 +164,6 @@ declare function createOrReplaceWorldbook(
 ): Promise<boolean>;
 
 /**
- * 删除 `preset_name` 预设
- *
- * @param preset_name 预设名称
- *
- * @returns 是否成功删除, 可能因预设不存在等原因而失败
- */
-
-/**
  * 删除 `worldbook_name` 世界书
  *
  * @param worldbook_name 世界书名称
@@ -191,26 +183,6 @@ declare function deleteWorldbook(worldbook_name: string): Promise<boolean>;
  * @returns 世界书内容
  */
 declare function getWorldbook(worldbook_name: string): Promise<WorldbookEntry[]>;
-
-/**
- * 完全替换 `preset_name` 预设的内容为 `preset`
- *
- * @param preset_name 预设名称
- * @param preset 预设内容
- *
- * @example
- * // 为酒馆正在使用的预设开启流式传输
- * const preset = getPreset('in_use');
- * preset.settings.should_stream = true;
- * await replacePreset('in_use', preset);
- *
- * @example
- * // 将 '预设A' 的条目按顺序复制到 '预设B' 开头
- * const preset_a = getPreset('预设A');
- * const preset_b = getPreset('预设B');
- * preset_b.prompts = [...preset_a.prompts, ...preset_b.prompts];
- * await replacePreset('预设B', preset_b);
- */
 
 /**
  * 完全替换 `worldbook_name` 世界书的内容为 `worldbook`
