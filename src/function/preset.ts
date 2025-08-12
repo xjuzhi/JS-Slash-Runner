@@ -156,19 +156,39 @@ export const default_preset: Preset = {
   extensions: {},
 } as const;
 
+const in_use_map = {
+  temp_openai: 'temperature',
+  freq_pen_openai: 'frequency_penalty',
+  pres_pen_openai: 'presence_penalty',
+  top_p_openai: 'top_p',
+  repetition_penalty_openai: 'repetition_penalty',
+  min_p_openai: 'min_p',
+  top_k_openai: 'top_k',
+  top_a_openai: 'top_a',
+} as const;
 type _OriginalPreset = {
-  max_context_unlocked: true;
+  max_context_unlocked: boolean;
   openai_max_context: number;
   openai_max_tokens: number;
   n: number;
 
   stream_openai: boolean;
 
+  // vv in use vv
+  temp_openai: number;
+  freq_pen_openai: number;
+  pres_pen_openai: number;
+  top_p_openai: number;
+  repetition_penalty_openai: number;
+  min_p_openai: number;
+  top_k_openai: number;
+  top_a_openai: number;
+  // vv in file vv
   temperature: number;
   frequency_penalty: number;
   presence_penalty: number;
-  repetition_penalty: number;
   top_p: number;
+  repetition_penalty: number;
   min_p: number;
   top_k: number;
   top_a: number;
@@ -355,7 +375,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
   return result.value() as _OriginalPrompt;
 }
 
-function toPreset(preset: _OriginalPreset): Preset {
+function toPreset(preset: _OriginalPreset, { in_use }: { in_use: boolean }): Preset {
   const prompt_order =
     preset.prompt_order
       .find(order => order.character_id === 100001)
@@ -379,14 +399,14 @@ function toPreset(preset: _OriginalPreset): Preset {
 
       should_stream: preset.stream_openai,
 
-      temperature: preset.temperature,
-      frequency_penalty: preset.frequency_penalty,
-      presence_penalty: preset.presence_penalty,
-      top_p: preset.top_p,
-      repetition_penalty: preset.repetition_penalty,
-      min_p: preset.min_p,
-      top_k: preset.top_k,
-      top_a: preset.top_a,
+      temperature: in_use ? preset.temp_openai : preset.temperature,
+      frequency_penalty: in_use ? preset.freq_pen_openai : preset.frequency_penalty,
+      presence_penalty: in_use ? preset.pres_pen_openai : preset.presence_penalty,
+      top_p: in_use ? preset.top_p_openai : preset.top_p,
+      repetition_penalty: in_use ? preset.repetition_penalty_openai : preset.repetition_penalty,
+      min_p: in_use ? preset.min_p_openai : preset.min_p,
+      top_k: in_use ? preset.top_k_openai : preset.top_k,
+      top_a: in_use ? preset.top_a_openai : preset.top_a,
 
       seed: preset.seed,
 
@@ -445,6 +465,16 @@ function fromPreset(preset: Preset): _OriginalPreset {
 
     stream_openai: preset.settings.should_stream,
 
+    // vv in use vv
+    temp_openai: preset.settings.temperature,
+    freq_pen_openai: preset.settings.frequency_penalty,
+    pres_pen_openai: preset.settings.presence_penalty,
+    top_p_openai: preset.settings.top_p,
+    repetition_penalty_openai: preset.settings.repetition_penalty,
+    min_p_openai: preset.settings.min_p,
+    top_k_openai: preset.settings.top_k,
+    top_a_openai: preset.settings.top_a,
+    // vv in file vv
     temperature: preset.settings.temperature,
     frequency_penalty: preset.settings.frequency_penalty,
     presence_penalty: preset.settings.presence_penalty,
@@ -465,7 +495,8 @@ function fromPreset(preset: Preset): _OriginalPreset {
     enable_web_search: preset.settings.enable_web_search,
 
     image_inlining: preset.settings.allow_sending_images !== 'disabled',
-    inline_image_quality: preset.settings.allow_sending_images === 'disabled' ? 'auto' : preset.settings.allow_sending_images,
+    inline_image_quality:
+      preset.settings.allow_sending_images === 'disabled' ? 'auto' : preset.settings.allow_sending_images,
     video_inlining: preset.settings.allow_sending_videos,
 
     names_behavior: (
@@ -523,7 +554,7 @@ export async function createPreset(
 function updateOriginalPresetData(
   data: Record<string, any>,
   updates: _OriginalPreset,
-  { should_render }: { should_render: boolean },
+  { in_use }: { in_use: boolean },
 ): void {
   (Object.entries(settingsToUpdate) as [keyof _OriginalPreset, [string, string, boolean, boolean]][]).forEach(
     ([key, [selector, setting, is_checkbox, is_connection]]) => {
@@ -531,9 +562,9 @@ function updateOriginalPresetData(
         return;
       }
 
-      _.set(data, setting, updates[key]);
+      _.set(data, in_use ? setting : _.get(in_use_map, setting, setting), updates[key]);
 
-      if (!should_render) {
+      if (!in_use) {
         return;
       }
 
@@ -552,7 +583,7 @@ function updateOriginalPresetData(
     },
   );
 
-  if (should_render) {
+  if (in_use) {
     saveSettingsDebounced();
     promptManager.renderDebounced();
   }
@@ -576,7 +607,7 @@ export async function createOrReplacePreset(
       preset_name === 'in_use' ? oai_settings : preset_manager.getCompletionPresetByName(preset_name),
       original_preset,
       {
-        should_render: preset_name === 'in_use',
+        in_use: preset_name === 'in_use',
       },
     );
   }
@@ -609,7 +640,7 @@ export function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset {
   if (!original_preset) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
-  return structuredClone(toPreset(original_preset));
+  return structuredClone(toPreset(original_preset, { in_use: preset_name === 'in_use' }));
 }
 
 export async function replacePreset(preset_name: LiteralUnion<'in_use', string>, preset: Preset): Promise<void> {
