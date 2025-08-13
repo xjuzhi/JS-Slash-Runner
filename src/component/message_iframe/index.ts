@@ -78,15 +78,19 @@ function syncRenderToggleUI(enable: boolean) {
 /**
  * 添加前端渲染快速按钮
  */
-function addRenderQuickButton() {
+export function addRenderQuickButton() {
   const buttonHtml = $(`
-  <div id="tavern-helper-render-container" class="list-group-item flex-container flexGap5 interactable">
+  <div id="tavern-helper-render-container" class="list-group-item flex-container flexGap5 interactable tavern-helper-shortcut-item">
       <div class="fa-solid fa-puzzle-piece extensionsMenuExtensionButton" /></div>
-      <span id="tavern-helper-render-text">${getSettingValue('render.render_enabled') ? '关闭前端渲染' : '开启前端渲染'}</span>
+      <span id="tavern-helper-render-text">${
+        getSettingValue('render.render_enabled') ? '关闭前端渲染' : '开启前端渲染'
+      }</span>
   </div>`);
   buttonHtml.css('display', 'flex');
-  $('#extensionsMenu').append(buttonHtml);
-  $('#tavern-helper-render-container').on('click', async function () {
+  if ($('#tavern-helper-render-container').length === 0) {
+    $('#extensionsMenu').append(buttonHtml);
+  }
+  $('#tavern-helper-render-container').off('click').on('click', async function () {
     const isRenderEnabled = getSettingValue('render.render_enabled') ?? defaultIframeSettings.render_enabled;
     await handleRenderEnableToggle(!isRenderEnabled, true);
   });
@@ -113,7 +117,8 @@ export async function initIframePanel() {
     });
 
   // 处理油猴兼容性设置
-  const isTampermonkeyEnabled = getSettingValue('render.tampermonkey_compatibility') ?? defaultIframeSettings.tampermonkey_compatibility;
+  const isTampermonkeyEnabled =
+    getSettingValue('render.tampermonkey_compatibility') ?? defaultIframeSettings.tampermonkey_compatibility;
   if (isTampermonkeyEnabled) {
     handleTampermonkeyCompatibilityChange(true, false);
   }
@@ -143,7 +148,6 @@ export async function initIframePanel() {
     }
   });
 
-  addRenderQuickButton();
   injectLoadingStyles();
   setupIframeRemovalListener();
 }

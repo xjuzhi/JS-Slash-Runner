@@ -41,11 +41,6 @@ export const DEFAULT_SCRIPT_CONFIGS: Record<string, ScriptConfig> = {
     content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/自动开启角色卡局部正则/index.js',
     info: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/自动开启角色卡局部正则/README.md',
   },
-  查看提示词发送情况: {
-    name: '查看提示词发送情况',
-    content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/查看提示词发送情况/index.js',
-    info: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/查看提示词发送情况/README.md',
-  },
   样式加载: {
     name: '样式加载: 像酒馆主题自定义 css 一样编写角色卡 css',
     content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/样式加载/index.js',
