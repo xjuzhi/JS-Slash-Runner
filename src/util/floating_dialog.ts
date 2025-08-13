@@ -13,6 +13,14 @@ export interface FloatingDialogOptions {
   width?: number | string;
   /** 初始高度（支持数字像素或CSS单位，如'80vh'、'50%'） */
   height?: number | string;
+  /** 移动端最小宽度（支持数字像素或CSS单位，如'90vw'、'80%'） */
+  mobileMinWidth?: number | string;
+  /** 移动端最小高度（支持数字像素或CSS单位，如'50vh'、'40%'） */
+  mobileMinHeight?: number | string;
+  /** 移动端初始宽度（支持数字像素或CSS单位，如'95vw'、'90%'） */
+  mobileWidth?: number | string;
+  /** 移动端初始高度（支持数字像素或CSS单位，如'70vh'、'60%'） */
+  mobileHeight?: number | string;
   /** 是否可调整大小 */
   resizable?: boolean;
   /** 是否可拖拽 */
@@ -31,26 +39,56 @@ export class FloatingDialog {
   private static readonly DEFAULT_WIDTH = 600;
   private static readonly DEFAULT_HEIGHT = 400;
 
+  // 移动端默认尺寸
+  private static readonly MOBILE_DEFAULT_MIN_WIDTH = 280;
+  private static readonly MOBILE_DEFAULT_MIN_HEIGHT = 200;
+  private static readonly MOBILE_DEFAULT_WIDTH = 200;
+  private static readonly MOBILE_DEFAULT_HEIGHT = 100;
+
   /** 全局浮窗实例管理器 */
   private static instances: Map<string, FloatingDialog> = new Map();
 
   private dialog: JQuery<HTMLElement> | null = null;
   private content: JQuery<HTMLElement> | null = null;
-  private options: Required<FloatingDialogOptions>;
+  private options: Required<
+    Omit<FloatingDialogOptions, 'mobileMinWidth' | 'mobileMinHeight' | 'mobileWidth' | 'mobileHeight'>
+  > &
+    Pick<FloatingDialogOptions, 'mobileMinWidth' | 'mobileMinHeight' | 'mobileWidth' | 'mobileHeight'>;
   private isCollapsed = false;
 
   constructor(options: FloatingDialogOptions) {
+    const isCurrentlyMobile = isMobile();
+
+    // 计算最终的尺寸值
+    const finalMinWidth = isCurrentlyMobile
+      ? options.mobileMinWidth ?? FloatingDialog.MOBILE_DEFAULT_MIN_WIDTH
+      : options.minWidth ?? FloatingDialog.DEFAULT_MIN_WIDTH;
+    const finalMinHeight = isCurrentlyMobile
+      ? options.mobileMinHeight ?? FloatingDialog.MOBILE_DEFAULT_MIN_HEIGHT
+      : options.minHeight ?? FloatingDialog.DEFAULT_MIN_HEIGHT;
+    const finalWidth = isCurrentlyMobile
+      ? options.mobileWidth ?? FloatingDialog.MOBILE_DEFAULT_WIDTH
+      : options.width ?? FloatingDialog.DEFAULT_WIDTH;
+    const finalHeight = isCurrentlyMobile
+      ? options.mobileHeight ?? FloatingDialog.MOBILE_DEFAULT_HEIGHT
+      : options.height ?? FloatingDialog.DEFAULT_HEIGHT;
+
     this.options = {
-      minWidth: FloatingDialog.DEFAULT_MIN_WIDTH,
-      minHeight: FloatingDialog.DEFAULT_MIN_HEIGHT,
-      width: FloatingDialog.DEFAULT_WIDTH,
-      height: FloatingDialog.DEFAULT_HEIGHT,
-      resizable: true,
-      draggable: true,
-      collapsible: true,
-      onClose: () => {},
-      onToggle: () => {},
-      ...options,
+      ...options, // 先展开原始选项
+      // 然后覆盖计算后的尺寸值
+      minWidth: finalMinWidth,
+      minHeight: finalMinHeight,
+      width: finalWidth,
+      height: finalHeight,
+      resizable: options.resizable ?? true,
+      draggable: options.draggable ?? true,
+      collapsible: options.collapsible ?? true,
+      onClose: options.onClose ?? (() => {}),
+      onToggle: options.onToggle ?? (() => {}),
+      mobileMinWidth: options.mobileMinWidth,
+      mobileMinHeight: options.mobileMinHeight,
+      mobileWidth: options.mobileWidth,
+      mobileHeight: options.mobileHeight,
     };
   }
 
@@ -121,12 +159,14 @@ export class FloatingDialog {
 
     this.content = this.dialog.find('.dialog-content');
 
-    this.dialog.css({
+    const cssValues = {
       width: this.resolveCssSize(this.options.width, 'w'),
       height: this.resolveCssSize(this.options.height, 'h'),
       minWidth: this.resolveCssSize(this.options.minWidth, 'w'),
       minHeight: this.resolveCssSize(this.options.minHeight, 'h'),
-    });
+    };
+
+    this.dialog.css(cssValues);
 
     this.bindEvents();
     this.initInteractions();
@@ -144,9 +184,17 @@ export class FloatingDialog {
    */
   private resolveCssSize(value: number | string | undefined, axis: 'w' | 'h'): string {
     if (typeof value === 'number' || typeof value === 'undefined') {
-      const fallback = axis === 'w' ? FloatingDialog.DEFAULT_WIDTH : FloatingDialog.DEFAULT_HEIGHT;
+      const isCurrentlyMobile = isMobile();
+      let fallback: number | string;
+
+      if (axis === 'w') {
+        fallback = isCurrentlyMobile ? FloatingDialog.MOBILE_DEFAULT_WIDTH : FloatingDialog.DEFAULT_WIDTH;
+      } else {
+        fallback = isCurrentlyMobile ? FloatingDialog.MOBILE_DEFAULT_HEIGHT : FloatingDialog.DEFAULT_HEIGHT;
+      }
+
       const numeric = typeof value === 'number' ? value : fallback;
-      return `${numeric}px`;
+      return typeof numeric === 'number' ? `${numeric}px` : numeric;
     }
     return value;
   }
@@ -162,7 +210,15 @@ export class FloatingDialog {
     const viewportW = $(window).width() || 0;
     const viewportH = $(window).height() || 0;
 
-    const fallback = axis === 'w' ? FloatingDialog.DEFAULT_MIN_WIDTH : FloatingDialog.DEFAULT_MIN_HEIGHT;
+    const isCurrentlyMobile = isMobile();
+    const fallback =
+      axis === 'w'
+        ? isCurrentlyMobile
+          ? FloatingDialog.MOBILE_DEFAULT_MIN_WIDTH
+          : FloatingDialog.DEFAULT_MIN_WIDTH
+        : isCurrentlyMobile
+        ? FloatingDialog.MOBILE_DEFAULT_MIN_HEIGHT
+        : FloatingDialog.DEFAULT_MIN_HEIGHT;
 
     if (typeof value === 'number' || typeof value === 'undefined') {
       return typeof value === 'number' ? value : fallback;
