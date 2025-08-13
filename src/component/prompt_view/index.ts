@@ -8,8 +8,8 @@ import { eventSource, event_types } from '@sillytavern/script';
 export function addPromptViewQuickButton() {
   const buttonHtml = $(`
   <div id="tavern-helper-prompt-view-container" class="list-group-item flex-container flexGap5 interactable tavern-helper-shortcut-item">
-      <div class="fa-solid fa-bug-slash extensionsMenuExtensionButton" /></div>
-      <span id="tavern-helper-variable-text">提示词查看器</span>
+      <div class="fa-solid fa-magnifying-glass extensionsMenuExtensionButton" /></div>
+      <span id="tavern-helper-variable-text">查看提示词发送情况</span>
   </div>`);
   buttonHtml.css('display', 'flex');
   if ($('#tavern-helper-prompt-view-container').length === 0) {
