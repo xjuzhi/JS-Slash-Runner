@@ -1,6 +1,6 @@
-import { eventSource, event_types } from '@sillytavern/script';
-import { onChatCompletionPromptReady } from '@/component/prompt_view/controller';
+import { onChatCompletionPromptReady } from '@/component/prompt_view/service';
 import { openPromptViewDialog } from '@/component/prompt_view/ui_manager';
+import { eventSource, event_types } from '@sillytavern/script';
 
 /**
  * 添加变量管理快速按钮

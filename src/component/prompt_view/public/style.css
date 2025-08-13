@@ -5,19 +5,41 @@
 }
 
 .prompt-view-content .prompt-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
   padding: 10px;
 }
 
 .prompt-view-content .prompt-total-tokens {
-  font-size: 16px;
+  font-size: var(--mainFontSize);
   font-weight: bold;
   color: var(--SmartThemeQuoteColor);
 }
 
 .prompt-view-content .prompt-count {
-  font-size: 12px;
+  font-size: calc(var(--mainFontSize) * 0.8);
   color: var(--SmartThemeQuoteColor);
+}
+
+#prompt-view-header-fresh {
+  font-size: var(--mainFontSize);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#prompt-view-header-fresh.rotating {
+  animation: rotate-icon 2s linear;
+}
+
+@keyframes rotate-icon {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .prompt-view-content .prompt-empty {
@@ -51,7 +73,70 @@
   max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
-  font-size: 13px;
+  font-size: var(--mainFontSize);
   line-height: 1.4;
   margin-top: 5px;
+}
+
+/* 控制区域样式 */
+.prompt-view-controls {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  padding: 10px 5px;
+  border-radius: 5px;
+  background-color: var(--grey5020a);
+}
+
+.prompt-view-controls-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+}
+
+.prompt-filter-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--mainFontSize) * 2);
+  height: calc(var(--mainFontSize) * 2);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: var(--SmartThemeQuoteColor);
+}
+
+.prompt-search-container {
+  flex-grow: 1;
+  margin-right: 5px;
+}
+
+.prompt-search {
+  width: 100%;
+  height: calc(var(--mainFontSize) * 2);
+  padding: 5px 10px;
+  border: 1px solid var(--SmartThemeBorderColor);
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--mainTextColor);
+  font-size: var(--mainFontSize);
+}
+
+.prompt-search:focus {
+  outline: none;
+  border-color: var(--SmartThemeQuoteColor);
+}
+
+/* 筛选选项样式 */
+.prompt-filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 10px 0 5px;
+}
+
+.prompt-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
