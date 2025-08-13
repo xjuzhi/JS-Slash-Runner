@@ -312,7 +312,7 @@ type CreateChatMessagesOption = {
 
 export async function createChatMessages(
   chat_messages: ChatMessageCreating[],
-  { insert_at = 'end', refresh = 'all' }: CreateChatMessagesOption = {},
+  { insert_at = 'end', refresh = 'affected' }: CreateChatMessagesOption = {},
 ): Promise<void> {
   if (insert_at !== 'end') {
     insert_at = insert_at < 0 ? chat.length + insert_at : insert_at;

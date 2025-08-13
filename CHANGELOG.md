@@ -10,6 +10,14 @@
   - 酒馆、酒馆助手宏
   - 角色卡里其他监听提示词发送而进行的脚本
 
+**前端美化**:
+
+- 为前端内置了 [tailwindcss](https://tailwindcss.com/) 库, 现在你可以直接在界面中使用 tailwindcss 的类名了
+
+### 🐛修复
+
+- 将 `createChatMessages` 的默认 `refresh` 选项修复为用 `'affected'`, 从而避免在尾部创建消息时刷新整个聊天消息
+
 ## 3.4.0
 
 ### 📚脚本库
