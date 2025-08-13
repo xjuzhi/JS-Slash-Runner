@@ -200,7 +200,7 @@ export async function openPromptViewDialog(): Promise<void> {
     applyFiltersAndSearch($contentHtml);
   });
 
-  // 触发一次 dryRun 以填充 UI
+  // 触发并拦截一次生成以填充 UI
   eventSource.makeLast(event_types.CHAT_COMPLETION_PROMPT_READY, onChatCompletionPromptReady);
   refreshPromptView();
 }
