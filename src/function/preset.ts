@@ -448,7 +448,17 @@ function fromPreset(preset: Preset): _OriginalPreset {
     id_set.add(new_id);
     return new_id;
   };
-  preset.prompts.forEach(prompt => (prompt.id = handle_id_collision(prompt.id, isPresetNormalPrompt(prompt))));
+  const make_uncollision_prompts = (prompts: PresetPrompt[]) => {
+    return prompts.map(prompt => {
+      const new_id = handle_id_collision(prompt.id, isPresetNormalPrompt(prompt));
+      return {
+        ...prompt,
+        id: new_id,
+      };
+    });
+  };
+  preset.prompts = make_uncollision_prompts(preset.prompts);
+  preset.prompts_unused = make_uncollision_prompts(preset.prompts_unused);
 
   const prompt_used = preset.prompts.map(prompt => fromPresetPrompt(prompt));
   const prompt_unused = preset.prompts_unused.map(prompt => fromPresetPrompt(prompt));
