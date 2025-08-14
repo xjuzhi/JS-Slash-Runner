@@ -247,7 +247,7 @@ function fromWorldbookEntry(
 
     .set('constant', entry?.strategy?.type ? entry?.strategy?.type === 'constant' : true)
     .set('selective', entry?.strategy?.type === 'selective')
-    .set('key', entry?.strategy?.keys?.map(toString) ?? [])
+    .set('key', entry?.strategy?.keys?.map(_.toString) ?? [])
     .set(
       'selectiveLogic',
       (
@@ -259,7 +259,7 @@ function fromWorldbookEntry(
         } as const
       )[entry?.strategy?.keys_secondary?.logic ?? 'and_any'],
     )
-    .set('keysecondary', entry?.strategy?.keys_secondary?.keys?.map(toString) ?? [])
+    .set('keysecondary', entry?.strategy?.keys_secondary?.keys?.map(_.toString) ?? [])
     .set('scanDepth', entry?.strategy?.scan_depth === 'same_as_global' ? null : (entry?.strategy?.scan_depth ?? null))
     .set('vectorized', entry?.strategy?.type === 'vectorized')
     .set(
