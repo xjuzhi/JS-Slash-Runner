@@ -562,40 +562,41 @@ function updateOriginalPresetData(
   updates: _OriginalPreset,
   { in_use, render }: { in_use: boolean; render?: 'immediate' | 'debounced' },
 ): void {
-  (Object.entries(settingsToUpdate) as [keyof _OriginalPreset, [string, string, boolean, boolean]][]).forEach(
-    ([key, [selector, setting, is_checkbox, is_connection]]) => {
-      if (is_connection) {
-        return;
-      }
+  let lodash_data = _(data);
+  Object.entries(settingsToUpdate).forEach(([key, { oai_setting }]) => {
+    lodash_data = lodash_data.set(
+      in_use ? oai_setting : _.get(in_use_map, oai_setting, oai_setting),
+      updates[key as keyof _OriginalPreset],
+    );
+  });
+  lodash_data.value();
 
-      _.set(data, in_use ? setting : _.get(in_use_map, setting, setting), updates[key]);
+  if (!in_use) {
+    return;
+  }
 
-      if (!in_use) {
-        return;
-      }
-
-      if (['extensions', 'prompts', 'prompt_order'].includes(key)) {
-        return;
-      }
-      if (is_checkbox) {
-        $(selector)
-          .prop('checked', updates[key] as boolean)
-          .trigger('input', { source: 'preset' });
-      } else {
-        $(selector)
-          .val(updates[key] as string | number)
-          .trigger('input', { source: 'preset' });
-      }
-    },
-  );
-
-  if (in_use) {
-    saveSettingsDebounced();
-    if (render === 'debounced') {
-      promptManager.renderDebounced();
-    } else {
-      promptManager.render();
+  const checkboxes = $();
+  const inputs = $();
+  Object.entries(settingsToUpdate).forEach(([key, { selector, type }]) => {
+    switch (type) {
+      case 'checkbox':
+        $(selector).prop('checked', updates[key as keyof _OriginalPreset]);
+        checkboxes.add(selector);
+        break;
+      case 'input':
+        $(selector).val(updates[key as keyof _OriginalPreset] as number | string);
+        inputs.add(selector);
+        break;
     }
+  });
+
+  $(checkboxes).trigger('input', { source: 'preset' });
+  $(inputs).trigger('input', { source: 'preset' });
+  saveSettingsDebounced();
+  if (render === 'debounced') {
+    promptManager.renderDebounced();
+  } else {
+    promptManager.render(false);
   }
 }
 type ReplacePresetOptions = {
