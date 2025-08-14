@@ -28,7 +28,7 @@ declare const builtin: {
   /** 刷新世界书编辑器的显示 (防抖) */
   reloadEditorDebounced: (file: string, load_if_not_selected?: boolean) => void;
   /** 刷新预设提示词列表 */
-  renderPromptManager: (after_try_generate: boolean) => void;
+  renderPromptManager: (after_try_generate?: boolean) => void;
   /** 刷新预设提示词列表 (防抖) */
-  renderPromptManagerDebounced: (after_try_generate: boolean) => void;
+  renderPromptManagerDebounced: (after_try_generate?: boolean) => void;
 };
