@@ -35,10 +35,6 @@
    const { worldbook, deleted_entries } = await deleteWorldbookEntries('eramgt少女歌剧', entry => entry.name.includes('神乐光'));
   ```
 
-**前端美化**:
-
-- 为前端内置了 [tailwindcss](https://tailwindcss.com/) 库, 现在你可以直接在界面中使用 tailwindcss 的类名了
-
 ### 🐛修复
 
 - 将 `createChatMessages` 的默认 `refresh` 选项修复为用 `'affected'`, 从而避免在尾部创建消息时刷新整个聊天消息
