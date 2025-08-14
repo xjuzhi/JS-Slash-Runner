@@ -300,10 +300,7 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
     .set('name', prompt.name ?? 'unnamed')
     .set(
       'enabled',
-      prompt_order.find(order => order.identifier === prompt.identifier)
-        ?.enabled ??
-        prompt.enabled ??
-        true,
+      prompt_order.find(order => order.identifier === prompt.identifier)?.enabled ?? prompt.enabled ?? true,
     );
 
   if (is_normal_prompt || is_placeholder_prompt) {
@@ -553,7 +550,7 @@ export async function createPreset(
 function updateOriginalPresetData(
   data: Record<string, any>,
   updates: _OriginalPreset,
-  { in_use }: { in_use: boolean },
+  { in_use, render }: { in_use: boolean; render?: 'immediate' | 'debounced' },
 ): void {
   (Object.entries(settingsToUpdate) as [keyof _OriginalPreset, [string, string, boolean, boolean]][]).forEach(
     ([key, [selector, setting, is_checkbox, is_connection]]) => {
@@ -584,12 +581,20 @@ function updateOriginalPresetData(
 
   if (in_use) {
     saveSettingsDebounced();
-    promptManager.renderDebounced();
+    if (render === 'debounced') {
+      promptManager.renderDebounced();
+    } else {
+      promptManager.render();
+    }
   }
 }
+type ReplacePresetOptions = {
+  render?: 'debounced' | 'immediate';
+};
 export async function createOrReplacePreset(
   preset_name: LiteralUnion<'in_use', string>,
   preset: Preset = default_preset,
+  { render = 'debounced' }: ReplacePresetOptions = {},
 ): Promise<boolean> {
   const original_preset = fromPreset(preset);
 
@@ -607,6 +612,7 @@ export async function createOrReplacePreset(
       original_preset,
       {
         in_use: preset_name === 'in_use',
+        render,
       },
     );
   }
@@ -642,11 +648,15 @@ export function getPreset(preset_name: LiteralUnion<'in_use', string>): Preset {
   return structuredClone(toPreset(original_preset, { in_use: preset_name === 'in_use' }));
 }
 
-export async function replacePreset(preset_name: LiteralUnion<'in_use', string>, preset: Preset): Promise<void> {
+export async function replacePreset(
+  preset_name: LiteralUnion<'in_use', string>,
+  preset: Preset,
+  options: ReplacePresetOptions = {},
+): Promise<void> {
   if (!getPresetNames().includes(preset_name)) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
-  await createOrReplacePreset(preset_name, preset);
+  await createOrReplacePreset(preset_name, preset, options);
 }
 
 type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise<Preset>);
@@ -654,25 +664,31 @@ type PresetUpdater = ((preset: Preset) => Preset) | ((preset: Preset) => Promise
 export async function updatePresetWith(
   preset_name: LiteralUnion<'in_use', string>,
   updater: PresetUpdater,
+  options: ReplacePresetOptions = {},
 ): Promise<Preset> {
   if (!getPresetNames().includes(preset_name)) {
     throw Error(`预设 '${preset_name}' 不存在`);
   }
   const preset = await updater(getPreset(preset_name)!);
-  await replacePreset(preset_name, preset);
+  await replacePreset(preset_name, preset, options);
   return preset;
 }
 
 export async function setPreset(
   preset_name: LiteralUnion<'in_use', string>,
   preset: PartialDeep<Preset>,
+  options: ReplacePresetOptions = {},
 ): Promise<Preset> {
-  return await updatePresetWith(preset_name, old_preset => {
-    return {
-      settings: _.defaultsDeep(preset.settings, old_preset.settings),
-      prompts: preset.prompts ?? old_preset.prompts,
-      prompts_unused: preset.prompts_unused ?? old_preset.prompts_unused,
-      extensions: _.defaultsDeep(preset.extensions, old_preset.extensions),
-    };
-  });
+  return await updatePresetWith(
+    preset_name,
+    old_preset => {
+      return {
+        settings: _.defaultsDeep(preset.settings, old_preset.settings),
+        prompts: preset.prompts ?? old_preset.prompts,
+        prompts_unused: preset.prompts_unused ?? old_preset.prompts_unused,
+        extensions: _.defaultsDeep(preset.extensions, old_preset.extensions),
+      };
+    },
+    options,
+  );
 }
