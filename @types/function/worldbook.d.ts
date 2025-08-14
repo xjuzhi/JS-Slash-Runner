@@ -202,7 +202,7 @@ declare function getWorldbook(worldbook_name: string): Promise<WorldbookEntry[]>
  * );
  *
  * @example
- * // 删除所有名字中包含 `神乐光` 的条目
+ * // 删除所有名字中包含 `'神乐光'` 的条目
  * const worldbook = await getWorldbook("eramgt少女歌剧");
  * _.remove(worldbook, entry => entry.name.includes('神乐光'));
  * await replaceWorldbook("eramgt少女歌剧", worldbook);
@@ -221,7 +221,41 @@ type WorldbookUpdater =
  * @returns 更新后的世界书条目
  *
  * @example
- * // 删除所有名字中包含 `神乐光` 的条目
- * await updateWorldbookWith("eramgt少女歌剧", worldbook => worldbook.filter(entry => entry.name.includes('神乐光')))
+ * // 删除所有名字中包含 `'神乐光'` 的条目
+ * await updateWorldbookWith("eramgt少女歌剧", worldbook => worldbook.filter(entry => entry.name.includes('神乐光')));
  */
 declare function updateWorldbookWith(worldbook_name: string, updater: WorldbookUpdater): Promise<WorldbookEntry[]>;
+
+/**
+ * 向世界书中新增条目
+ *
+ * @param worldbook_name 世界书名称
+ * @param new_entries 要新增的条目, 对于不设置的字段将会采用酒馆给的默认值
+ *
+ * @returns 更新后的世界书条目, 以及新增条目补全字段后的结果
+ *
+ * @example
+ * // 创建两个条目, 一个标题叫 `'神乐光'`, 一个留白
+ * const { worldbook, new_entries } = await createWorldbookEntries('eramgt少女歌剧', [{ name: '神乐光' }, {}]);
+ */
+declare function createWorldbookEntries(
+  worldbook_name: string,
+  new_entries: PartialDeep<WorldbookEntry>[],
+): Promise<{ worldbook: WorldbookEntry[]; new_entries: WorldbookEntry[] }>;
+
+/**
+ * 删除世界书中的条目
+ *
+ * @param worldbook_name 世界书名称
+ * @param predicate 判断函数, 如果返回 `true` 则删除该条目
+ *
+ * @returns 更新后的世界书条目, 以及被删除的条目
+ *
+ * @example
+ * // 删除所有名字中包含 `'神乐光'` 的条目
+ * const { worldbook, deleted_entries } = await deleteWorldbookEntries('eramgt少女歌剧', entry => entry.name.includes('神乐光'));
+ */
+declare function deleteWorldbookEntries(
+  worldbook_name: string,
+  predicate: (entry: WorldbookEntry) => boolean,
+): Promise<{ worldbook: WorldbookEntry[]; deleted_entries: WorldbookEntry[] }>;
