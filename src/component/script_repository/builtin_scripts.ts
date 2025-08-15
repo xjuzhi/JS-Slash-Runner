@@ -39,7 +39,7 @@ export const DEFAULT_SCRIPT_CONFIGS: Record<string, ScriptConfig> = {
   },
   预设条目更多按钮: {
     name: '预设条目更多按钮: 一键新增预设条目',
-    content: 'https://fastly.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/预设条目更多按钮/index.js',
+    content: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/dist/酒馆助手/预设条目更多按钮/index.js',
     info: 'https://testingcf.jsdelivr.net/gh/StageDog/tavern_resource/src/酒馆助手/预设条目更多按钮/README.md',
   },
   自动开启角色卡局部正则: {
