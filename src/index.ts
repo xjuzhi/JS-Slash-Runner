@@ -181,6 +181,14 @@ jQuery(async () => {
     _.unset(extension_settings, extensionName);
     showNewFeature();
     await saveSettings();
+  } else {
+    // 清理弃用的油猴配置项
+    //@ts-ignore
+    const extensionConfig = extension_settings[extensionSettingName];
+    if (_.has(extensionConfig, 'render.tampermonkey_compatibility')) {
+      _.unset(extensionConfig, 'render.tampermonkey_compatibility');
+      await saveSettings();
+    }
   }
 
   disableIncompatibleOption();

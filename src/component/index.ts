@@ -10,7 +10,6 @@ import {
   renderAllIframes,
   renderMessageAfterDelete,
   renderPartialIframes,
-  tampermonkey_script,
   viewport_adjust_script,
 } from '@/component/message_iframe/render_message';
 import { addRenderQuickButton } from '@/component/message_iframe/index';
@@ -99,7 +98,6 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
 
     script_url.set('iframe_client', iframe_client);
     script_url.set('viewport_adjust_script', viewport_adjust_script);
-    script_url.set('tampermonkey_script', tampermonkey_script);
 
     registerAllMacros();
     initializeToastr();
@@ -134,7 +132,6 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
 
     script_url.delete('iframe_client');
     script_url.delete('viewport_adjust_script');
-    script_url.delete('tampermonkey_script');
 
     unregisterAllMacros();
     destroyMacroOnExtension();
