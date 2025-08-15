@@ -176,7 +176,7 @@ export class ButtonManager {
 
     $(`#${containerId}`).remove();
 
-    let containerHtml = `<div id="${containerId}" class="qr--buttons th--button">`;
+    let containerHtml = `<div id="${containerId}" class="qr--button th--button">`;
 
     buttons.forEach(button => {
       this.buttons = this.buttons.filter(btn => btn.id !== button.id);
