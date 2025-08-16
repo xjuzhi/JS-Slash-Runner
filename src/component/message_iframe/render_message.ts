@@ -145,7 +145,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
               .char_avatar,.char-avatar{background-image:url('${getCharAvatarPath()}')}
               </style>
               ${third_party}
-              <script src="${script_url.get('iframe_client')}"></script>
+              <script src="${script_url.get('iframe')}"></script>
             </head>
             <body>
               ${extractedText}

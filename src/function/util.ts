@@ -32,3 +32,23 @@ export function errorCatched<T extends any[], U>(fn: (...args: T) => U): (...arg
     }
   };
 }
+
+export function _getIframeName(this: Window): string {
+  return (this.frameElement as Element).id;
+}
+
+export function _getScriptId(this: Window): string {
+  return $(this.frameElement as Element).attr('script-id') ?? 'unknown_script';
+}
+
+export function _getCurrentMessageId(this: Window): number {
+  return getMessageId(_getIframeName.call(this));
+}
+
+export function getMessageId(iframe_name: string): number {
+  const match = iframe_name.match(/^message-iframe-(\d+)-\d+$/);
+  if (!match) {
+    throw Error(`获取 ${iframe_name} 所在楼层 id 时出错: 不要对全局脚本 iframe 调用 getMessageId!`);
+  }
+  return parseInt(match[1].toString());
+}

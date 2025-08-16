@@ -1,3 +1,10 @@
+## 3.4.8
+
+### ⏫功能
+
+- 新增 `getButtonEvent` 来获取脚本按钮对应的事件
+- 弃用 `eventOnButton`, 请使用 `eventOn(getButtonEvent('按钮名称'), 函数)` 代替
+
 ## 3.4.7
 
 ### ⏫功能

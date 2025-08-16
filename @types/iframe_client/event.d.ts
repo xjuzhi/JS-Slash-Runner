@@ -29,19 +29,7 @@ type EventType = IframeEventType | TavernEventType | string;
  */
 declare function eventOn<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
-/**
- * 让 `listener` 监听 `event_type`, 按下脚本库中附加了按钮的脚本时自动运行 `listener`;
- * 如果 `listener` 已经在监听 `event_type`, 则调用本函数不会有任何效果.
- *
- * 当 `eventOnButton` 所在的前端界面/脚本关闭时, 监听将会自动卸载.
- *
- * @param event_type 要监听的事件
- * @param listener 要注册的函数
- *
- * @example
- * function hello() { alert("hello"); }
- * eventOnButton(对应的按钮名称, hello);
- */
+/** @deprecated 请使用 `eventOn(getButtonEvent('按钮名称'), 函数)` 代替 */
 declare function eventOnButton<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
