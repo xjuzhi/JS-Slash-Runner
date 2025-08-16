@@ -16,6 +16,7 @@ import {
   setChatMessages,
 } from '@/function/chat_message';
 import { formatAsDisplayedMessage, retrieveDisplayedMessage } from '@/function/displayed_message';
+import { _get_map, _register_listener } from '@/function/event';
 import { generate, generateRaw } from '@/function/generate';
 import { builtin_prompt_default_order } from '@/function/generate/types';
 import {
@@ -125,6 +126,10 @@ function getTavernHelper() {
     // displayed_message
     formatAsDisplayedMessage,
     retrieveDisplayedMessage,
+
+    // event
+    _register_listener,
+    _get_map,
 
     // generate
     builtin_prompt_default_order,
