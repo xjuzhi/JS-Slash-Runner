@@ -28,7 +28,13 @@ function eventMakeFirst<T extends EventType>(event_type: T, listener: ListenerTy
 }
 
 function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): void {
-  SillyTavern.eventSource.once(event_type, listener);
+  // 酒馆自己也支持重复 once, 因此此处不考虑重复的情况
+  const once = (...args: any[]) => {
+    _get_map().get(event_type)?.delete(once);
+    return listener(...args);
+  };
+  _register_listener(event_type, once);
+  SillyTavern.eventSource.once(event_type, once);
 }
 
 async function eventEmit<T extends EventType>(event_type: T, ...data: Parameters<ListenerType[T]>): Promise<void> {
