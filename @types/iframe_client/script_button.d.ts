@@ -10,4 +10,4 @@
  *   console.log('按钮被点击了');
  * });
  */
-function getButtonEvent(button_name: string): string;
+declare function getButtonEvent(button_name: string): string;
