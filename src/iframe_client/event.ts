@@ -286,3 +286,5 @@ type ListenerType = {
   [tavern_events.TOOL_CALLS_RENDERED]: (tool_invocations: Object[]) => void;
   [custom_event: string]: (...args: any) => any;
 };
+
+$('window').on('unload', eventClearAll);
