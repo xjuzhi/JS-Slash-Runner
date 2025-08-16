@@ -3297,7 +3297,7 @@ declare const TavernHelper: typeof window.TavernHelper;
  *   console.log('按钮被点击了');
  * });
  */
-function getButtonEvent(button_name: string): string;
+declare function getButtonEvent(button_name: string): string;
 /**
  * 获取 iframe 的名称
  *
