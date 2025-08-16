@@ -4,7 +4,7 @@ import { VariableManagerUtil } from '@/component/variable_manager/util';
 import { getSortableDelay } from '@sillytavern/scripts/utils';
 
 import log from 'loglevel';
-import YAML from 'yaml';
+const YAML = await import('yaml');
 
 declare const toastr: any;
 

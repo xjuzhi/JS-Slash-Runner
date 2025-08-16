@@ -32,9 +32,7 @@ import {
 import { event_types, eventSource, saveSettings } from '@sillytavern/script';
 import { extension_settings, renderExtensionTemplateAsync } from '@sillytavern/scripts/extensions';
 
-import log_object from 'loglevel';
-import YAML_object from 'yaml';
-import z_object from 'zod';
+import log from 'loglevel'
 
 const defaultSettings = {
   enabled_extension: true,
@@ -137,16 +135,10 @@ async function handleVersionUpdate() {
   $('#update-extension').on('click', async () => await handleUpdateButton());
 }
 
-declare namespace globalThis {
-  let log: typeof log_object;
-  let YAML: typeof YAML_object;
-  let z: typeof z_object;
-}
-
-function initThirdPartyObject() {
-  globalThis.log = log_object;
-  globalThis.YAML = YAML_object;
-  globalThis.z = z_object;
+async function initThirdPartyObject() {
+  _.set(globalThis, 'log', await import('loglevel'));
+  _.set(globalThis, 'YAML', await import('yaml'));
+  _.set(globalThis, 'z', await import('zod'));
 }
 
 async function initDebugMode() {
@@ -192,7 +184,7 @@ jQuery(async () => {
   }
 
   disableIncompatibleOption();
-  initThirdPartyObject();
+  await initThirdPartyObject();
   initTavernHelperObject();
   await initDebugMode();
   // 默认显示主设置界面
