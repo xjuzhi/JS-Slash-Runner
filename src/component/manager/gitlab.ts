@@ -1,6 +1,6 @@
 import * as CORE from '@gitbeaker/core';
+import YAML from 'yaml';
 import { Gitlab } from '@gitbeaker/rest';
-const YAML = await import('yaml');
 
 export interface Repository_path {
   host: string;

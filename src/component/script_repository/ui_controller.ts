@@ -19,7 +19,7 @@ import { callGenericPopup, POPUP_TYPE } from '@sillytavern/scripts/popup';
 import { download, getSortableDelay, showFontAwesomePicker, uuidv4 } from '@sillytavern/scripts/utils';
 
 import log from 'loglevel';
-const YAML = await import ('yaml');
+import YAML from 'yaml';
 
 export class UIController {
   private static instance: UIController;

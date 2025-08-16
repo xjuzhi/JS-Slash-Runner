@@ -6,7 +6,7 @@ import { VariableManagerUtil } from '@/component/variable_manager/util';
 import { VariableView } from '@/component/variable_manager/view';
 
 import log from 'loglevel';
-const YAML = await import('yaml')
+import YAML from 'yaml';
 
 export class VariableController {
   /**
