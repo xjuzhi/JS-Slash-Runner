@@ -82,32 +82,6 @@ declare function eventMakeFirst<T extends EventType>(event_type: T, listener: Li
 declare function eventOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): void;
 
 /**
- * 等待一次 `event_type` 事件
- *
- * @param event_type 要等待的事件
- *
- * @example
- * await eventWaitOnce(tavern_events.MESSAGE_DELETED);
- */
-declare function eventWaitOnce(event_type: EventType): Promise<any | undefined>;
-
-/**
- * 等待 `listener` 监听到一次 `event_type` 且执行完成, 返回 `listener` 的执行结果
- *
- * 如果填入 `listener`, 则在调用本函数前 `listener` 必须已经在监听 `event_type`
- *
- * @param event_type `listener` 在监听的事件
- * @param listener 已经在监听 `event_type` 的函数
- *
- * @returns  `listener` 得到的结果
- *
- * @example
- * eventOnce("存档", save);
- * await eventWaitOnce("存档", save);
- */
-declare function eventWaitOnce<T extends EventType>(event_type: T, listener: ListenerType[T]): Promise<any | undefined>;
-
-/**
  * 发送 `event_type` 事件, 同时可以发送一些数据 `data`.
  *
  * 所有正在监听 `event_type` 消息频道的都会收到该消息并接收到 `data`.
