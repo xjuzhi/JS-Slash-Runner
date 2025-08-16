@@ -7,6 +7,19 @@
 ### ⏫功能
 
 - **`generate`函数和 `generateRaw` 函数现在支持自定义 api 了**
+
+  ```typescript
+  const result = await generate({
+    user_input: '你好',
+    custom_api: {
+      apiurl: 'https://your-proxy-url.com',
+      key: 'your-api-key',
+      model: 'gpt-4',
+      source: 'openai'
+    }
+  });
+  ```
+
 - 新增 `getButtonEvent` 来获取脚本按钮对应的事件
 - 弃用 `eventOnButton`, 请使用 `eventOn(getButtonEvent('按钮名称'), 函数)` 代替
 - `generate` 和 `generateRaw` 现在可以自定义请求的API了
