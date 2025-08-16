@@ -109,7 +109,9 @@ import { getTavernHelperVersion, updateTavernHelper } from '@/function/version';
 import {
   createOrReplaceWorldbook,
   createWorldbook,
+  createWorldbookEntries,
   deleteWorldbook,
+  deleteWorldbookEntries,
   getCharWorldbookNames,
   getChatWorldbookName,
   getGlobalWorldbookNames,
@@ -284,6 +286,8 @@ function getTavernHelper() {
     getWorldbook,
     replaceWorldbook,
     updateWorldbookWith,
+    createWorldbookEntries,
+    deleteWorldbookEntries,
   };
 }
 
