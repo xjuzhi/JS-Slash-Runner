@@ -287,4 +287,4 @@ type ListenerType = {
   [custom_event: string]: (...args: any) => any;
 };
 
-$('window').on('unload', eventClearAll);
+$(window).on('pagehide', eventClearAll);

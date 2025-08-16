@@ -468,7 +468,7 @@ export function destroyIframe(iframe: HTMLIFrameElement): void {
     }
   }
 
-  $iframe.trigger('unload').remove();
+  $iframe.remove();
 
   if (window._observedElements?.size === 0 && window._sharedResizeObserver) {
     window._sharedResizeObserver.disconnect();
