@@ -33,7 +33,7 @@ interface SearchResult {
   indices?: Array<{ start: number; end: number; text: string }>; // 普通搜索的位置信息
 }
 
-let originalContentMap = new Map<number, string>();
+const originalContentMap = new Map<number, string>();
 
 /**
  * 获取元素的原始内容
@@ -746,17 +746,4 @@ function findWithContextFromMatches(
       matches: matches,
     };
   });
-}
-
-/**
- * 在顶部插入系统消息压缩/后处理的警告
- */
-export function insertMessageMergeWarning(scope: JQuery<HTMLElement>, type: 'squash' | 'post-processing') {
-  const $warning = $('<div class="prompt-view-process-warning">');
-  if (type === 'squash') {
-    $warning.text('⚠️ 本次提示词发送经过了预设中的“系统消息压缩”合并处理');
-  } else if (type === 'post-processing') {
-    $warning.text('⚠️ 本次提示词发送经过了API中的“提示词后处理”合并处理');
-  }
-  scope.prepend($warning);
 }
