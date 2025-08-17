@@ -331,7 +331,7 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
 
   if (is_normal_prompt || is_placeholder_prompt) {
     result = result.set('position.type', { 0: 'relative', 1: 'in_chat' }[prompt.injection_position ?? 0]);
-    if (prompt.injection_depth === 0) {
+    if (prompt.injection_depth === 1) {
       result = result.set('position.depth', prompt.injection_depth ?? 4);
       result = result.set('position.order', prompt.injection_order ?? 100);
     }
