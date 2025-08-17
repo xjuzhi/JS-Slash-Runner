@@ -1,7 +1,7 @@
 import { defaultAudioSettings, initAudioComponents } from '@/component/audio';
 import { initExtensionMainPanel } from '@/component/index';
 import { initListener } from '@/component/listener';
-import { renderAllMacros } from '@/component/macrolike';
+import { destroyMacroOnExtension, initializeMacroOnExtension, renderAllMacros } from '@/component/macrolike';
 import { defaultIframeSettings, initIframePanel } from '@/component/message_iframe';
 import { initPromptView } from '@/component/prompt_view';
 import { initReference } from '@/component/reference';
@@ -46,6 +46,9 @@ const defaultSettings = {
   },
   audio: {
     ...defaultAudioSettings,
+  },
+  macro: {
+    replace: true,
   },
   debug: {
     enabled: false,
@@ -149,10 +152,28 @@ function initThirdPartyObject() {
   globalThis.z = z_object;
 }
 
+// TODO: 拆入 component 中
+async function initMacroReplace() {
+  const macro_replace_disabled = !(await getOrSaveSettingValue('macro.replace', defaultSettings.macro.replace));
+  $('#macro-replace-disable-toggle')
+    .prop('checked', macro_replace_disabled)
+    .on('click', (event: JQuery.ClickEvent) => {
+      const is_macro_replace_disabled = event.target.checked;
+      saveSettingValue('macro.replace', is_macro_replace_disabled);
+      if (is_macro_replace_disabled) {
+        destroyMacroOnExtension();
+      } else {
+        initializeMacroOnExtension();
+      }
+    });
+  // 随 initExtensionMainPanel 初始化
+}
+
+// TODO: 拆入 component 中
 async function initDebugMode() {
-  const debugEnabled = await getOrSaveSettingValue('debug.enabled', defaultSettings.debug.enabled);
+  const debug_enabled = await getOrSaveSettingValue('debug.enabled', defaultSettings.debug.enabled);
   $('#debug-mode-toggle')
-    .prop('checked', debugEnabled)
+    .prop('checked', debug_enabled)
     .on('click', (event: JQuery.ClickEvent) => {
       const isDebugMode = event.target.checked;
       saveSettingValue('debug.enabled', isDebugMode);
@@ -162,7 +183,9 @@ async function initDebugMode() {
         log_object.setLevel('warn');
       }
     });
-  if (debugEnabled) {
+
+  // TODO: 随 initExtensionMainPanel 初始化?
+  if (debug_enabled) {
     log_object.enableAll();
   } else {
     log_object.setLevel('warn');
@@ -194,6 +217,7 @@ jQuery(async () => {
   disableIncompatibleOption();
   initThirdPartyObject();
   initTavernHelperObject();
+  await initMacroReplace();
   await initDebugMode();
   // 默认显示主设置界面
   $('#main-settings-title').addClass('title-item-active');

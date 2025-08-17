@@ -185,7 +185,7 @@ export const tavern_events = {
   TOOL_CALLS_RENDERED: 'tool_calls_rendered',
 } as const;
 
-type ListenerType = {
+export type ListenerType = {
   [iframe_events.MESSAGE_IFRAME_RENDER_STARTED]: (iframe_name: string) => void;
   [iframe_events.MESSAGE_IFRAME_RENDER_ENDED]: (iframe_name: string) => void;
   [iframe_events.GENERATION_STARTED]: () => void;

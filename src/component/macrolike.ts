@@ -1,3 +1,5 @@
+import { ListenerType } from '@/function/event';
+
 import { chat, chat_metadata, event_types, eventSource } from '@sillytavern/script';
 import { extension_settings } from '@sillytavern/scripts/extensions';
 
