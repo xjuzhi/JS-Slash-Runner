@@ -345,7 +345,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
 
   let result = _({}).set('identifier', prompt.id).set('name', prompt.name).set('enabled', prompt.enabled);
 
-  if ((is_normal_prompt || is_placeholder_prompt) && !['dialogue_examples', 'chat_history'].includes(prompt.id)) {
+  if ((is_normal_prompt || is_placeholder_prompt) && !['dialogueExamples', 'chatHistory'].includes(prompt.id)) {
     result = result
       .set('injection_position', prompt.position.type === 'relative' ? 0 : 1)
       .set('injection_depth', prompt.position.depth ?? 4)
@@ -357,7 +357,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
     result = result.set('content', prompt.content);
   }
 
-  result = result.set('system_prompt', is_system_prompt && is_placeholder_prompt).set('marker', is_placeholder_prompt);
+  result = result.set('system_prompt', is_system_prompt || is_placeholder_prompt).set('marker', is_placeholder_prompt);
 
   if (prompt.extra) {
     result = result.set('extra', prompt.extra);
