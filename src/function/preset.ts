@@ -260,7 +260,7 @@ type _OriginalNormalPrompt = {
   content: string;
 
   system_prompt: false;
-  marker: false;
+  marker?: false;
 
   extra?: Record<string, any>;
 
@@ -275,7 +275,7 @@ type _OriginalSystemPrompt = {
   content: string;
 
   system_prompt: true;
-  marker: false;
+  marker?: false;
 
   extra?: Record<string, any>;
 
@@ -301,7 +301,7 @@ type _OriginalPlaceholderPrompt = {
   role: 'system' | 'user' | 'assistant';
 
   system_prompt: true;
-  marker: true;
+  marker?: true;
 
   extra?: Record<string, any>;
 };
@@ -317,9 +317,9 @@ const identifier_to_id_map = {
   chatHistory: 'chat_history',
 } as const;
 function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOrder[]): PresetPrompt {
-  const is_normal_prompt = prompt.system_prompt === false && prompt.marker === false;
-  const is_system_prompt = prompt.system_prompt === true && prompt.marker === false;
-  const is_placeholder_prompt = prompt.marker === true;
+  const is_normal_prompt = prompt.system_prompt === false && prompt.marker == false;
+  const is_system_prompt = prompt.system_prompt === true && prompt.marker == false;
+  const is_placeholder_prompt = prompt.marker == true;
 
   let result = _({})
     .set('id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4())
