@@ -26,6 +26,7 @@
     "@types/jquery": "^3.5.32",
     "@types/jqueryui": "^1.12.24",
     "@types/lodash": "^4.17.20",
+    "@types/mark.js": "^8.11.12",
     "@types/toastr": "^2.1.43",
     "@typescript-eslint/parser": "^8.39.1",
     "css-loader": "^7.1.2",
@@ -54,6 +55,7 @@
     "@gitbeaker/requester-utils": "^42.5.0",
     "@gitbeaker/rest": "^42.5.0",
     "loglevel": "^1.9.2",
+    "mark.js": "^8.11.1",
     "socket.io-client": "^4.8.1",
     "type-fest": "^4.41.0",
     "zod": "^4.0.17"
