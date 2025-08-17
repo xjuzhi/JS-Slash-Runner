@@ -1,5 +1,4 @@
 import { registerAllMacros, unregisterAllMacros } from '@/component/macro';
-import { destroyMacroOnExtension, initializeMacroOnExtension, renderAllMacros } from '@/component/macrolike';
 import { addRenderQuickButton } from '@/component/message_iframe/index';
 import {
   addCodeToggleButtonsToAllMessages,
@@ -33,10 +32,6 @@ import { eventSource, event_types, reloadCurrentChat, saveSettingsDebounced, thi
 const handleChatLoaded = async () => {
   await renderAllIframes();
   addCodeToggleButtonsToAllMessages();
-};
-
-const handleChatChanged = async () => {
-  renderAllMacros();
 };
 
 const handlePartialRender = (mesId: string) => {
@@ -114,7 +109,6 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
       addRenderingHideStyleSettings();
     }
 
-    eventSource.on(event_types.CHAT_CHANGED, handleChatChanged);
     eventSource.on('chatLoaded', handleChatLoaded);
 
     partialRenderEvents.forEach(eventType => {
@@ -146,7 +140,6 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
       removeRenderingHideStyleSettings();
     }
 
-    eventSource.removeListener(event_types.CHAT_CHANGED, handleChatChanged);
     eventSource.removeListener('chatLoaded', handleChatLoaded);
     partialRenderEvents.forEach(eventType => {
       eventSource.removeListener(eventType, handlePartialRender);
