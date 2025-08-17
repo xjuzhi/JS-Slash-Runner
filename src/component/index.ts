@@ -101,7 +101,6 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
 
     registerAllMacros();
     initializeToastr();
-    initializeMacroOnExtension();
     initializeCharacterLevelOnExtension();
     buildScriptRepositoryOnExtension();
 
@@ -134,7 +133,6 @@ async function handleExtensionToggle(userAction: boolean = true, enable: boolean
     script_url.delete('viewport_adjust_script');
 
     unregisterAllMacros();
-    destroyMacroOnExtension();
     destroyCharacterLevelOnExtension();
     destroyScriptRepositoryOnExtension();
 

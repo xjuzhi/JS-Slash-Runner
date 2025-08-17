@@ -154,19 +154,24 @@ function initThirdPartyObject() {
 
 // TODO: 拆入 component 中
 async function initMacroReplace() {
-  const macro_replace_disabled = !(await getOrSaveSettingValue('macro.replace', defaultSettings.macro.replace));
+  const macro_replace_enabled = !(await getOrSaveSettingValue('macro.replace', defaultSettings.macro.replace));
   $('#macro-replace-disable-toggle')
-    .prop('checked', macro_replace_disabled)
+    .prop('checked', !macro_replace_enabled)
     .on('click', (event: JQuery.ClickEvent) => {
-      const is_macro_replace_disabled = event.target.checked;
-      saveSettingValue('macro.replace', is_macro_replace_disabled);
-      if (is_macro_replace_disabled) {
+      const should_disable = event.target.checked;
+      saveSettingValue('macro.replace', !should_disable);
+      if (should_disable) {
         destroyMacroOnExtension();
       } else {
         initializeMacroOnExtension();
       }
     });
-  // 随 initExtensionMainPanel 初始化
+  // TODO: 随 initExtensionMainPanel 初始化, 现在这样即便酒馆助手关闭依旧生效
+  if (macro_replace_enabled) {
+    initializeMacroOnExtension();
+  } else {
+    destroyMacroOnExtension();
+  }
 }
 
 // TODO: 拆入 component 中
