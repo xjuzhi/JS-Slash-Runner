@@ -50,15 +50,15 @@ type PresetPrompt = {
     | 'main'
     | 'nsfw'
     | 'jailbreak'
-    | 'enhance_definitions'
-    | 'world_info_before'
-    | 'persona_description'
-    | 'char_description'
-    | 'char_personality'
+    | 'enhanceDefinitions'
+    | 'worldInfoBefore'
+    | 'personaDescription'
+    | 'charDescription'
+    | 'charPersonality'
     | 'scenario'
-    | 'world_info_after'
-    | 'dialogue_examples'
-    | 'chat_history',
+    | 'worldInfoAfter'
+    | 'dialogueExamples'
+    | 'chatHistory',
     string
   >;
   name: string;
@@ -79,20 +79,20 @@ type PresetPrompt = {
 };
 type PresetNormalPrompt = SetRequired<{ id: string } & Omit<PresetPrompt, 'id'>, 'position' | 'content'>;
 type PresetSystemPrompt = SetRequired<
-  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions' } & Omit<PresetPrompt, 'id'>,
+  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions' } & Omit<PresetPrompt, 'id'>,
   'content'
 >;
 type PresetPlaceholderPrompt = SetRequired<
   {
     id:
-      | 'world_info_before'
-      | 'persona_description'
-      | 'char_description'
-      | 'char_personality'
+      | 'worldInfoBefore'
+      | 'personaDescription'
+      | 'charDescription'
+      | 'charPersonality'
       | 'scenario'
-      | 'world_info_after'
-      | 'dialogue_examples'
-      | 'chat_history';
+      | 'worldInfoAfter'
+      | 'dialogueExamples'
+      | 'chatHistory';
   } & Omit<PresetPrompt, 'id'>,
   'position'
 >;
@@ -100,18 +100,18 @@ export function isPresetNormalPrompt(prompt: PresetPrompt): prompt is PresetNorm
   return !isPresetSystemPrompt(prompt) && !isPresetPlaceholderPrompt(prompt);
 }
 export function isPresetSystemPrompt(prompt: PresetPrompt): prompt is PresetSystemPrompt {
-  return ['main', 'nsfw', 'jailbreak', 'enhance_definitions'].includes(prompt.id);
+  return ['main', 'nsfw', 'jailbreak', 'enhanceDefinitions'].includes(prompt.id);
 }
 export function isPresetPlaceholderPrompt(prompt: PresetPrompt): prompt is PresetPlaceholderPrompt {
   return [
-    'world_info_before',
-    'persona_description',
-    'char_description',
-    'char_personality',
+    'worldInfoBefore',
+    'personaDescription',
+    'charDescription',
+    'charPersonality',
     'scenario',
-    'world_info_after',
-    'dialogue_examples',
-    'chat_history',
+    'worldInfoAfter',
+    'dialogueExamples',
+    'chatHistory',
   ].includes(prompt.id);
 }
 
@@ -150,31 +150,31 @@ export const default_preset: Preset = {
   },
   prompts: [
     {
-      id: 'world_info_before',
+      id: 'worldInfoBefore',
       name: 'World Info (before)',
       enabled: true,
       position: { type: 'relative' },
       role: 'system',
     },
     {
-      id: 'persona_description',
+      id: 'personaDescription',
       name: 'Persona Description',
       enabled: true,
       position: { type: 'relative' },
       role: 'system',
     },
-    { id: 'char_description', name: 'Char Description', enabled: true, position: { type: 'relative' }, role: 'system' },
-    { id: 'char_personality', name: 'Char Personality', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'charDescription', name: 'Char Description', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'charPersonality', name: 'Char Personality', enabled: true, position: { type: 'relative' }, role: 'system' },
     { id: 'scenario', name: 'Scenario', enabled: true, position: { type: 'relative' }, role: 'system' },
     {
-      id: 'world_info_after',
+      id: 'worldInfoAfter',
       name: 'World Info (after)',
       enabled: true,
       position: { type: 'relative' },
       role: 'system',
     },
-    { id: 'dialogue_examples', name: 'Chat Examples', enabled: true, position: { type: 'relative' }, role: 'system' },
-    { id: 'chat_history', name: 'Chat History', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'dialogueExamples', name: 'Chat Examples', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'chatHistory', name: 'Chat History', enabled: true, position: { type: 'relative' }, role: 'system' },
   ],
   prompts_unused: [],
   extensions: {},
@@ -306,24 +306,13 @@ type _OriginalPlaceholderPrompt = {
 
   extra?: Record<string, any>;
 };
-const identifier_to_id_map = {
-  enhanceDefinitions: 'enhance_definitions',
-  worldInfoBefore: 'world_info_before',
-  personaDescription: 'persona_description',
-  charDescription: 'char_description',
-  charPersonality: 'char_personality',
-  scenario: 'scenario',
-  worldInfoAfter: 'world_info_after',
-  dialogueExamples: 'dialogue_examples',
-  chatHistory: 'chat_history',
-} as const;
 function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOrder[]): PresetPrompt {
   const is_normal_prompt = prompt.system_prompt === false && (prompt.marker === undefined || prompt.marker === false);
   const is_system_prompt = prompt.system_prompt === true && (prompt.marker === undefined || prompt.marker === false);
   const is_placeholder_prompt = prompt.marker === true;
 
   let result = _({})
-    .set('id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4())
+    .set('id', prompt.identifier ?? uuidv4())
     .set('name', prompt.name ?? 'unnamed')
     .set(
       'enabled',
@@ -354,27 +343,7 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
   const is_system_prompt = isPresetSystemPrompt(prompt);
   const is_placeholder_prompt = isPresetPlaceholderPrompt(prompt);
 
-  let result = _({})
-    .set(
-      'identifier',
-      _.get(
-        {
-          enhance_definitions: 'enhanceDefinitions',
-          world_info_before: 'worldInfoBefore',
-          persona_description: 'personaDescription',
-          char_description: 'charDescription',
-          char_personality: 'charPersonality',
-          scenario: 'scenario',
-          world_info_after: 'worldInfoAfter',
-          dialogue_examples: 'dialogueExamples',
-          chat_history: 'chatHistory',
-        } as const,
-        prompt.id,
-        prompt.id,
-      ),
-    )
-    .set('name', prompt.name)
-    .set('enabled', prompt.enabled);
+  let result = _({}).set('identifier', prompt.id).set('name', prompt.name).set('enabled', prompt.enabled);
 
   if ((is_normal_prompt || is_placeholder_prompt) && !['dialogue_examples', 'chat_history'].includes(prompt.id)) {
     result = result
@@ -403,9 +372,7 @@ function toPreset(preset: _OriginalPreset, { in_use }: { in_use: boolean }): Pre
   const prompt_order = preset.prompt_order.find(order => order.character_id === 100001)?.order ?? [];
   const prompts_all = preset.prompts.map(prompt => toPresetPrompt(prompt, prompt_order));
 
-  const prompt_order_identifiers = prompt_order.map(order =>
-    _.get(identifier_to_id_map, order.identifier, order.identifier),
-  );
+  const prompt_order_identifiers = prompt_order.map(order => order.identifier);
   const [prompts_used, prompts_unused] = _.partition(prompts_all, prompt =>
     prompt_order_identifiers.includes(prompt.id),
   );

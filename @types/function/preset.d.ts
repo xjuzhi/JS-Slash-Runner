@@ -77,15 +77,15 @@ type PresetPrompt = {
     | 'main'
     | 'nsfw'
     | 'jailbreak'
-    | 'enhance_definitions'
-    | 'world_info_before'
-    | 'persona_description'
-    | 'char_description'
-    | 'char_personality'
+    | 'enhanceDefinitions'
+    | 'worldInfoBefore'
+    | 'personaDescription'
+    | 'charDescription'
+    | 'charPersonality'
     | 'scenario'
-    | 'world_info_after'
-    | 'dialogue_examples'
-    | 'chat_history',
+    | 'worldInfoAfter'
+    | 'dialogueExamples'
+    | 'chatHistory',
     string
   >;
   name: string;
@@ -112,20 +112,20 @@ type PresetPrompt = {
 };
 type PresetNormalPrompt = SetRequired<{ id: string } & Omit<PresetPrompt, 'id'>, 'position' | 'content'>;
 type PresetSystemPrompt = SetRequired<
-  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhance_definitions' } & Omit<PresetPrompt, 'id'>,
+  { id: 'main' | 'nsfw' | 'jailbreak' | 'enhanceDefinitions' } & Omit<PresetPrompt, 'id'>,
   'content'
 >;
 type PresetPlaceholderPrompt = SetRequired<
   {
     id:
-      | 'world_info_before'
-      | 'persona_description'
-      | 'char_description'
-      | 'char_personality'
+      | 'worldInfoBefore'
+      | 'personaDescription'
+      | 'charDescription'
+      | 'charPersonality'
       | 'scenario'
-      | 'world_info_after'
-      | 'dialogue_examples'
-      | 'chat_history';
+      | 'worldInfoAfter'
+      | 'dialogueExamples'
+      | 'chatHistory';
   } & Omit<PresetPrompt, 'id'>,
   'position'
 >;

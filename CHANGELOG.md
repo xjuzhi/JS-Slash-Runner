@@ -3,6 +3,7 @@
 ### ⏫功能
 
 - ~~趁没人用~~调整预设提示词条目的插入字段 (`prompt.position`), 添加新酒馆的插入顺序字段 (`prompt.injection_order`).
+- 将预设占位符提示词的 id 从 `snake_case` 改为 `camelCase`, 便于与酒馆界面交互.
 
 ### 🐛修复
 
