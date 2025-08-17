@@ -157,15 +157,15 @@ async function initDebugMode() {
       const isDebugMode = event.target.checked;
       saveSettingValue('debug.enabled', isDebugMode);
       if (isDebugMode) {
-        log.enableAll();
+        log_object.enableAll();
       } else {
-        log.setLevel('warn');
+        log_object.setLevel('warn');
       }
     });
   if (debugEnabled) {
-    log.enableAll();
+    log_object.enableAll();
   } else {
-    log.setLevel('warn');
+    log_object.setLevel('warn');
   }
 }
 
