@@ -317,9 +317,12 @@ const identifier_to_id_map = {
   chatHistory: 'chat_history',
 } as const;
 function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOrder[]): PresetPrompt {
-  const is_normal_prompt = prompt.system_prompt === false && prompt.marker == false;
-  const is_system_prompt = prompt.system_prompt === true && prompt.marker == false;
-  const is_placeholder_prompt = prompt.marker == true;
+  if (prompt.marker == undefined) {
+    prompt.marker = false;
+  }
+  const is_normal_prompt = prompt.system_prompt === false && prompt.marker === false;
+  const is_system_prompt = prompt.system_prompt === true && prompt.marker === false;
+  const is_placeholder_prompt = prompt.marker === true;
 
   let result = _({})
     .set('id', _.get(identifier_to_id_map, prompt.identifier, prompt.identifier) ?? uuidv4())
