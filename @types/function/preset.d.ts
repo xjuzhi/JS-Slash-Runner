@@ -94,9 +94,15 @@ type PresetPrompt = {
   /**
    * 插入位置, 仅用于普通和占位符提示词
    *   - `'relative'`: 按提示词相对位置插入
-   *   - `number`: 插入到聊天记录的对应深度
+   *   - `'in_chat'`: 插入到聊天记录的对应深度, 需要设置对应的深度 `depth` 和顺序 `order`
    */
-  position?: 'relative' | number;
+  position:
+    | {
+        type: 'relative';
+        depth?: never;
+        order?: never;
+      }
+    | { type: 'in_chat'; depth: number; order: number };
   role: 'system' | 'user' | 'assistant';
   /** 仅用于普通和系统提示词 */
   content?: string;

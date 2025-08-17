@@ -64,7 +64,13 @@ type PresetPrompt = {
   name: string;
   enabled: boolean;
 
-  position?: 'relative' | number;
+  position:
+    | {
+        type: 'relative';
+        depth?: never;
+        order?: never;
+      }
+    | { type: 'in_chat'; depth: number; order: number };
 
   role: 'system' | 'user' | 'assistant';
   content?: string;
@@ -143,14 +149,32 @@ export const default_preset: Preset = {
     wrap_user_messages_in_quotes: false,
   },
   prompts: [
-    { id: 'world_info_before', name: 'World Info (before)', enabled: true, position: 'relative', role: 'system' },
-    { id: 'persona_description', name: 'Persona Description', enabled: true, position: 'relative', role: 'system' },
-    { id: 'char_description', name: 'Char Description', enabled: true, position: 'relative', role: 'system' },
-    { id: 'char_personality', name: 'Char Personality', enabled: true, position: 'relative', role: 'system' },
-    { id: 'scenario', name: 'Scenario', enabled: true, position: 'relative', role: 'system' },
-    { id: 'world_info_after', name: 'World Info (after)', enabled: true, position: 'relative', role: 'system' },
-    { id: 'dialogue_examples', name: 'Chat Examples', enabled: true, position: 'relative', role: 'system' },
-    { id: 'chat_history', name: 'Chat History', enabled: true, position: 'relative', role: 'system' },
+    {
+      id: 'world_info_before',
+      name: 'World Info (before)',
+      enabled: true,
+      position: { type: 'relative' },
+      role: 'system',
+    },
+    {
+      id: 'persona_description',
+      name: 'Persona Description',
+      enabled: true,
+      position: { type: 'relative' },
+      role: 'system',
+    },
+    { id: 'char_description', name: 'Char Description', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'char_personality', name: 'Char Personality', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'scenario', name: 'Scenario', enabled: true, position: { type: 'relative' }, role: 'system' },
+    {
+      id: 'world_info_after',
+      name: 'World Info (after)',
+      enabled: true,
+      position: { type: 'relative' },
+      role: 'system',
+    },
+    { id: 'dialogue_examples', name: 'Chat Examples', enabled: true, position: { type: 'relative' }, role: 'system' },
+    { id: 'chat_history', name: 'Chat History', enabled: true, position: { type: 'relative' }, role: 'system' },
   ],
   prompts_unused: [],
   extensions: {},
@@ -230,6 +254,7 @@ type _OriginalNormalPrompt = {
 
   injection_position: 0 | 1;
   injection_depth: number;
+  injection_order: number;
 
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -271,6 +296,7 @@ type _OriginalPlaceholderPrompt = {
 
   injection_position: 0 | 1;
   injection_depth: number;
+  injection_order: number;
 
   role: 'system' | 'user' | 'assistant';
 
@@ -304,15 +330,11 @@ function toPresetPrompt(prompt: _OriginalPrompt, prompt_order: _OriginalPromptOr
     );
 
   if (is_normal_prompt || is_placeholder_prompt) {
-    result = result.set(
-      'position',
-      (
-        {
-          0: 'relative',
-          1: prompt.injection_depth ?? 4,
-        } as const
-      )[prompt.injection_position ?? 0],
-    );
+    result = result.set('position.type', { 0: 'relative', 1: 'in_chat' }[prompt.injection_position ?? 0]);
+    if (prompt.injection_depth === 0) {
+      result = result.set('position.depth', prompt.injection_depth ?? 4);
+      result = result.set('position.order', prompt.injection_order ?? 100);
+    }
   }
   result = result.set('role', prompt.role ?? 'system');
 
@@ -355,8 +377,9 @@ function fromPresetPrompt(prompt: PresetPrompt): _OriginalPrompt {
 
   if ((is_normal_prompt || is_placeholder_prompt) && !['dialogue_examples', 'chat_history'].includes(prompt.id)) {
     result = result
-      .set('injection_position', prompt.position === 'relative' ? 0 : 1)
-      .set('injection_depth', prompt.position === 'relative' ? 4 : prompt.position);
+      .set('injection_position', prompt.position.type === 'relative' ? 0 : 1)
+      .set('injection_depth', prompt.position.depth ?? 4)
+      .set('injection_order', prompt.position.order ?? 100);
   }
 
   result = result.set('role', prompt.role);
