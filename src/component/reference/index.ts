@@ -95,10 +95,10 @@ function openDownloadReferencePopup() {
   const $html = $(`
   <div class="flex-container flexFlowColumn">
   <a href="https://gitlab.com/novi028/JS-Slash-Runner/-/raw/main/dist/@types.zip?ref_type=heads&inline=false" target="_blank" class="menu_button interactable width100p">
-    下载酒馆助手类型声明文件 (压缩包)
+    下载酒馆助手类型声明文件 (电脑编写模板用的压缩包)
   </a>
   <a href="https://gitlab.com/novi028/JS-Slash-Runner/-/raw/main/dist/@types.txt?ref_type=heads&inline=false" target="_blank" class="menu_button interactable width100p">
-    下载酒馆助手类型声明文件 (单文件)
+    下载酒馆助手类型声明文件 (手机或 AI 官网用的单文件)
   </a>
   <div class="menu_button interactable width100p" id="download_slash_commands">
     下载文本版酒馆 STScript 命令大全
