@@ -5,6 +5,10 @@
 - 调整`酒馆助手设置-编写参考`的显示
 - 移除`酒馆助手设置-实时监听-监听地址`, 避免有人跳着看教程而填错
 
+### ⏫功能
+
+- 为前端界面添加 tailwindcss cdn 版支持. 其提供了很多预定义样式, 例如 `class="items-center"` 表示居中对齐.
+
 ### 🐛修复
 
 - 取消预设函数隐式将酒馆系统提示词 (Main Prompt、Auxiliary Prompt、Post-Instruction Prompt、Enhance Definition) 转换为一般提示词的功能, 因为这似乎会导致酒馆清空这几个条目.
