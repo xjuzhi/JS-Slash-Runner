@@ -139,6 +139,7 @@ const config = (_env: any, argv: any): webpack.Configuration => {
         hljs: 'hljs',
         lodash: '_',
         toastr: 'toastr',
+        '@popperjs/core': 'Popper',
       },
     ],
   };

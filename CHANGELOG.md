@@ -1,5 +1,9 @@
 ## 3.4.12
 
+### 💻界面
+
+- 调整`酒馆助手设置-编写参考` 的显示
+
 ### 🐛修复
 
 - 取消预设函数隐式将酒馆系统提示词 (Main Prompt、Auxiliary Prompt、Post-Instruction Prompt、Enhance Definition) 转换为一般提示词的功能, 因为这似乎会导致酒馆清空这几个条目.
