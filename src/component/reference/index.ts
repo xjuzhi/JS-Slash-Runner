@@ -82,12 +82,14 @@ export async function initReference() {
   );
   $('#download_tavern_helper_types_button').on('click', function () {
     const $popup = $('#download_tavern_helper_types_popup');
-    if ($popup.css('display') === 'none') {
-      $popup.css('display', 'block');
-    } else {
-      $popup.css('display', 'none');
-    }
+    $popup.css('display', $popup.css('display') === 'none' ? 'block' : 'none');
     popper_instance.update();
+  });
+  $('html').on('touchstart mousedown', function () {
+    if (!$(this).closest('#download_tavern_helper_types_button').length) {
+      $('#download_tavern_helper_types_popup').css('display', 'none');
+      popper_instance.update();
+    }
   });
 
   $('#download_slash_commands').on('click', function () {
