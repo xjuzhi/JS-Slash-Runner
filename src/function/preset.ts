@@ -380,33 +380,36 @@ function toPreset(preset: _OriginalPreset, { in_use }: { in_use: boolean }): Pre
 
   return {
     settings: {
-      max_context: preset.openai_max_context,
-      max_completion_tokens: preset.openai_max_tokens,
-      reply_count: preset.n,
+      max_context: Number(preset.openai_max_context),
+      max_completion_tokens: Number(preset.openai_max_tokens),
+      reply_count: Number(preset.n),
 
-      should_stream: preset.stream_openai,
+      should_stream: Boolean(preset.stream_openai),
 
-      temperature: in_use ? preset.temp_openai : preset.temperature,
-      frequency_penalty: in_use ? preset.freq_pen_openai : preset.frequency_penalty,
-      presence_penalty: in_use ? preset.pres_pen_openai : preset.presence_penalty,
-      top_p: in_use ? preset.top_p_openai : preset.top_p,
-      repetition_penalty: in_use ? preset.repetition_penalty_openai : preset.repetition_penalty,
-      min_p: in_use ? preset.min_p_openai : preset.min_p,
-      top_k: in_use ? preset.top_k_openai : preset.top_k,
-      top_a: in_use ? preset.top_a_openai : preset.top_a,
+      temperature: Number(in_use ? preset.temp_openai : preset.temperature),
+      frequency_penalty: Number(in_use ? preset.freq_pen_openai : preset.frequency_penalty),
+      presence_penalty: Number(in_use ? preset.pres_pen_openai : preset.presence_penalty),
+      top_p: Number(in_use ? preset.top_p_openai : preset.top_p),
+      repetition_penalty: Number(in_use ? preset.repetition_penalty_openai : preset.repetition_penalty),
+      min_p: Number(in_use ? preset.min_p_openai : preset.min_p),
+      top_k: Number(in_use ? preset.top_k_openai : preset.top_k),
+      top_a: Number(in_use ? preset.top_a_openai : preset.top_a),
 
-      seed: preset.seed,
+      seed: Number(preset.seed),
 
-      squash_system_messages: preset.squash_system_messages,
+      squash_system_messages: Boolean(preset.squash_system_messages),
 
-      reasoning_effort: preset.reasoning_effort,
-      request_thoughts: preset.show_thoughts,
-      request_images: preset.request_images,
-      enable_function_calling: preset.function_calling,
-      enable_web_search: preset.enable_web_search,
+      reasoning_effort: String(preset.reasoning_effort) as 'auto' | 'min' | 'low' | 'medium' | 'high' | 'max',
+      request_thoughts: Boolean(preset.show_thoughts),
+      request_images: Boolean(preset.request_images),
+      enable_function_calling: Boolean(preset.function_calling),
+      enable_web_search: Boolean(preset.enable_web_search),
 
-      allow_sending_images: preset.image_inlining === false ? 'disabled' : preset.inline_image_quality,
-      allow_sending_videos: preset.video_inlining,
+      allow_sending_images:
+        Boolean(preset.image_inlining) === false
+          ? 'disabled'
+          : (String(preset.inline_image_quality) as 'auto' | 'low' | 'high'),
+      allow_sending_videos: Boolean(preset.video_inlining),
 
       character_name_prefix: (
         {
@@ -415,8 +418,8 @@ function toPreset(preset: _OriginalPreset, { in_use }: { in_use: boolean }): Pre
           [2]: 'content',
           [1]: 'completion',
         } as const
-      )[preset.names_behavior],
-      wrap_user_messages_in_quotes: preset.wrap_in_quotes,
+      )[Number(preset.names_behavior) as -1 | 0 | 2 | 1],
+      wrap_user_messages_in_quotes: Boolean(preset.wrap_in_quotes),
     },
 
     prompts,
