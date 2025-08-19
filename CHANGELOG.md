@@ -8,6 +8,7 @@
 ### ⏫功能
 
 - 为前端界面添加 tailwindcss cdn 版支持. 其提供了很多预定义样式, 例如 `class="items-center"` 表示居中对齐.
+- 更新 `font-awesome` 图标库为 `@fortawesome/fontawesome-free` 版本
 
 ### 🐛修复
 
