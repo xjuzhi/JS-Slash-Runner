@@ -221,11 +221,14 @@ function toWorldbookEntry(entry: _OriginalWorldbookEntry & _ImplicitKeys): World
 
     .set('recursion.prevent_incoming', entry.excludeRecursion)
     .set('recursion.prevent_outgoing', entry.preventRecursion)
-    .set('recursion.delay_until', typeof entry.delayUntilRecursion === 'number' ? entry.delayUntilRecursion : null)
+    .set(
+      'recursion.delay_until',
+      typeof entry.delayUntilRecursion === 'number' && entry.delayUntilRecursion > 0 ? entry.delayUntilRecursion : null,
+    )
 
-    .set('effect.sticky', typeof entry.sticky === 'number' ? entry.sticky : null)
-    .set('effect.cooldown', typeof entry.cooldown === 'number' ? entry.cooldown : null)
-    .set('effect.delay', typeof entry.delay === 'number' ? entry.delay : null);
+    .set('effect.sticky', typeof entry.sticky === 'number' && entry.sticky > 0 ? entry.sticky : null)
+    .set('effect.cooldown', typeof entry.cooldown === 'number' && entry.cooldown > 0 ? entry.cooldown : null)
+    .set('effect.delay', typeof entry.delay === 'number' && entry.delay > 0 ? entry.delay : null);
 
   if (entry.extra) {
     result = result.set('extra', entry.extra);

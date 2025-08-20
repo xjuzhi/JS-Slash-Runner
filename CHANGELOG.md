@@ -18,6 +18,7 @@
 
 - 修复 `createChatMessages` 对 `refresh: none` 的处理
 - 修复 `createChatMessages` 在尾部插入消息时不会处理酒馆助手渲染的问题
+- 清理 `getWorldbook` 获取的 `recursion.delay_until`、`effect.sticky`、`effect.cooldown`、`effect.delay` 等字段, 将 `0` 等无效值转换为 `null`
 - 修复 `getPreset` 提取出的老预设存在的类型错误
 
 ## 3.4.11
