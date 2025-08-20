@@ -85,12 +85,6 @@ export async function initReference() {
     $popup.css('display', $popup.css('display') === 'none' ? 'block' : 'none');
     popper_instance.update();
   });
-  $('html').on('touchstart mousedown', function () {
-    if (!$(this).closest('#download_tavern_helper_types_button').length) {
-      $('#download_tavern_helper_types_popup').css('display', 'none');
-      popper_instance.update();
-    }
-  });
 
   $('#download_slash_commands').on('click', function () {
     const url = URL.createObjectURL(new Blob([formatSlashCommands()], { type: 'text/plain' }));
