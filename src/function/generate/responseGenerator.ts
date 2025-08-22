@@ -216,6 +216,7 @@ export async function generateResponse(
       }
     }
 
+    eventSource.emit('js_generation_started');
     if (useStream) {
       const originalStreamSetting = oai_settings.stream_openai;
       if (!originalStreamSetting) {
@@ -231,7 +232,6 @@ export async function generateResponse(
         saveSettingsDebounced();
       }
     } else {
-      eventSource.emit('js_generation_started');
       const response = await sendOpenAIRequest(type, generate_data.prompt, abortController.signal);
       result = await handleResponse(response);
     }
