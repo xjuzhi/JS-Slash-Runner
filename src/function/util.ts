@@ -38,7 +38,11 @@ export function _getIframeName(this: Window): string {
 }
 
 export function _getScriptId(this: Window): string {
-  return $(this.frameElement as Element).attr('script-id') ?? 'unknown_script';
+  const script_id = $(this.frameElement as Element).attr('script-id');
+  if (!script_id) {
+    throw new Error('你只能在脚本 iframe 内获取 getScriptId!');
+  }
+  return script_id;
 }
 
 export function _getCurrentMessageId(this: Window): number {

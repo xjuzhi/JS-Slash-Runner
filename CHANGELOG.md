@@ -1,5 +1,17 @@
 ## 3.4.13
 
+### ⏫功能
+
+- 为 `getScriptButtons` 等脚本按钮函数移除 `script_id` 参数, 现在你可以在脚本中直接调用它们而无需传入 `getScriptId()` 参数 (以前的代码依旧有效):
+
+  ```typescript
+  // 以前
+  const buttons = getScriptButtons(getScriptId());
+
+  // 现在
+  const buttons = getScriptButtons();
+  ```
+
 ### 🐛修复
 
 - 为流式 `generate` 函数补充 `iframe_events.GENERATION_STARTED` 事件

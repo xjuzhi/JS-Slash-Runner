@@ -74,10 +74,10 @@ import {
   updatePresetWith,
 } from '@/function/preset';
 import {
+  _appendInexistentScriptButtons,
   _getButtonEvent,
-  appendInexistentScriptButtons,
-  getScriptButtons,
-  replaceScriptButtons,
+  _getScriptButtons,
+  _replaceScriptButtons,
 } from '@/function/script_button';
 import { triggerSlash } from '@/function/slash';
 import {
@@ -90,10 +90,10 @@ import {
 import {
   _getCurrentMessageId,
   _getIframeName,
-  getMessageId,
   _getScriptId,
   errorCatched,
   getLastMessageId,
+  getMessageId,
   substitudeMacros,
 } from '@/function/util';
 import {
@@ -144,6 +144,9 @@ function getTavernHelper() {
 
       // script_button
       _getButtonEvent,
+      _getScriptButtons,
+      _replaceScriptButtons,
+      _appendInexistentScriptButtons,
 
       // variables
       _getAllVariables,
@@ -259,11 +262,6 @@ function getTavernHelper() {
     insertOrAssignVariables,
     deleteVariable,
     insertVariables,
-
-    // script_button
-    getScriptButtons,
-    replaceScriptButtons,
-    appendInexistentScriptButtons,
 
     // version
     getTavernHelperVersion,
