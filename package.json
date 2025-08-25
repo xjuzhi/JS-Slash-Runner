@@ -22,15 +22,15 @@
     ]
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@types/jquery": "^3.5.32",
+    "@eslint/js": "^9.34.0",
+    "@types/jquery": "^3.5.33",
     "@types/jqueryui": "^1.12.24",
     "@types/lodash": "^4.17.20",
     "@types/mark.js": "^8.11.12",
     "@types/toastr": "^2.1.43",
     "@typescript-eslint/parser": "^8.40.0",
     "css-loader": "^7.1.2",
-    "eslint": "^9.33.0",
+    "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.1",
@@ -41,7 +41,7 @@
     "postcss-loader": "^8.1.1",
     "sass-loader": "^16.0.5",
     "terser-webpack-plugin": "^5.3.14",
-    "ts-loader": "^9.5.2",
+    "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths-webpack-plugin": "^4.2.0",
     "tslib": "^2.8.1",
@@ -59,6 +59,6 @@
     "mark.js": "^8.11.1",
     "socket.io-client": "^4.8.1",
     "type-fest": "^4.41.0",
-    "zod": "^4.0.17"
+    "zod": "^4.1.1"
   }
 }
