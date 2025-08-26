@@ -321,24 +321,29 @@ export async function createChatMessages(
     }
   }
 
-  const convert = async (chat_message: ChatMessageCreating) => {
-    const result: Record<string, any> = {};
+  const convert = async (chat_message: ChatMessageCreating): Promise<Record<string, any>> => {
+    let result = _({});
 
     if (chat_message?.name !== undefined) {
-      _.set(result, 'name', chat_message.name);
+      result = result.set('name', chat_message.name);
+    } else if (chat_message.role === 'system') {
+      result = result.set('name', 'system');
     } else if (chat_message.role === 'user') {
-      _.set(result, 'name', name1);
+      result = result.set('name', name1);
     } else {
-      _.set(result, 'name', name2);
+      result = result.set('name', name2);
     }
 
     // TODO: avatar
 
-    _.set(result, 'is_user', chat_message.role === 'user');
-    _.set(result, 'is_system', chat_message.is_hidden ?? false);
-    _.set(result, 'mes', chat_message.message);
-    _.set(result, ['variables', 0], chat_message.data ?? {});
-    return result;
+    result = result.set('is_user', chat_message.role === 'user');
+    if (chat_message.role === 'system') {
+      result = result.set('extra.type', system_message_types.NARRATOR);
+    }
+    result = result.set('is_system', chat_message.is_hidden ?? false);
+    result = result.set('mes', chat_message.message);
+    result = result.set(['variables', 0], chat_message.data ?? {});
+    return result.value();
   };
 
   const converted = await Promise.all(chat_messages.map(convert));

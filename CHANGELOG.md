@@ -20,6 +20,7 @@
 ### 🐛修复
 
 - 为流式 `generate` 函数补充 `iframe_events.GENERATION_STARTED` 事件
+- 修复 `createChatMessages` 对 `system` 消息的处理
 
 ## 3.4.12
 
