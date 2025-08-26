@@ -196,6 +196,11 @@ export async function setChatMessages(
     }
     if (chat_message?.role !== undefined) {
       _.set(data, 'is_user', chat_message.role === 'user');
+      if (chat_message.role === 'system') {
+        _.set(data, 'extra.type', system_message_types.NARRATOR);
+      } else {
+        _.unset(data, 'extra.type');
+      }
     }
     if (chat_message?.is_hidden !== undefined) {
       _.set(data, 'is_system', chat_message.is_hidden);
