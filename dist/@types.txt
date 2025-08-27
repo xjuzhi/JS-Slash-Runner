@@ -566,7 +566,7 @@ type GenerateConfig = {
   overrides?: Overrides;
 
   /** 要额外注入的提示词 */
-  injects?: InjectionPrompt[];
+  injects?: Omit<InjectionPrompt, 'id'>[];
 
   /** 最多使用多少条聊天历史; 默认为 'all' */
   max_chat_history?: 'all' | number;
@@ -609,7 +609,7 @@ type GenerateRawConfig = {
    */
   overrides?: Overrides;
 
-  injects?: InjectionRawPrompt[];
+  injects?: Omit<InjectionPrompt, 'id'>[];
 
   /**
    * 一个提示词数组, 数组元素将会按顺序发给 ai, 因而相当于自定义预设. 该数组允许存放两种类型:
@@ -630,32 +630,6 @@ type RolePrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   image?: File | string | (File | string)[];
-};
-
-type InjectionPrompt = {
-  role: 'system' | 'assistant' | 'user';
-  content: string;
-
-  /** 要注入的位置. 'none' 不会发给 ai, 但能用来激活世界书条目. */
-  position: 'before_prompt' | 'in_chat' | 'after_prompt' | 'none';
-
-  depth: number;
-
-  /** 是否要加入世界书扫描中 */
-  should_scan: boolean;
-};
-
-type InjectionRawPrompt = {
-  role: 'system' | 'assistant' | 'user';
-  content: string;
-
-  /** 要注入的位置. 'none' 不会发给 ai, 但能用来激活世界书条目. */
-  position: 'in_chat' | 'none';
-
-  depth: number;
-
-  /** 是否要加入世界书扫描中 */
-  should_scan: boolean;
 };
 
 type Overrides = {
@@ -710,7 +684,7 @@ type BuiltinPrompt =
  *   - `should_stream?:boolean`: 是否启用流式传输; 默认为 'false'
  *   - `image?:File|string`: 图片输入
  *   - `overrides?:Overrides`: 覆盖选项. 若设置, 则 `overrides` 中给出的字段将会覆盖对应的提示词. 如 `overrides.char_description = '覆盖的角色描述';` 将会覆盖角色描述
- *   - `injects?:InjectionPrompt[]`: 要额外注入的提示词
+ *   - `injects?:Omit<InjectionPrompt, 'id'>[]`: 要额外注入的提示词
  *   - `max_chat_history?:'all'|number`: 最多使用多少条聊天历史
  * @returns 生成的最终文本
  *
@@ -764,7 +738,7 @@ declare function generate(config: GenerateConfig): Promise<string>;
  *   - `should_stream?:boolean`: 是否启用流式传输; 默认为 'false'
  *   - `image?:File|string`: 图片输入
  *   - `overrides?:Overrides`: 覆盖选项. 若设置, 则 `overrides` 中给出的字段将会覆盖对应的提示词. 如 `overrides.char_description = '覆盖的角色描述';` 将会覆盖角色描述
- *   - `injects?:InjectionPrompt[]`: 要额外注入的提示词
+ *   - `injects?:Omit<InjectionPrompt, 'id'>[]`: 要额外注入的提示词
  *   - `max_chat_history?:'all'|number`: 最多使用多少条聊天历史
  *   - `ordered_prompts?:(BuiltinPrompt|RolePrompt)[]`: 一个提示词数组, 数组元素将会按顺序发给 ai, 因而相当于自定义预设
  * @returns 生成的最终文本
@@ -832,6 +806,10 @@ interface Window {
     // displayed_message
     readonly formatAsDisplayedMessage: typeof formatAsDisplayedMessage;
     readonly retrieveDisplayedMessage: typeof retrieveDisplayedMessage;
+
+    // inject
+    readonly injectPrompts: typeof injectPrompts;
+    readonly uninjectPrompts: typeof uninjectPrompts;
 
     // generate
     readonly builtin_prompt_default_order: typeof builtin_prompt_default_order;
@@ -924,6 +902,45 @@ interface Window {
     readonly updateWorldbookWith: typeof updateWorldbookWith;
   };
 }
+type InjectionPrompt = {
+  id: string;
+  /**
+   * 要注入的位置
+   * - 'in_chat': 插入到聊天中
+   * - 'none': 不会发给 AI, 但能用来激活世界书条目.
+   */
+  position: 'in_chat' | 'none';
+  depth: number;
+
+  role: 'system' | 'assistant' | 'user';
+  content: string;
+
+  /** 提示词在什么情况下启用; 默认为始终 */
+  filter?: (() => boolean) | (() => Promise<boolean>);
+  /** 是否作为欲扫描文本, 加入世界书绿灯条目扫描文本中; 默认为任意 */
+  should_scan?: boolean;
+};
+
+type injectPromptsOptions = {
+  /** 是否只在下一次请求生成中有效; 默认为 false */
+  once?: boolean;
+};
+
+/**
+ * 注入提示词
+ *
+ * @param prompts 要注入的提示词
+ * @param options 可选选项
+ *   - `once:boolean`: 是否只在下一次请求生成中有效; 默认为 false
+ */
+declare function injectPrompts(prompts: InjectionPrompt[], options?: injectPromptsOptions): void;
+
+/**
+ * 移除注入的提示词
+ *
+ * @param ids 要移除的提示词的 id 列表
+ */
+declare function uninjectPrompts(ids: string[]): void;
 /** @deprecated 请使用内置库 "世界书强制用推荐的全局设置" */
 type LorebookSettings = {
   selected_global_lorebooks: string[];
@@ -3093,7 +3110,7 @@ declare const SillyTavern: {
    * @param depth 深度
    * @param scan 是否作为欲扫描文本, 加入世界书绿灯条目扫描文本中
    * @param role 消息角色. 0 为 system, 1 为 user, 2 为 assistant
-   * @param filter 提示词在什么情况下有效
+   * @param filter 提示词在什么情况下启用
    */
   readonly setExtensionPrompt: (
     prompt_id: string,
