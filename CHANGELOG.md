@@ -4,6 +4,10 @@
 
 - 新增 `injectPrompts` 和 `uninjectPrompts` 函数, 便于注入和移除提示词
 
+### 🐛修复
+
+- 修复 `replaceVariables` 在一些情况下不能正确保存对脚本变量的修改的问题
+
 ## 3.4.14
 
 ### ⏫功能
