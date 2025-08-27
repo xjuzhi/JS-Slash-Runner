@@ -1,4 +1,4 @@
-import { _getButtonEvent } from '@/function/script_button';
+import { _getButtonEvent } from '@/function/script';
 import { get_or_set } from '@/util/map_util';
 
 import { eventSource } from '@sillytavern/script';

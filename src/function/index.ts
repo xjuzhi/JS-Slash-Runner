@@ -77,8 +77,10 @@ import {
   _appendInexistentScriptButtons,
   _getButtonEvent,
   _getScriptButtons,
+  _getScriptInfo,
   _replaceScriptButtons,
-} from '@/function/script_button';
+  _replaceScriptInfo,
+} from '@/function/script';
 import { triggerSlash } from '@/function/slash';
 import {
   formatAsTavernRegexedString,
@@ -142,11 +144,13 @@ function getTavernHelper() {
       _eventClearListener,
       _eventClearAll,
 
-      // script_button
+      // script
       _getButtonEvent,
       _getScriptButtons,
       _replaceScriptButtons,
       _appendInexistentScriptButtons,
+      _getScriptInfo,
+      _replaceScriptInfo,
 
       // variables
       _getAllVariables,
