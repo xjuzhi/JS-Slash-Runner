@@ -3,6 +3,7 @@
 ### ⏫功能
 
 - 新增 `getScriptInfo` 和 `replaceScriptInfo` 函数, 便于获取和替换脚本作者注释
+- 对酒馆用于注册函数调用的函数 `SillyTavern.registerFunctionTool` 添加类型定义, 具体见于[类型文件](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/iframe/exported.sillytavern.d.ts)
 
 ## 3.4.13
 
