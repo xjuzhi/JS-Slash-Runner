@@ -459,11 +459,11 @@ declare const SillyTavern: {
     /** 要注册的函数调用工具 */
     action: ((args: Record<string, any>) => string) | ((args: Record<string, any>) => Promise<string>);
 
-    /** 要如何格式化函数调用消息; 默认不进行任何操作, 显示为 `'Invoking tool: 工具显示名称'` */
+    /** 要如何格式化函数调用结果消息; 默认不进行任何操作, 显示为 `'Invoking tool: 工具显示名称'` */
     formatMessage?: (args: Record<string, any>) => string;
     /** 在下次聊天补全请求时是否注册本工具; 默认为始终注册 */
     shouldRegister?: (() => boolean) | (() => Promise<boolean>);
-    /** 是否不在楼层中显示函数调用结果, `true` 则不显示且将不会触发生成; 默认为 false */
+    /** 是否不在楼层中用一层楼显示函数调用结果, `true` 则不显示且将不会触发生成; 默认为 false */
     stealth?: boolean;
   }) => void;
   readonly unregisterFunctionTool: (name: string) => void;
