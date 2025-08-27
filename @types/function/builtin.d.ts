@@ -23,6 +23,18 @@ declare const builtin: {
     },
   ) => void;
   saveSettings: () => Promise<void>;
+  promptManager: {
+    messages: Array<{
+      collection: Array<{
+        identifier: string;
+        role: 'user' | 'assistant' | 'system';
+        content: string;
+        tokens: number;
+      }>;
+      identifier: string;
+    }>;
+    [key: string]: any;
+  };
   /** 刷新世界书编辑器的显示 */
   reloadEditor: (file: string, load_if_not_selected?: boolean) => void;
   /** 刷新世界书编辑器的显示 (防抖) */
