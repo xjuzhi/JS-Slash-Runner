@@ -3,7 +3,7 @@ import { handlePresetPath } from '@/function/generate/generate';
 import { handleCustomPath } from '@/function/generate/generateRaw';
 import { processUserInputWithImages } from '@/function/generate/inputProcessor';
 import { generateResponse } from '@/function/generate/responseGenerator';
-import { detail, GenerateConfig, GenerateRawConfig, InjectionPrompt, Overrides } from '@/function/generate/types';
+import { detail, GenerateConfig, GenerateRawConfig, Overrides } from '@/function/generate/types';
 import { setupImageArrayProcessing, unblockGeneration } from '@/function/generate/utils';
 
 import { event_types, eventSource, stopGeneration } from '@sillytavern/script';
@@ -56,27 +56,6 @@ export function fromOverrides(overrides: Overrides): detail.OverrideConfig {
 }
 
 /**
- * 从InjectionPrompt转换为InjectionPrompt
- * @param inject 注入提示词
- * @returns InjectionPrompt
- */
-export function fromInjectionPrompt(inject: InjectionPrompt): InjectionPrompt {
-  const position_map = {
-    before_prompt: 'before_prompt',
-    in_chat: 'in_chat',
-    after_prompt: 'after_prompt',
-    none: 'none',
-  } as const;
-  return {
-    role: inject.role,
-    content: inject.content,
-    position: position_map[inject.position] as 'before_prompt' | 'in_chat' | 'after_prompt' | 'none',
-    depth: inject.depth,
-    should_scan: inject.should_scan,
-  };
-}
-
-/**
  * 从GenerateConfig转换为detail.GenerateParams
  * @param config 生成配置
  * @returns detail.GenerateParams
@@ -88,7 +67,7 @@ export function fromGenerateConfig(config: GenerateConfig): detail.GenerateParam
     image: config.image,
     stream: config.should_stream ?? false,
     overrides: config.overrides !== undefined ? fromOverrides(config.overrides) : undefined,
-    inject: config.injects !== undefined ? config.injects.map(fromInjectionPrompt) : undefined,
+    inject: config.injects,
     max_chat_history: typeof config.max_chat_history === 'number' ? config.max_chat_history : undefined,
     custom_api: config.custom_api,
   };
@@ -107,7 +86,7 @@ export function fromGenerateRawConfig(config: GenerateRawConfig): detail.Generat
     stream: config.should_stream ?? false,
     max_chat_history: typeof config.max_chat_history === 'number' ? config.max_chat_history : undefined,
     overrides: config.overrides ? fromOverrides(config.overrides) : undefined,
-    inject: config.injects ? config.injects.map(fromInjectionPrompt) : undefined,
+    inject: config.injects,
     order: config.ordered_prompts,
     custom_api: config.custom_api,
   };
@@ -145,12 +124,7 @@ async function iframeGenerate({
 
   currentImageProcessingSetup = imageProcessingSetup;
 
-  await eventSource.emit(
-    event_types.GENERATION_AFTER_COMMANDS,
-    'quiet',
-    {},
-    false,
-  );
+  await eventSource.emit(event_types.GENERATION_AFTER_COMMANDS, 'quiet', {}, false);
 
   // 2. 准备过滤后的基础数据
   const baseData = await prepareAndOverrideData(

@@ -33,6 +33,7 @@ import {
 } from '@/function/event';
 import { generate, generateRaw } from '@/function/generate';
 import { builtin_prompt_default_order } from '@/function/generate/types';
+import { injectPrompts, uninjectPrompts } from '@/function/inject';
 import {
   createLorebook,
   deleteLorebook,
@@ -193,6 +194,10 @@ function getTavernHelper() {
     // event
     tavern_events,
     iframe_events,
+
+    // inject
+    injectPrompts,
+    uninjectPrompts,
 
     // generate
     builtin_prompt_default_order,

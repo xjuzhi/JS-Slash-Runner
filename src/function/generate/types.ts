@@ -1,3 +1,5 @@
+import { InjectionPrompt } from '@/function/inject';
+
 /**
  * 角色类型（复制自@sillytavern/script以避免依赖）
  */
@@ -25,7 +27,7 @@ export type GenerateConfig = {
   image?: File | string | (File | string)[];
   should_stream?: boolean;
   overrides?: Overrides;
-  injects?: InjectionPrompt[];
+  injects?: Omit<InjectionPrompt, 'id'>[];
   max_chat_history?: 'all' | number;
   custom_api?: CustomApiConfig;
 };
@@ -38,7 +40,7 @@ export type GenerateRawConfig = {
   image?: File | string | (File | string)[];
   should_stream?: boolean;
   overrides?: Overrides;
-  injects?: InjectionRawPrompt[];
+  injects?: Omit<InjectionPrompt, 'id'>[];
   ordered_prompts?: (BuiltinPrompt | RolePrompt)[];
   max_chat_history?: 'all' | number;
   custom_api?: CustomApiConfig;
@@ -51,28 +53,6 @@ export type RolePrompt = {
   role: 'system' | 'assistant' | 'user';
   content: string;
   image?: File | string | (File | string)[];
-};
-
-/**
- * 注入提示词接口
- */
-export type InjectionPrompt = {
-  role: 'system' | 'assistant' | 'user';
-  content: string;
-  position: 'before_prompt' | 'in_chat' | 'after_prompt' | 'none';
-  depth: number;
-  should_scan: boolean;
-};
-
-/**
- * 原始注入提示词接口
- */
-export type InjectionRawPrompt = {
-  role: 'system' | 'assistant' | 'user';
-  content: string;
-  position: 'in_chat' | 'none';
-  depth: number;
-  should_scan: boolean;
 };
 
 /**
@@ -192,7 +172,7 @@ export namespace detail {
     stream?: boolean;
     overrides?: OverrideConfig;
     max_chat_history?: number;
-    inject?: InjectionPrompt[];
+    inject?: Omit<InjectionPrompt, 'id'>[];
     order?: Array<BuiltinPromptEntry | CustomPrompt>;
     custom_api?: CustomApiConfig;
   };

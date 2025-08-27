@@ -393,7 +393,7 @@ declare const SillyTavern: {
    * @param depth 深度
    * @param scan 是否作为欲扫描文本, 加入世界书绿灯条目扫描文本中
    * @param role 消息角色. 0 为 system, 1 为 user, 2 为 assistant
-   * @param filter 提示词在什么情况下有效
+   * @param filter 提示词在什么情况下启用
    */
   readonly setExtensionPrompt: (
     prompt_id: string,
