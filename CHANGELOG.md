@@ -3,7 +3,7 @@
 ### ⏫功能
 
 - 在代码任意处写入注释`<!--enable-blob-url-render-->` 后将用 `blob-url` 渲染, 而不使用 `srcdoc`
-
+- 为了更好的 Vue 兼容性, 为 iframe 添加全局变量 `Vue` 和 `VueRouter`
 
 ## 3.4.16
 
