@@ -10,6 +10,8 @@ import { getCharAvatarPath, getSettingValue, getUserAvatarPath, saveSettingValue
 import { eventSource, event_types, reloadCurrentChat, this_chid, updateMessageBlock } from '@sillytavern/script';
 import { getContext } from '@sillytavern/scripts/extensions';
 
+import log from 'loglevel';
+
 const RENDER_MODES = {
   FULL: 'FULL',
   PARTIAL: 'PARTIAL',
@@ -85,6 +87,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
       let extractedText = extractTextFromCode(this);
       if (extractedText.includes('<body') && extractedText.includes('</body>')) {
         const disableLoading = /<!--\s*disable-default-loading\s*-->/.test(extractedText);
+        const enableBlobUrlRendering = /<!--\s*enable-blob-url-render\s*-->/.test(extractedText);
         const hasMinVh = /min-height:\s*[^;]*vh/.test(extractedText);
         const hasJsVhUsage = /\d+vh/.test(extractedText);
 
@@ -134,8 +137,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
         }
 
         $wrapper.append($iframe);
-
-        const srcdocContent = `
+        const srcContent = `
             <html>
             <head>
               <style>
@@ -154,8 +156,13 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
             </html>
           `;
 
-        $iframe.attr('srcdoc', srcdocContent);
-
+        if (enableBlobUrlRendering) {
+          const blob = new Blob([srcContent], { type: 'text/html' });
+          const blobUrl = URL.createObjectURL(blob);
+          $iframe.attr('src', blobUrl);
+        } else {
+          $iframe.attr('srcdoc', srcContent);
+        }
         $iframe.on('load', function () {
           observeIframeContent(this);
 
