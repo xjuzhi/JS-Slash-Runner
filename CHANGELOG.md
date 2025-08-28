@@ -2,8 +2,12 @@
 
 ### ⏫功能
 
-- 在代码任意处写入注释`<!--enable-blob-url-render-->` 后将用 `blob-url` 渲染, 而不使用 `srcdoc`
+- 在代码任意处写入注释`<!--enable-blob-url-render-->` 后将用 `blob-url` 渲染, 而不使用 `srcdoc`. 这种渲染更方便查看日志和调试, 但一些国产浏览器不支持.
 - 为了更好的 Vue 兼容性, 为 iframe 添加全局变量 `Vue` 和 `VueRouter`
+
+### 🐛修复
+
+- 修复与酒馆 1.12.10 的兼容性
 
 ## 3.4.16
 
