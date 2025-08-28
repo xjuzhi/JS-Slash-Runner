@@ -1,6 +1,7 @@
-import { eventSource, extension_prompts, setExtensionPrompt } from '@sillytavern/script';
-
 import { iframe_events, tavern_events } from '@/function/event';
+
+import { eventSource, extension_prompts, setExtensionPrompt } from '@sillytavern/script';
+import { uuidv4 } from '@sillytavern/scripts/utils';
 
 export type InjectionPrompt = {
   id: string;
@@ -21,12 +22,12 @@ type injectPromptsOptions = {
 export function injectPrompts(prompts: InjectionPrompt[], { once = false }: injectPromptsOptions = {}) {
   prompts.forEach(prompt =>
     setExtensionPrompt(
-      prompt.id,
-      prompt.content,
-      prompt.position === 'in_chat' ? 1 : -1,
-      prompt.depth,
-      prompt.should_scan,
-      { system: 0, user: 1, assistant: 2 }[prompt.role],
+      prompt.id ?? uuidv4(),
+      prompt.content ?? '',
+      prompt.position === 'none' ? -1 : 1,
+      prompt.depth ?? 0,
+      prompt.should_scan ?? false,
+      { system: 0, user: 1, assistant: 2 }[prompt.role ?? 'system'],
       // @ts-expect-error
       prompt.filter ?? null,
     ),

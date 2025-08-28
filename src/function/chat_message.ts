@@ -510,7 +510,7 @@ export async function setChatMessage(
       return;
     }
 
-    if (should_update_swipe) {
+    if (should_update_swipe && chat_message.swipes) {
       // FIXME: 只有一条消息时, swipes-counter 不会正常显示; 此外还要考虑 swipes-counter 的 "Swipe # for All Messages" 选项
       mes_html.find('.swipes-counter').text(`${swipe_id_to_use_index + 1}\u200b/\u200b${chat_message.swipes.length}`);
     }
