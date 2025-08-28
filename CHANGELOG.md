@@ -1,4 +1,14 @@
+## 3.4.17
+
+### ⏫功能
+
+- 新增导入酒馆角色卡、预设、世界书、酒馆正则功能 (`importRawCharacter` 等接口), 你可以直接从酒馆界面导出角色卡、预设、世界书、酒馆正则，而使用这些函数导入它们, 由此便于有人希望利用 gitlab、github 制作**自动更新角色卡、预设、世界书酒馆正则功能**, 具体见于[类型文件](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/import_raw.d.ts)
+
 ## 3.4.16
+
+### ⏫功能
+
+- 新增导入酒馆角色卡、预设、世界书、酒馆正则功能 (`importRawCharacter` 等接口), 你可以直接从酒馆界面导出角色卡、预设、世界书、酒馆正则，而使用这些函数导入它们, 由此便于有人希望利用 gitlab、github 制作**自动更新角色卡、预设、世界书酒馆正则功能**, 具体见于[类型文件](https://github.com/N0VI028/JS-Slash-Runner/blob/main/%40types/function/import_raw.d.ts)
 
 ### 🐛修复
 

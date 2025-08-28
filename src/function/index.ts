@@ -33,6 +33,7 @@ import {
 } from '@/function/event';
 import { generate, generateRaw } from '@/function/generate';
 import { builtin_prompt_default_order } from '@/function/generate/types';
+import { importRawCharacter, importRawPreset, importRawTavernRegex, importRawWorldbook } from '@/function/import_raw';
 import { injectPrompts, uninjectPrompts } from '@/function/inject';
 import {
   createLorebook,
@@ -194,6 +195,12 @@ function getTavernHelper() {
     // event
     tavern_events,
     iframe_events,
+
+    // import_raw
+    importRawCharacter,
+    importRawPreset,
+    importRawWorldbook,
+    importRawTavernRegex,
 
     // inject
     injectPrompts,
