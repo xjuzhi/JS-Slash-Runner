@@ -2,7 +2,6 @@ import {
   addToggleButtonToCodeBlock,
   removeCodeToggleButtonsByMesId,
 } from '@/component/message_iframe/render_hide_style';
-import { extractTextFromCode } from '@/component/message_iframe/utils';
 import { script_url } from '@/script_url';
 import third_party from '@/third_party.html';
 import { getCharAvatarPath, getSettingValue, getUserAvatarPath, saveSettingValue } from '@/util/extension_variables';
@@ -84,7 +83,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
     let iframeCounter = 1;
 
     $codeElements.each(function () {
-      let extractedText = extractTextFromCode(this);
+      let extractedText = $(this).text();
       if (extractedText.includes('<body') && extractedText.includes('</body>')) {
         const disableLoading = /<!--\s*disable-default-loading\s*-->/.test(extractedText);
         const enableBlobUrlRendering = /<!--\s*enable-blob-url-render\s*-->/.test(extractedText);
