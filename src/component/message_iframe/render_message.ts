@@ -145,6 +145,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
               .user_avatar,.user-avatar{background-image:url('${getUserAvatarPath()}')}
               .char_avatar,.char-avatar{background-image:url('${getCharAvatarPath()}')}
               </style>
+              ${enableBlobUrlRendering ? `<base href="${window.location.origin}/">` : ``}
               ${third_party}
               <script src="${script_url.get('iframe')}"></script>
             </head>
