@@ -151,6 +151,7 @@ export async function replaceVariables(
           script,
           type: script_type,
         });
+        await script_manager.updateScriptVariables(script_id, variables, script_type);
       }
       break;
   }
