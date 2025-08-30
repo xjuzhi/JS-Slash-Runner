@@ -48,6 +48,9 @@ export class ScriptButton extends Button {
       eventSource.emit(this.id);
       log.info(`[ScriptManager] 点击按钮：${this.id}`);
     });
+    $(`#${this.id}`).on('pointerdown', function (event) {
+      event.originalEvent?.preventDefault();
+    });
   }
 }
 
