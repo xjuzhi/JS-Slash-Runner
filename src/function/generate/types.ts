@@ -23,6 +23,7 @@ export type CustomApiConfig = {
  * 生成配置接口（使用预设）
  */
 export type GenerateConfig = {
+  generation_id?: string;
   user_input?: string;
   image?: File | string | (File | string)[];
   should_stream?: boolean;
@@ -36,6 +37,7 @@ export type GenerateConfig = {
  * 原始生成配置接口（不使用预设）
  */
 export type GenerateRawConfig = {
+  generation_id?: string;
   user_input?: string;
   image?: File | string | (File | string)[];
   should_stream?: boolean;
@@ -166,6 +168,7 @@ export namespace detail {
 
   // 生成参数类型
   export type GenerateParams = {
+    generation_id?: string;
     user_input?: string;
     use_preset?: boolean;
     image?: File | string | (File | string)[];

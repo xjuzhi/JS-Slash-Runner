@@ -31,7 +31,8 @@ import {
   iframe_events,
   tavern_events,
 } from '@/function/event';
-import { generate, generateRaw } from '@/function/generate';
+import { generate, generateRaw, stopAllGeneration, stopGenerationById } from '@/function/generate';
+
 import { builtin_prompt_default_order } from '@/function/generate/types';
 import { importRawCharacter, importRawPreset, importRawTavernRegex, importRawWorldbook } from '@/function/import_raw';
 import { injectPrompts, uninjectPrompts } from '@/function/inject';
@@ -210,7 +211,8 @@ function getTavernHelper() {
     builtin_prompt_default_order,
     generate,
     generateRaw,
-
+    stopGenerationById,
+    stopAllGeneration,
     // lorebook_entry
     getLorebookEntries,
     replaceLorebookEntries,
