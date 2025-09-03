@@ -61,7 +61,9 @@ function connect_socket(url: string): void {
     return;
   }
 
-  socket = io(url);
+  socket = io(url, {
+    transports: ['websocket'],
+  });
 
   socket.on('connect_error', (error: Error) => {
     toggle_status(false);
