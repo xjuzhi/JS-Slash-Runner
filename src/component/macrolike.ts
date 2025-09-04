@@ -101,15 +101,17 @@ function renderAllMacros() {
     demacroOnRender($(node).attr('mesid')!);
   });
 }
+const renderAllMacrosDebounced = _.debounce(renderAllMacros, 1000);
 
 async function derenderAllMacros() {
   await saveChatConditional();
   await reloadCurrentChat();
 }
+const derenderAllMacrosDebounced = _.debounce(derenderAllMacros, 1000);
 
 export function initializeMacroOnExtension() {
-  renderAllMacros();
-  eventSource.on(event_types.CHAT_CHANGED, renderAllMacros);
+  renderAllMacrosDebounced();
+  eventSource.on(event_types.CHAT_CHANGED, renderAllMacrosDebounced);
   eventSource.on(event_types.GENERATE_AFTER_COMBINE_PROMPTS, checkDryRun);
   eventSource.on(event_types.GENERATE_AFTER_DATA, demacroOnPrompt);
   eventSource.on(event_types.CHARACTER_MESSAGE_RENDERED, demacroOnRender);
@@ -119,8 +121,8 @@ export function initializeMacroOnExtension() {
 }
 
 export function destroyMacroOnExtension() {
-  derenderAllMacros();
-  eventSource.removeListener(event_types.CHAT_CHANGED, renderAllMacros);
+  derenderAllMacrosDebounced();
+  eventSource.removeListener(event_types.CHAT_CHANGED, renderAllMacrosDebounced);
   eventSource.removeListener(event_types.GENERATE_AFTER_COMBINE_PROMPTS, checkDryRun);
   eventSource.removeListener(event_types.GENERATE_AFTER_DATA, demacroOnPrompt);
   eventSource.removeListener(event_types.CHARACTER_MESSAGE_RENDERED, demacroOnRender);
