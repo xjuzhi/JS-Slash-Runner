@@ -1,7 +1,17 @@
-import { ListenerType } from '@/function/event';
+import { ListenerType, tavern_events } from '@/function/event';
 
-import { chat, chat_metadata, event_types, eventSource, GenerateOptions, reloadCurrentChat, saveChatConditional } from '@sillytavern/script';
+import {
+  chat,
+  chat_metadata,
+  clearChat,
+  event_types,
+  eventSource,
+  GenerateOptions,
+  printMessages,
+  saveChatConditional,
+} from '@sillytavern/script';
 import { extension_settings } from '@sillytavern/scripts/extensions';
+import _ from 'lodash';
 
 interface MacroLike {
   regex: RegExp;
@@ -101,16 +111,24 @@ function renderAllMacros() {
     demacroOnRender($(node).attr('mesid')!);
   });
 }
-const renderAllMacrosDebounced = _.debounce(renderAllMacros, 1000);
+export const renderAllMacrosDebounced = _.debounce(renderAllMacros, 1000);
 
 async function derenderAllMacros() {
   await saveChatConditional();
-  await reloadCurrentChat();
+  await clearChat();
+  await printMessages();
+  $('div.mes').each((_index, node) => {
+    eventSource.emit(
+      Boolean($(node).attr('is_user')) === true
+        ? tavern_events.USER_MESSAGE_RENDERED
+        : tavern_events.CHARACTER_MESSAGE_RENDERED,
+      Number($(node).attr('mesid')!),
+    );
+  });
 }
-const derenderAllMacrosDebounced = _.debounce(derenderAllMacros, 1000);
+export const derenderAllMacrosDebounced = _.debounce(derenderAllMacros, 1000);
 
-export function initializeMacroOnExtension() {
-  renderAllMacrosDebounced();
+export function registerMacroOnExtension() {
   eventSource.on(event_types.CHAT_CHANGED, renderAllMacrosDebounced);
   eventSource.on(event_types.GENERATE_AFTER_COMBINE_PROMPTS, checkDryRun);
   eventSource.on(event_types.GENERATE_AFTER_DATA, demacroOnPrompt);
@@ -120,8 +138,7 @@ export function initializeMacroOnExtension() {
   eventSource.on(event_types.MESSAGE_SWIPED, demacroOnRender);
 }
 
-export function destroyMacroOnExtension() {
-  derenderAllMacrosDebounced();
+export function unregisterMacroOnExtension() {
   eventSource.removeListener(event_types.CHAT_CHANGED, renderAllMacrosDebounced);
   eventSource.removeListener(event_types.GENERATE_AFTER_COMBINE_PROMPTS, checkDryRun);
   eventSource.removeListener(event_types.GENERATE_AFTER_DATA, demacroOnPrompt);
