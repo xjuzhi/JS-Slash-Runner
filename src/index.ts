@@ -160,9 +160,8 @@ async function initMacroReplace() {
     .on('click', function () {
       const should_disable = $(this).prop('checked');
       saveSettingValue('macro.replace', !should_disable);
-      if (should_disable) {
-        destroyMacroOnExtension();
-      } else {
+      destroyMacroOnExtension();
+      if (!should_disable) {
         initializeMacroOnExtension();
       }
     });
