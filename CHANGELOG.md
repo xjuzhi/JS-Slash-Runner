@@ -1,3 +1,9 @@
+## 3.4.21
+
+### ⏫功能
+
+- 使用`stopGenerationById`和`stopAllGeneration`时, 会发送`tavern_events.GENERATION_STOPPED`事件, 并携带停止的生成ID
+
 ## 3.4.20
 
 ### ⏫功能
