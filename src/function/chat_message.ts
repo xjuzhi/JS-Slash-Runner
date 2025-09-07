@@ -12,7 +12,10 @@ import {
   system_message_types,
 } from '@sillytavern/script';
 
+import _ from 'lodash';
 import log from 'loglevel';
+import { t } from '../../../../../i18n';
+import { copyText } from '../../../../../utils';
 
 type ChatMessage = {
   message_id: number;
@@ -179,6 +182,22 @@ export async function setChatMessages(
   chat_messages: Array<{ message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>)>,
   { refresh = 'affected' }: SetChatMessagesOption = {},
 ): Promise<void> {
+  const convert_and_merge_messages = (
+    data: Array<{ message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>)>,
+  ): any => {
+    return _(data)
+      .map(chat_message => ({
+        ...chat_message,
+        message_id: chat_message.message_id < 0 ? chat.length + chat_message.message_id : chat_message.message_id,
+      }))
+      .sortBy('message_id')
+      .groupBy('message_id')
+      .map(messages => {
+        return messages.reduce((result, current) => ({ ...result, ...current }), {});
+      })
+      .value();
+  };
+
   const is_chat_message = (
     chat_message: { message_id: number } & (Partial<ChatMessage> | Partial<ChatMessageSwiped>),
   ): chat_message is { message_id: number } & Partial<ChatMessage> => {
@@ -282,12 +301,32 @@ export async function setChatMessages(
           message_id,
         ),
       );
+    $mes_html
+      .find('pre code')
+      .filter((_index, element) => {
+        const $element = $(element);
+        return !$element.hasClass('hljs') && !$element.text().includes('<body');
+      })
+      .each((_index, element) => {
+        hljs.highlightElement(element);
+        $(element).append(
+          $(`<i class="fa-solid fa-copy code-copy interactable" title="Copy code"></i>`)
+            .on('click', function (e) {
+              e.stopPropagation();
+            })
+            .on('pointerup', async function () {
+              await copyText($(element).text());
+              toastr.info(t`Copied!`, '', { timeOut: 2000 });
+            }),
+        );
+      });
     await eventSource.emit(
       chat_message.is_user ? event_types.USER_MESSAGE_RENDERED : event_types.CHARACTER_MESSAGE_RENDERED,
       message_id,
     );
   };
 
+  chat_messages = convert_and_merge_messages(chat_messages);
   await Promise.all(chat_messages.map(modify));
   await saveChatConditional();
   if (refresh === 'all') {
