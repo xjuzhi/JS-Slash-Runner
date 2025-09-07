@@ -34,7 +34,13 @@ import {
 import { generate, generateRaw, stopAllGeneration, stopGenerationById } from '@/function/generate';
 
 import { builtin_prompt_default_order } from '@/function/generate/types';
-import { importRawCharacter, importRawPreset, importRawTavernRegex, importRawWorldbook } from '@/function/import_raw';
+import {
+  importRawCharacter,
+  importRawChat,
+  importRawPreset,
+  importRawTavernRegex,
+  importRawWorldbook,
+} from '@/function/import_raw';
 import { injectPrompts, uninjectPrompts } from '@/function/inject';
 import {
   createLorebook,
@@ -200,6 +206,7 @@ function getTavernHelper() {
     // import_raw
     importRawCharacter,
     importRawPreset,
+    importRawChat,
     importRawWorldbook,
     importRawTavernRegex,
 
