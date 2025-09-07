@@ -11,11 +11,10 @@ import {
   substituteParamsExtended,
   system_message_types,
 } from '@sillytavern/script';
+import { copyText } from '@sillytavern/scripts/utils';
 
 import _ from 'lodash';
 import log from 'loglevel';
-import { t } from '../../../../../i18n';
-import { copyText } from '../../../../../utils';
 
 type ChatMessage = {
   message_id: number;
@@ -316,7 +315,7 @@ export async function setChatMessages(
             })
             .on('pointerup', async function () {
               await copyText($(element).text());
-              toastr.info(t`Copied!`, '', { timeOut: 2000 });
+              toastr.info(`已复制!`, '', { timeOut: 2000 });
             }),
         );
       });
