@@ -6,7 +6,7 @@ import { Script, ScriptType } from '@/component/script_repository/types';
 import { UIController } from '@/component/script_repository/ui_controller';
 import { extensionFolderPath } from '@/util/extension_variables';
 
-import { event_types, eventSource, this_chid } from '@sillytavern/script';
+import { event_types, eventSource, setCharacterId, this_chid } from '@sillytavern/script';
 import { callGenericPopup, POPUP_TYPE } from '@sillytavern/scripts/popup';
 import { loadFileToDocument, uuidv4 } from '@sillytavern/scripts/utils';
 
@@ -223,7 +223,10 @@ export class ScriptRepositoryApp {
           }
         }
       });
-    this.scriptManager.stopScriptsByType(previousCharacterScripts, ScriptType.CHARACTER);
+    const chid = this_chid;
+    setCharacterId(undefined);  // 想找切换前的 chid 太难了, 临时改为空试试
+    await this.scriptManager.stopScriptsByType(previousCharacterScripts, ScriptType.CHARACTER);
+    setCharacterId(chid);
 
     const scriptData = ScriptData.getInstance();
     const globalScripts = this.scriptManager.getGlobalScripts();

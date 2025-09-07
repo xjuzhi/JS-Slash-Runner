@@ -692,6 +692,10 @@ export class ScriptManager {
    * @param type 脚本类型
    */
   public async updateScript(script: Script, type: ScriptType): Promise<void> {
+    const existingScript = this.scriptData.getScriptById(script.id);
+    if (!existingScript) {
+      return;
+    }
     await this.scriptData.saveScript(script, type);
     scriptEvents.emit(ScriptRepositoryEventType.UI_REFRESH, {
       action: 'script_update',
@@ -986,6 +990,10 @@ export class ScriptManager {
    * @param type 脚本类型
    */
   public async setScriptButton(script: Script, type: ScriptType): Promise<void> {
+    const existingScript = this.scriptData.getScriptById(script.id);
+    if (!existingScript) {
+      return;
+    }
     await this.scriptData.saveScript(script, type);
 
     if (script.enabled) {
@@ -1025,7 +1033,6 @@ export class ScriptManager {
   ): Promise<boolean> {
     const script = this.scriptData.getScriptById(scriptId);
     if (!script) {
-      log.warn(`[ScriptManager] 脚本不存在: ${scriptId}`);
       return false;
     }
 
