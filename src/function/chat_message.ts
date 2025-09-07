@@ -11,9 +11,7 @@ import {
   substituteParamsExtended,
   system_message_types,
 } from '@sillytavern/script';
-import { copyText } from '@sillytavern/scripts/utils';
 
-import _ from 'lodash';
 import log from 'loglevel';
 
 type ChatMessage = {
@@ -314,7 +312,7 @@ export async function setChatMessages(
               e.stopPropagation();
             })
             .on('pointerup', async function () {
-              await copyText($(element).text());
+              navigator.clipboard.writeText($(element).text());
               toastr.info(`已复制!`, '', { timeOut: 2000 });
             }),
         );
