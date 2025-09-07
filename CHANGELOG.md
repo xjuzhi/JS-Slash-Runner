@@ -2,7 +2,11 @@
 
 ### ⏫功能
 
-- 使用`stopGenerationById`和`stopAllGeneration`时, 会发送`tavern_events.GENERATION_STOPPED`事件, 并携带停止的生成ID
+- 使用 `stopGenerationById` 和 `stopAllGeneration` 时, 会发送 `tavern_events.GENERATION_STOPPED` 事件, 并携带停止的生成 ID
+
+### 🐛修复
+
+- 让切换角色卡时对角色脚本的处理更正确, 例如在脚本卸载时使用 `replaceScriptButtons` 不会导致脚本被复制到其他角色卡中了
 
 ## 3.4.20
 
