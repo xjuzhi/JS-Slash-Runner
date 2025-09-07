@@ -123,7 +123,7 @@ export async function replaceVariables(
       await saveMetadata();
       break;
     case 'character':
-      if (!this_chid) {
+      if (this_chid === undefined) {
         throw new Error('保存变量失败，当前角色为空');
       }
       //@ts-ignore

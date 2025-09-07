@@ -22,7 +22,7 @@ export class Character {
     allow_avatar?: boolean;
   }): v1CharData | null {
     if (!name || name === 'current') {
-      if (!this_chid) {
+      if (this_chid === undefined) {
         return null;
       }
       return characters[Number(this_chid)];

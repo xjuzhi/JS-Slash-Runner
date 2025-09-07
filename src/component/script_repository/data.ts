@@ -133,7 +133,7 @@ export class ScriptData {
       if (type === ScriptType.GLOBAL) {
         saveSettingValue('script.scriptsRepository', repository);
       } else {
-        if (!this_chid) {
+        if (this_chid === undefined) {
           log.warn('[ScriptManager] 无法保存角色脚本迁移数据：当前角色为空');
           return;
         }
@@ -303,7 +303,7 @@ export class ScriptData {
    * @param array 脚本数组
    */
   async saveCharacterScripts(array: Script[]): Promise<void> {
-    if (!this_chid) {
+    if (this_chid === undefined) {
       throw new Error('[ScriptManager] 保存失败，当前角色为空');
     }
 
@@ -327,7 +327,7 @@ export class ScriptData {
    * @param repository 仓库项数组
    */
   async saveCharacterRepositoryItems(repository: ScriptRepositoryItem[]): Promise<void> {
-    if (!this_chid) {
+    if (this_chid === undefined) {
       throw new Error('[ScriptManager] 保存失败，当前角色为空');
     }
     //@ts-ignore
