@@ -35,14 +35,27 @@ class ScriptExecutor {
         destroyIframe(iframeElement);
       }
 
-      const htmlContent = this.createScriptHtml(script);
+      const is_debug_enabled = getSettingValue('debug.enabled');
+      const htmlContent = this.createScriptHtml(script, is_debug_enabled);
 
       const $iframe = $('<iframe>', {
         style: 'display: none;',
         id: `tavern-helper-script-${script.name}`,
-        srcdoc: htmlContent,
         'script-id': script.id,
       });
+
+      if (is_debug_enabled) {
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+        $iframe.attr('src', blobUrl);
+        $iframe.on('pagehide', () => {
+          if (is_debug_enabled) {
+            URL.revokeObjectURL(blobUrl);
+          }
+        });
+      } else {
+        $iframe.attr('srcdoc', htmlContent);
+      }
 
       $iframe.on('load', () => {
         log.info(`[ScriptManager] 启用${typeName}脚本["${script.name}"]`);
@@ -79,11 +92,12 @@ class ScriptExecutor {
    * @param script 脚本对象
    * @returns HTML内容
    */
-  private createScriptHtml(script: Script): string {
+  private createScriptHtml(script: Script, is_debug_enabled: boolean): string {
     return `
       <html>
       <head>
         ${third_party}
+        ${is_debug_enabled ? `<base href="${window.location.origin}/">` : ``}
         <script>
           (function ($) {
             var original$ = $;
@@ -434,9 +448,9 @@ export class ScriptManager {
     const rootScripts: string[] = [];
 
     for (const fileName in zipContent.files) {
-      const file = zipContent.files[fileName];
+      const f = zipContent.files[fileName];
 
-      if (!file.dir && fileName.endsWith('.json')) {
+      if (!f.dir && fileName.endsWith('.json')) {
         const pathParts = fileName.split('/');
 
         if (pathParts.length === 1) {
@@ -448,8 +462,8 @@ export class ScriptManager {
     }
 
     for (const fileName of rootScripts) {
-      const file = zipContent.files[fileName];
-      const scriptContent = await file.async('string');
+      const f = zipContent.files[fileName];
+      const scriptContent = await f.async('string');
       const scriptData = JSON.parse(scriptContent);
 
       if (scriptData.name && 'content' in scriptData) {

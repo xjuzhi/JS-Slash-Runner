@@ -85,8 +85,14 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
     $codeElements.each(function () {
       let extractedText = $(this).text();
       if (extractedText.includes('<body') && extractedText.includes('</body>')) {
-        const disableLoading = /<!--\s*disable-default-loading\s*-->/.test(extractedText);
-        const enableBlobUrlRendering = /<!--\s*enable-blob-url-render\s*-->/.test(extractedText);
+        const enableLoading =
+          /<!--\s*disable-default-loading\s*-->/.test(extractedText) === true
+            ? false
+            : getSettingValue('render.render_loading', true);
+        const enableBlobUrlRendering =
+          /<!--\s*enable-blob-url-render\s*-->/.test(extractedText) === true
+            ? true
+            : getSettingValue('debug.enabled', false);
         const hasMinVh = /min-height:\s*[^;]*vh/.test(extractedText);
         const hasJsVhUsage = /\d+vh/.test(extractedText);
 
@@ -118,7 +124,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
         }
 
         let loadingTimeout: NodeJS.Timeout | null = null;
-        if (!disableLoading) {
+        if (enableLoading) {
           const $loadingOverlay = $('<div>').addClass('iframe-loading-overlay').html(`
                 <div class="iframe-loading-content">
                   <i class="fa-solid fa-spinner fa-spin"></i>
@@ -160,6 +166,11 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
           const blob = new Blob([srcContent], { type: 'text/html' });
           const blobUrl = URL.createObjectURL(blob);
           $iframe.attr('src', blobUrl);
+          $iframe.on('pagehide', () => {
+            if (enableBlobUrlRendering) {
+              URL.revokeObjectURL(blobUrl);
+            }
+          });
         } else {
           $iframe.attr('srcdoc', srcContent);
         }

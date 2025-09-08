@@ -22,6 +22,7 @@ export const defaultIframeSettings = {
   render_depth: 0,
   render_optimize: false,
   render_hide_style: false,
+  render_loading: true,
 };
 
 /**
@@ -131,6 +132,14 @@ export async function initIframePanel() {
   $('#render-hide-style-toggle')
     .prop('checked', isRenderingHideStyleEnabled)
     .on('click', (event: JQuery.ClickEvent) => handleRenderingHideStyleToggle(event.target.checked, true));
+
+  const isRenderingLoadingEnabled = getSettingValue('render.render_loading') ?? defaultIframeSettings.render_loading;
+  $('#render-loading-toggle')
+    .prop('checked', isRenderingLoadingEnabled)
+    .on('click', async (event: JQuery.ClickEvent) => {
+      saveSettingValue('render.render_loading', event.target.checked);
+      await clearAndRenderAllIframes();
+    });
 
   $(window).on('resize', function () {
     if ($('iframe[data-needs-vh="true"]').length) {
