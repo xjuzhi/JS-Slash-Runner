@@ -35,7 +35,7 @@ class ScriptExecutor {
         destroyIframe(iframeElement);
       }
 
-      const is_debug_enabled = getSettingValue('debug.enabled');
+      const is_debug_enabled = getSettingValue('debug.enabled', false);
       const htmlContent = this.createScriptHtml(script, is_debug_enabled);
 
       const $iframe = $('<iframe>', {
