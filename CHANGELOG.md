@@ -1,3 +1,13 @@
+## 3.5.1
+
+### 💻界面
+
+- 拆分 `调试模式` 和 `Blob URL 渲染` 为两个独立的设置
+
+### 🐛修复
+
+- 修复 `insertOrAssignVariables`、`insertVariables` 和 `getAllVariables` 对数组合并方式的处理. 现在如果插入新数组, 将会覆盖旧数组, 而不是合并
+
 ## 3.5.0
 
 ### 💻界面

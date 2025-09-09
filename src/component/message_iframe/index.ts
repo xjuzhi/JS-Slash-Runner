@@ -23,6 +23,7 @@ export const defaultIframeSettings = {
   render_optimize: false,
   render_hide_style: false,
   render_loading: true,
+  render_blob_url: false,
 };
 
 /**
@@ -138,7 +139,13 @@ export async function initIframePanel() {
     .prop('checked', isRenderingLoadingEnabled)
     .on('click', async (event: JQuery.ClickEvent) => {
       saveSettingValue('render.render_loading', event.target.checked);
-      await clearAndRenderAllIframes();
+    });
+
+  const isRenderingBlobUrlEnabled = getSettingValue('render.render_blob_url') ?? defaultIframeSettings.render_blob_url;
+  $('#render-blob-url-toggle')
+    .prop('checked', isRenderingBlobUrlEnabled)
+    .on('click', async (event: JQuery.ClickEvent) => {
+      saveSettingValue('render.render_blob_url', event.target.checked);
     });
 
   $(window).on('resize', function () {

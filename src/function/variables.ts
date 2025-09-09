@@ -85,25 +85,24 @@ export function getVariables({ type = 'chat', message_id = 'latest', script_id }
 export function _getAllVariables(this: Window): Record<string, any> {
   const is_message_iframe = _getIframeName.call(this).startsWith('message-iframe');
 
-  let data = _.merge(
-    {},
+  let result = _({});
+  result = result.assign(
     extension_settings.variables.global,
     // @ts-expect-error
     characters[this_chid]?.data?.extensions?.TavernHelper_characterScriptVariables,
   );
   if (!is_message_iframe) {
-    data = _.merge(data, getVariables({ type: 'script', script_id: _getScriptId.call(this) }));
+    result = result.assign(getVariables({ type: 'script', script_id: _getScriptId.call(this) }));
   }
-  data = _.merge(data, (chat_metadata as { variables: Record<string, any> | undefined }).variables);
+  result = result.assign((chat_metadata as { variables: Record<string, any> | undefined }).variables);
   if (is_message_iframe) {
-    data = _.merge(
-      data,
+    result = result.assign(
       ...chat
         .slice(0, _getCurrentMessageId.call(this) + 1)
         .map((chat_message: any) => chat_message?.variables?.[chat_message?.swipe_id ?? 0]),
     );
   }
-  return structuredClone(data);
+  return structuredClone(result.value());
 }
 
 export async function replaceVariables(
@@ -202,18 +201,24 @@ export async function insertOrAssignVariables(
   variables: Record<string, any>,
   { type = 'chat', message_id = 'latest', script_id }: VariableOption = {},
 ): Promise<Record<string, any>> {
-  return await updateVariablesWith(old_variables => _.merge(old_variables, variables), { type, message_id, script_id });
+  return await updateVariablesWith(
+    old_variables => _.mergeWith(old_variables, variables, (_lhs, rhs) => (_.isArray(rhs) ? rhs : undefined)),
+    { type, message_id, script_id },
+  );
 }
 
 export async function insertVariables(
   variables: Record<string, any>,
   { type = 'chat', message_id = 'latest', script_id }: VariableOption = {},
 ): Promise<Record<string, any>> {
-  return await updateVariablesWith(old_variables => _.defaultsDeep(old_variables, variables), {
-    type,
-    message_id,
-    script_id,
-  });
+  return await updateVariablesWith(
+    old_variables => _.mergeWith({}, variables, old_variables, (_lhs, rhs) => (_.isArray(rhs) ? rhs : undefined)),
+    {
+      type,
+      message_id,
+      script_id,
+    },
+  );
 }
 
 export async function deleteVariable(

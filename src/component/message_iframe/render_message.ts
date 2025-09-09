@@ -92,7 +92,7 @@ async function renderMessagesInIframes(mode = RENDER_MODES.FULL, specificMesId: 
         const enableBlobUrlRendering =
           /<!--\s*enable-blob-url-render\s*-->/.test(extractedText) === true
             ? true
-            : getSettingValue('debug.enabled', false);
+            : getSettingValue('render.render_blob_url', false);
         const hasMinVh = /min-height:\s*[^;]*vh/.test(extractedText);
         const hasJsVhUsage = /\d+vh/.test(extractedText);
 
